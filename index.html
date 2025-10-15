@@ -25,6 +25,8 @@
     .text{font-size:24px;margin-top:20px}
     .controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
     .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+    /* Styles for the navigation bar */
+    .nav-bar{position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); padding: 10px 0; display: flex; justify-content: space-around; z-index: 100; max-width: 720px; margin: 0 auto; border-top-left-radius: 15px; border-top-right-radius: 15px;}
   </style>
 </head>
 <body>
@@ -47,7 +49,30 @@
         <button class="btn" id="resetBtn">Reset</button>
       </div>
     </div>
-  </div>
+    
+    <div class="profile-view" id="profileView" style="display: none;">
+      <h2>Personal Progress 🗓️</h2>
+      <p class="sub">Track your clean date and progress.</p>
+      
+      <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(32,40,60,0.05);">
+        <label for="lastDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Date of Last Use:</label>
+        <input type="date" id="lastDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
+        <button class="primary" id="saveDateBtn" style="width: 100%; margin-top: 0;">Save Date</button>
+      </div>
+
+      <div id="progressDisplay" style="margin-top: 20px; text-align: center; padding: 15px; border-radius: 10px; background: #f0f4f8; font-size: 1.1em; font-weight: bold; color: #2b77f0;">
+        Clean Time: --
+      </div>
+      
+      <div class="controls">
+        <button class="btn" id="homeFromProfileBtn" style="background: #e0e0e0;">Home</button>
+      </div>
+    </div>
+    <div class="nav-bar" id="navBar">
+        <button id="navHome" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 20px; color: #2b77f0;">🏠 Home</button>
+        <button id="navProfile" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 20px; color: #556;">👤 Profile</button>
+    </div>
+    </div>
 
 <script>
 const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Mindful 5‑min task 🧼", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Letter to future sober you 💌", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Visualize success 🌟", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "15‑min focused timer ⏱️", "suit_key": "green"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call or text a supportive friend 📱", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Reach out to your sponsor ☎️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a 'thinking of you' message 💬", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Find a recovery meeting 🔎", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Volunteer to help a friend 🤝", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a funny meme 😂", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Plan a sober weekend activity 📅", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Schedule a video call 🎥", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Scroll old happy photos 📸", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Encourage someone online 🌐", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Write a thank‑you note ✉️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call a warmline if needed 📞", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Share strength with someone 🤲", "suit_key": "orange"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Listen to a new podcast 🎙️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Sketch or color ✏️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Learn 5 phrases in new language 🌍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Work on a craft project 🧵", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Practice an instrument 🎸", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Research a hobby 🔍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Fix something small 🔧", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Organize your photos 🗂️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Watch a TED Talk 🎓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Set a 1‑week goal 🥅", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Browse library catalog 📚", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Start a journal entry 📓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Take a photo outside 📷", "suit_key": "purple"}];
@@ -77,12 +102,88 @@ function drawRandom(){
   return card;
 }
 
+// --- NEW PROFILE LOGIC ---
+
+function calculateAndDisplayCleanTime() {
+    const lastUseDate = localStorage.getItem('lastUseDate');
+    const display = document.getElementById('progressDisplay');
+    const input = document.getElementById('lastDate');
+
+    if (lastUseDate) {
+        // Set the input value to the saved date
+        input.value = lastUseDate; 
+
+        const start = new Date(lastUseDate);
+        const now = new Date();
+        
+        // Calculate the difference in milliseconds
+        const diff = now - start;
+        
+        // Convert milliseconds to days, hours, and minutes
+        const msInDay = 1000 * 60 * 60 * 24;
+        const days = Math.floor(diff / msInDay);
+        const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        // Format the output
+        if (days >= 0) {
+             display.innerHTML = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
+        } else {
+             display.innerHTML = 'Clean Time: Date must be in the past.';
+        }
+       
+    } else {
+        display.innerHTML = 'Clean Time: Please set your last use date.';
+    }
+}
+
+function saveDate() {
+    const dateInput = document.getElementById('lastDate');
+    if (dateInput.value) {
+        localStorage.setItem('lastUseDate', dateInput.value);
+        calculateAndDisplayCleanTime();
+        alert('Clean date saved!');
+    } else {
+        alert('Please select a date first.');
+    }
+}
+
+// --- VIEW SWITCHING LOGIC ---
+
+function showView(viewId) {
+    // Hide all views
+    document.getElementById('homeScreen').style.display = 'none';
+    document.getElementById('cardView').style.display = 'none';
+    document.getElementById('profileView').style.display = 'none';
+    
+    // Show the requested view
+    document.getElementById(viewId).style.display = 'block';
+
+    // Update nav colors for active tab
+    document.getElementById('navHome').style.color = '#556';
+    document.getElementById('navProfile').style.color = '#556';
+    
+    if(viewId === 'homeScreen' || viewId === 'cardView') {
+        document.getElementById('navHome').style.color = '#2b77f0';
+    } else if (viewId === 'profileView') {
+        document.getElementById('navProfile').style.color = '#2b77f0';
+        // Recalculate time every time profile is shown
+        calculateAndDisplayCleanTime(); 
+    }
+}
+
+
+// --- EVENT LISTENERS ---
+
+// Initial setup to display clean time if it exists
+calculateAndDisplayCleanTime();
+
+// Card Controls
 document.getElementById('drawBtn').addEventListener('click', ()=>{
   const card = drawRandom();
   if(!card) return alert('Deck empty — shuffle or reset.');
   renderCard(card);
-  document.getElementById('homeScreen').style.display = 'none';
-  document.getElementById('cardView').style.display = 'block';
+  showView('cardView');
 });
 
 document.getElementById('nextBtn').addEventListener('click', ()=>{
@@ -98,9 +199,31 @@ document.getElementById('shuffleBtn').addEventListener('click', ()=>{
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
   deck = [...cards];
-  document.getElementById('cardView').style.display = 'none';
-  document.getElementById('homeScreen').style.display = 'block';
+  showView('homeScreen');
 });
+
+
+// Profile Controls
+document.getElementById('saveDateBtn').addEventListener('click', saveDate);
+
+document.getElementById('homeFromProfileBtn').addEventListener('click', ()=>{
+  showView('homeScreen');
+});
+
+// Navigation Bar
+document.getElementById('navHome').addEventListener('click', ()=>{
+    // Decide whether to show the home screen or the card view based on where the user left off
+    const currentView = document.getElementById('cardView').style.display === 'block' ? 'cardView' : 'homeScreen';
+    showView(currentView);
+});
+
+document.getElementById('navProfile').addEventListener('click', ()=>{
+  showView('profileView');
+});
+
+
+// Auto-update clean time every minute (optional but recommended)
+setInterval(calculateAndDisplayCleanTime, 60000); // 60000 ms = 1 minute
 </script>
 
 </body>
