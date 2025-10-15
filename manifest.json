@@ -1,0 +1,9 @@
+{
+  "name": "52 Coping Cards for Cravings",
+  "short_name": "Coping Cards",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2b77f0",
+  "icons": []
+}
