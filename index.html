@@ -160,10 +160,15 @@ function suitColor(key){
 }
 
 function renderCard(c){
-  document.getElementById('cardIcon').textContent = c.icon;
-  document.getElementById('cardSuit').textContent = c.suit;
-  document.getElementById('cardText').textContent = c.text;
-  document.getElementById('cardArea').style.background = suitColor(c.suit_key);
+  const cardIcon = document.getElementById('cardIcon');
+  const cardSuit = document.getElementById('cardSuit');
+  const cardText = document.getElementById('cardText');
+  const cardArea = document.getElementById('cardArea');
+    
+  if (cardIcon) cardIcon.textContent = c.icon;
+  if (cardSuit) cardSuit.textContent = c.suit;
+  if (cardText) cardText.textContent = c.text;
+  if (cardArea) cardArea.style.background = suitColor(c.suit_key);
 }
 
 function drawRandom(){
@@ -193,4 +198,45 @@ function displayDailyFact() {
 }
 
 
-// --- PROFILE/CLE
+// --- PROFILE/CLEAN TIME LOGIC ---
+
+function calculateAndDisplayCleanTime() {
+    const lastUseDate = localStorage.getItem('lastUseDate');
+    const profileDisplay = document.getElementById('progressDisplay');
+    const homeDisplay = document.getElementById('homeCleanTime'); 
+    const input = document.getElementById('lastDate');
+
+    if (lastUseDate) {
+        // Update input in Profile view
+        if (input) input.value = lastUseDate; 
+
+        const start = new Date(lastUseDate);
+        const now = new Date();
+        
+        const diff = now - start;
+        const msInDay = 1000 * 60 * 60 * 24;
+        const days = Math.floor(diff / msInDay);
+        const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        let timeString;
+        if (days >= 0) {
+             timeString = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
+        } else {
+             timeString = 'Clean Time: Date must be in the past.';
+        }
+       
+        // Update both displays
+        if (profileDisplay) profileDisplay.innerHTML = timeString;
+        if (homeDisplay) homeDisplay.innerHTML = timeString;
+       
+    } else {
+        const message = 'Clean Time: Set your date in the Profile tab.';
+        if (profileDisplay) profileDisplay.innerHTML = message;
+        if (homeDisplay) homeDisplay.innerHTML = message;
+    }
+}
+
+function saveDate() {
+    const dateInput = document.getElementById('lastDate');
+    if (date
