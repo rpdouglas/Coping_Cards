@@ -68,9 +68,28 @@
         <button class="btn" id="homeFromProfileBtn" style="background: #e0e0e0;">Home</button>
       </div>
     </div>
+    <div class="journal-view" id="journalView" style="display: none;">
+      <h2>Daily Reflection 📝</h2>
+      <p class="sub">Write down your thoughts and experiences.</p>
+      
+      <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(32,40,60,0.05);">
+        <label for="journalDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Select Date:</label>
+        <input type="date" id="journalDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
+        
+        <label for="journalEntry" style="display: block; font-weight: bold; margin-bottom: 8px;">Entry:</label>
+        <textarea id="journalEntry" rows="8" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical;"></textarea>
+
+        <button class="primary" id="saveJournalBtn" style="width: 100%; margin-top: 0;">Save Entry</button>
+      </div>
+      
+      <div class="controls">
+        <button class="btn" id="homeFromJournalBtn" style="background: #e0e0e0;">Home</button>
+      </div>
+    </div>
     <div class="nav-bar" id="navBar">
-        <button id="navHome" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 20px; color: #2b77f0;">🏠 Home</button>
-        <button id="navProfile" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 20px; color: #556;">👤 Profile</button>
+        <button id="navHome" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #2b77f0;">🏠 Home</button>
+        <button id="navJournal" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #556;">📝 Journal</button>
+        <button id="navProfile" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #556;">👤 Profile</button>
     </div>
     </div>
 
@@ -102,7 +121,7 @@ function drawRandom(){
   return card;
 }
 
-// --- NEW PROFILE LOGIC ---
+// --- PROFILE LOGIC ---
 
 function calculateAndDisplayCleanTime() {
     const lastUseDate = localStorage.getItem('lastUseDate');
@@ -110,22 +129,16 @@ function calculateAndDisplayCleanTime() {
     const input = document.getElementById('lastDate');
 
     if (lastUseDate) {
-        // Set the input value to the saved date
         input.value = lastUseDate; 
-
         const start = new Date(lastUseDate);
         const now = new Date();
         
-        // Calculate the difference in milliseconds
         const diff = now - start;
-        
-        // Convert milliseconds to days, hours, and minutes
         const msInDay = 1000 * 60 * 60 * 24;
         const days = Math.floor(diff / msInDay);
         const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         
-        // Format the output
         if (days >= 0) {
              display.innerHTML = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
         } else {
@@ -148,6 +161,46 @@ function saveDate() {
     }
 }
 
+// --- JOURNAL LOGIC ---
+
+const journalDateInput = document.getElementById('journalDate');
+const journalEntryTextArea = document.getElementById('journalEntry');
+const JOURNAL_PREFIX = 'journal_';
+
+// Set today's date as default on load
+const today = new Date();
+journalDateInput.value = today.toISOString().split('T')[0];
+
+
+function loadJournalEntry(dateString) {
+    const entry = localStorage.getItem(JOURNAL_PREFIX + dateString);
+    journalEntryTextArea.value = entry || '';
+}
+
+function saveJournalEntry() {
+    const dateString = journalDateInput.value;
+    const entryText = journalEntryTextArea.value.trim();
+
+    if (!dateString) {
+        return alert('Please select a date for the journal entry.');
+    }
+
+    if (entryText === '') {
+        // If the entry is empty, remove any existing entry for that date
+        localStorage.removeItem(JOURNAL_PREFIX + dateString);
+        alert('Entry cleared.');
+    } else {
+        localStorage.setItem(JOURNAL_PREFIX + dateString, entryText);
+        alert('Journal entry saved for ' + dateString + '!');
+    }
+}
+
+// Event listener to load entry when date changes
+journalDateInput.addEventListener('change', (e) => {
+    loadJournalEntry(e.target.value);
+});
+
+
 // --- VIEW SWITCHING LOGIC ---
 
 function showView(viewId) {
@@ -155,28 +208,35 @@ function showView(viewId) {
     document.getElementById('homeScreen').style.display = 'none';
     document.getElementById('cardView').style.display = 'none';
     document.getElementById('profileView').style.display = 'none';
+    document.getElementById('journalView').style.display = 'none';
     
     // Show the requested view
     document.getElementById(viewId).style.display = 'block';
 
     // Update nav colors for active tab
     document.getElementById('navHome').style.color = '#556';
+    document.getElementById('navJournal').style.color = '#556';
     document.getElementById('navProfile').style.color = '#556';
     
     if(viewId === 'homeScreen' || viewId === 'cardView') {
         document.getElementById('navHome').style.color = '#2b77f0';
     } else if (viewId === 'profileView') {
         document.getElementById('navProfile').style.color = '#2b77f0';
-        // Recalculate time every time profile is shown
         calculateAndDisplayCleanTime(); 
+    } else if (viewId === 'journalView') {
+        document.getElementById('navJournal').style.color = '#2b77f0';
+        // Load the entry for the currently selected date when switching to journal view
+        loadJournalEntry(journalDateInput.value); 
     }
 }
 
 
 // --- EVENT LISTENERS ---
 
-// Initial setup to display clean time if it exists
+// Initial setup
 calculateAndDisplayCleanTime();
+loadJournalEntry(journalDateInput.value);
+
 
 // Card Controls
 document.getElementById('drawBtn').addEventListener('click', ()=>{
@@ -210,11 +270,23 @@ document.getElementById('homeFromProfileBtn').addEventListener('click', ()=>{
   showView('homeScreen');
 });
 
+
+// Journal Controls
+document.getElementById('saveJournalBtn').addEventListener('click', saveJournalEntry);
+
+document.getElementById('homeFromJournalBtn').addEventListener('click', ()=>{
+  showView('homeScreen');
+});
+
+
 // Navigation Bar
 document.getElementById('navHome').addEventListener('click', ()=>{
-    // Decide whether to show the home screen or the card view based on where the user left off
     const currentView = document.getElementById('cardView').style.display === 'block' ? 'cardView' : 'homeScreen';
     showView(currentView);
+});
+
+document.getElementById('navJournal').addEventListener('click', ()=>{
+  showView('journalView');
 });
 
 document.getElementById('navProfile').addEventListener('click', ()=>{
@@ -222,8 +294,8 @@ document.getElementById('navProfile').addEventListener('click', ()=>{
 });
 
 
-// Auto-update clean time every minute (optional but recommended)
-setInterval(calculateAndDisplayCleanTime, 60000); // 60000 ms = 1 minute
+// Auto-update clean time every minute
+setInterval(calculateAndDisplayCleanTime, 60000); 
 </script>
 
 </body>
