@@ -10,6 +10,8 @@
       --bg: #f7f7f9;
       --card-radius: 16px;
       --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --nav-width: 180px;
+      --header-height: 60px; /* For mobile navigation */
     }
     /* Base Layout Reset */
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);}
@@ -26,7 +28,7 @@
 
     /* Vertical Sidebar Navigation (Desktop/Tablet) */
     .sidebar{
-      width: 180px; 
+      width: var(--nav-width); 
       background: #2b77f0; /* Theme blue */
       color: white;
       padding: 20px 0;
@@ -75,10 +77,12 @@
     @media (max-width: 600px) {
         .app {
             flex-direction: column; /* Stack sidebar and content vertically */
+            height: auto; /* Allow app to be as tall as content */
+            min-height: 100vh;
         }
         .sidebar {
             width: 100%;
-            height: 60px; /* Fixed height for bottom nav */
+            height: var(--header-height); /* Fixed height for bottom nav */
             flex-direction: row; /* Horizontal nav */
             justify-content: space-around;
             padding: 0;
@@ -104,24 +108,53 @@
         .main-content {
             padding-bottom: 80px; /* Leave space for bottom nav */
         }
+        .view-container {
+             /* Take full width of main content */
+            max-width: none;
+        }
     }
 
     /* Shared Component Styles */
-    .card-base{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);margin-top:20px;}
+    .card-base{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);margin-top:20px; width: 100%; box-sizing: border-box;}
     .hero { text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
     h2 { font-size: 1.5rem; margin-top: 0; }
     p.sub{color:#556;opacity:0.8;margin-top:8px}
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:16px;cursor:pointer; transition: background 0.2s;}
     button.primary:hover{background: #1e5ab8;}
 
-    /* Card Specific Styles */
-    .card{padding:28px;border-radius:14px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between; margin-top: 0;}
+    /* **CARD SPECIFIC STYLES (UPDATED)** */
+    #cardView {
+        /* Ensure the card view takes full vertical space minus header/footer elements */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 0;
+    }
+    .card{
+        width: 100%;
+        max-width: 400px; /* Limit max size for readability */
+        padding: 30px;
+        border-radius: 18px;
+        min-height: 240px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Added box shadow */
+        margin-top: 20px;
+    }
     .card .top{display:flex;justify-content:space-between;align-items:center}
-    .icon{font-size:48px}
+    .icon{font-size:56px} /* Increased icon size */
     .suit{font-size:16px;opacity:0.9}
     .text{font-size:24px;margin-top:20px}
-    .controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
-    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer; background: #e0e0e0; transition: background 0.2s;}
+    .controls{
+        display:flex;
+        gap:10px;
+        justify-content:center;
+        margin-top:24px; /* Space below the card */
+        width: 100%;
+        max-width: 400px;
+    }
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer; background: #e0e0e0; transition: background 0.2s; flex-grow: 1;}
     .btn:hover{background: #ccc;}
 
     /* Feature Styles */
@@ -154,7 +187,6 @@
 <body>
   <div class="app">
 
-    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar">
         <h1>The Addicts Agenda</h1>
         <div id="navHome" class="nav-item active" data-view="homeView">🏠 Home</div>
@@ -162,32 +194,22 @@
         <div id="navJournal" class="nav-item" data-view="journalView">📝 Journal</div>
         <div id="navProfile" class="nav-item" data-view="profileView">👤 Progress</div>
     </div>
-    <!-- END SIDEBAR NAVIGATION -->
-
-    <!-- MAIN CONTENT AREA -->
     <div class="main-content">
         <div class="view-container">
 
-            <!-- 1. HOME VIEW (Landing Page) -->
             <div id="homeView" class="card-base hero">
                 <div>
                     <h2>Welcome to The Addicts Agenda</h2>
                     <p class="sub">Find motivation, track your progress, and manage cravings.</p>
                 </div>
-                <!-- CLEAN TIME DISPLAY -->
                 <div id="homeCleanTime"></div>
 
-                <!-- DAILY FUN FACT -->
                 <div id="dailyFact"></div>
 
                 <button class="primary" id="goToCardsBtn">Draw Coping Card Now</button>
             </div>
-            <!-- END HOME VIEW -->
-
-
-            <!-- 2. CARD VIEW (Coping Cards Selector) -->
-            <div id="cardView" class="card-base" style="display: none; text-align: center;">
-                <h2>52 Coping Cards</h2>
+            <div id="cardView" style="display: none; width: 100%; text-align: center;">
+                <h2 style="margin-top: 0;">52 Coping Cards</h2>
                 <p class="sub">Draw a random card for immediate action.</p>
                 
                 <div class="card" id="cardArea">
@@ -201,10 +223,6 @@
                     <button class="btn" id="resetBtn">Reset Deck</button>
                 </div>
             </div>
-            <!-- END CARD VIEW -->
-
-
-            <!-- 3. JOURNAL VIEW -->
             <div id="journalView" class="card-base" style="display: none;">
                 <h2>Daily Reflection 📝</h2>
                 <p class="sub">Write down your thoughts and experiences.</p>
@@ -217,10 +235,6 @@
 
                 <button class="primary" id="saveJournalBtn" style="width: 100%; margin-top: 0;">Save Entry</button>
             </div>
-            <!-- END JOURNAL VIEW -->
-
-            
-            <!-- 4. PROFILE VIEW -->
             <div id="profileView" class="card-base" style="display: none;">
                 <h2>Personal Progress 🗓️</h2>
                 <p class="sub">Set your clean date to track your time.</p>
@@ -233,13 +247,9 @@
                     Clean Time: --
                 </div>
             </div>
-            <!-- END PROFILE VIEW -->
-
-        </div>
+            </div>
     </div>
-    <!-- END MAIN CONTENT AREA -->
-
-  </div>
+    </div>
 
 <script>
 const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Mindful 5‑min task 🧼", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Letter to future sober you 💌", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Visualize success 🌟", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "15‑min focused timer ⏱️", "suit_key": "green"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call or text a supportive friend 📱", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Reach out to your sponsor ☎️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a 'thinking of you' message 💬", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Find a recovery meeting 🔎", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Volunteer to help a friend 🤝", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a funny meme 😂", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Plan a sober weekend activity 📅", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Schedule a video call 🎥", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Scroll old happy photos 📸", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Encourage someone online 🌐", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Write a thank‑you note ✉️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call a warmline if needed 📞", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Share strength with someone 🤲", "suit_key": "orange"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Listen to a new podcast 🎙️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Sketch or color ✏️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Learn 5 phrases in new language 🌍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Work on a craft project 🧵", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Practice an instrument 🎸", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Research a hobby 🔍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Fix something small 🔧", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Organize your photos 🗂️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Watch a TED Talk 🎓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Set a 1‑week goal 🥅", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Browse library catalog 📚", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Start a journal entry 📓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Take a photo outside 📷", "suit_key": "purple"}];
@@ -291,199 +301,4 @@ function drawRandom(){
 function getDayOfYear(date) {
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = date - start;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay);
-}
-
-function displayDailyFact() {
-    const today = new Date();
-    const day = getDayOfYear(today);
-    const factIndex = day % recoveryFacts.length;
-    const factDisplay = document.getElementById('dailyFact');
-    
-    if (factDisplay) {
-        factDisplay.innerHTML = `**Daily Fact** ${recoveryFacts[factIndex]}`;
-    }
-}
-
-// --- PROFILE/CLEAN TIME LOGIC ---
-
-function calculateAndDisplayCleanTime() {
-    const lastUseDate = localStorage.getItem('lastUseDate');
-    const profileDisplay = document.getElementById('progressDisplay');
-    const homeDisplay = document.getElementById('homeCleanTime'); 
-    const input = document.getElementById('lastDate');
-
-    if (lastUseDate) {
-        if (input) input.value = lastUseDate; 
-
-        const start = new Date(lastUseDate);
-        const now = new Date();
-        
-        const diff = now - start;
-        const msInDay = 1000 * 60 * 60 * 24;
-        const days = Math.floor(diff / msInDay);
-        const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        
-        let timeString;
-        if (days >= 0) {
-             timeString = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
-        } else {
-             timeString = 'Clean Time: Date must be in the past.';
-        }
-       
-        if (profileDisplay) profileDisplay.innerHTML = timeString;
-        if (homeDisplay) homeDisplay.innerHTML = timeString;
-       
-    } else {
-        const message = 'Clean Time: Set your date in the Progress tab.';
-        if (profileDisplay) profileDisplay.innerHTML = message;
-        if (homeDisplay) homeDisplay.innerHTML = message;
-    }
-}
-
-function saveDate() {
-    const dateInput = document.getElementById('lastDate');
-    if (dateInput && dateInput.value) {
-        localStorage.setItem('lastUseDate', dateInput.value);
-        calculateAndDisplayCleanTime();
-        alert('Clean date saved!');
-    } else {
-        alert('Please select a date first.');
-    }
-}
-
-// --- JOURNAL LOGIC ---
-
-const JOURNAL_PREFIX = 'journal_';
-
-function loadJournalEntry(dateString) {
-    const journalEntryTextArea = document.getElementById('journalEntry');
-    const entry = localStorage.getItem(JOURNAL_PREFIX + dateString);
-    if (journalEntryTextArea) journalEntryTextArea.value = entry || '';
-}
-
-function saveJournalEntry() {
-    const journalDateInput = document.getElementById('journalDate');
-    const journalEntryTextArea = document.getElementById('journalEntry');
-    
-    if (!journalDateInput || !journalEntryTextArea) return;
-
-    const dateString = journalDateInput.value;
-    const entryText = journalEntryTextArea.value.trim();
-
-    if (!dateString) {
-        return alert('Please select a date for the journal entry.');
-    }
-
-    if (entryText === '') {
-        localStorage.removeItem(JOURNAL_PREFIX + dateString);
-        alert('Entry cleared.');
-    } else {
-        localStorage.setItem(JOURNAL_PREFIX + dateString, entryText);
-        alert('Journal entry saved for ' + dateString + '!');
-    }
-}
-
-// --- VIEW SWITCHING LOGIC ---
-
-function showView(viewId) {
-    // Hide all views
-    document.getElementById('homeView').style.display = 'none';
-    document.getElementById('cardView').style.display = 'none'; 
-    document.getElementById('profileView').style.display = 'none';
-    document.getElementById('journalView').style.display = 'none';
-    
-    // Show the requested view
-    const viewElement = document.getElementById(viewId);
-    if (viewElement) viewElement.style.display = 'flex'; // Use flex for centered views, or block for standard flow
-
-    // Update active nav item class
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
-    if (activeNav) activeNav.classList.add('active');
-
-    // Trigger updates for specific views
-    if(viewId === 'homeView') {
-        calculateAndDisplayCleanTime(); 
-        displayDailyFact(); 
-    } else if (viewId === 'profileView') {
-        calculateAndDisplayCleanTime(); 
-    } else if (viewId === 'journalView') {
-        const journalDateInput = document.getElementById('journalDate');
-        if (journalDateInput) {
-             const today = new Date();
-             journalDateInput.value = journalDateInput.value || today.toISOString().split('T')[0];
-             loadJournalEntry(journalDateInput.value); 
-        }
-    }
-}
-
-
-// --- EVENT LISTENERS ---
-function setupEventListeners() {
-    // Initial Date Setup for Journal (run once)
-    const initialJournalDateInput = document.getElementById('journalDate');
-    if (initialJournalDateInput) {
-        const today = new Date();
-        initialJournalDateInput.value = today.toISOString().split('T')[0];
-        initialJournalDateInput.addEventListener('change', (e) => {
-            loadJournalEntry(e.target.value);
-        });
-    }
-
-    // Set up navigation listeners
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            showView(e.target.dataset.view);
-        });
-    });
-
-    // Cards Controls
-    document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
-        const card = drawRandom();
-        if (card) renderCard(card);
-        showView('cardView');
-    });
-
-    if (document.getElementById('nextBtn')) document.getElementById('nextBtn').addEventListener('click', ()=>{
-      const card = drawRandom();
-      if(!card) return alert('Deck empty — shuffle or reset.');
-      renderCard(card);
-    });
-
-    if (document.getElementById('shuffleBtn')) document.getElementById('shuffleBtn').addEventListener('click', ()=>{
-      deck = [...cards].sort(()=>Math.random()-0.5);
-      alert('Deck shuffled.');
-    });
-
-    if (document.getElementById('resetBtn')) document.getElementById('resetBtn').addEventListener('click', ()=>{
-      deck = [...cards];
-      document.getElementById('cardText').textContent = 'Deck reset. Ready to draw.';
-      document.getElementById('cardArea').style.background = suitColor('default');
-      document.getElementById('cardIcon').textContent = '❓';
-      document.getElementById('cardSuit').textContent = 'Welcome';
-    });
-
-
-    // Profile Controls
-    if (document.getElementById('saveDateBtn')) document.getElementById('saveDateBtn').addEventListener('click', saveDate);
-
-    // Journal Controls
-    if (document.getElementById('saveJournalBtn')) document.getElementById('saveJournalBtn').addEventListener('click', saveJournalEntry);
-}
-
-
-// --- INITIALIZATION ---
-window.onload = function() {
-    setupEventListeners();
-    showView('homeView'); // Start on the Home view
-    setInterval(calculateAndDisplayCleanTime, 60000); 
-};
-</script>
-
-</body>
-</html>
+    const oneDay = 1
