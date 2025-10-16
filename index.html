@@ -16,92 +16,181 @@
     .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
     h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
-    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:16px;cursor:pointer}
-    .card-view{margin-top:20px;display:none;}
-    .card{padding:28px;border-radius:14px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}
-    .card .top{display:flex;justify-content:space-between;align-items:center}
-    .icon{font-size:48px}
-    .suit{font-size:16px;opacity:0.9}
-    .text{font-size:24px;margin-top:20px}
-    .controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
-    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
+    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px rgba(43,119,240,0.3);cursor:pointer;transition:background 0.2s}
+    button.primary:hover{background:#2361c4}
+    button{cursor:pointer;background:none;border:none;color:#2b77f0;font-size:16px;padding:8px;font-weight:500}
+    /* ADDED FOR ACCESSIBILITY */
+    button:focus-visible {
+      outline: 2px solid #2b77f0;
+      outline-offset: 2px;
+    }
+    .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
+    #cardIcon{font-size:80px;line-height:1;margin-bottom:12px}
+    #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#444}
+    #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#333}
+    .actions button{margin:0 10px}
+    .status-text{font-size:14px;color:#777;margin-top:10px}
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="hero" id="homeScreen">
-      <h1>✨ 52 Coping Cards for Cravings</h1>
-      <p class="sub">Draw one. Take action. Stay strong.</p>
-      <button class="primary" id="drawBtn">Draw Card</button>
-    </div>
-
-    <div class="card-view" id="cardView">
-      <div class="card" id="cardArea">
-        <div class="top"><div class="icon" id="cardIcon">🏃‍♂️</div><div class="suit" id="cardSuit">Action & Movement</div></div>
-        <div class="text" id="cardText">Take a brisk 10-minute walk</div>
+    <div id="homeScreen">
+      <div class="hero">
+        <h1>52 Coping Cards</h1>
+        <p class="sub">Need a quick strategy to manage a craving? Draw a card.</p>
+        <button id="drawBtn" class="primary">Draw a Card</button>
       </div>
-
-      <div class="controls">
-        <button class="btn" id="nextBtn">Next</button>
-        <button class="btn" id="shuffleBtn">Shuffle</button>
-        <button class="btn" id="resetBtn">Reset</button>
+    </div>
+    
+    <div id="cardView" style="display:none;">
+      <div id="cardArea" class="card-area">
+        <div>
+          <span id="cardIcon"></span>
+          <div id="cardSuit"></div>
+        </div>
+        <p id="cardText"></p>
+        <div class="actions">
+          <button id="nextBtn">Next Card</button>
+          <button id="shuffleBtn">Shuffle Deck</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+        <div id="statusText" class="status-text"></div>
       </div>
     </div>
   </div>
+  
+  <script>
+    // CLEANED UP: RGB colors removed as they were not used by the suitColor function.
+    const cards = [
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Stretch your entire body for 60 seconds.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Go for a walk, even if it is just a lap around the house.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Take 5 deep breaths, focusing only on the air moving in and out.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Clean an area of your home for 5 minutes (e.g., wash a few dishes).'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a quick chore like taking out the trash or folding one piece of laundry.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Drink a full glass of water or a soothing hot beverage.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Splash cold water on your face.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Change your location. Move to another room or step outside.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a 2-minute wall sit or plank.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Hold ice in your hand for a minute until the feeling subsides.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Eat a small, healthy snack, like a piece of fruit.'},
+      
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Use a grounding technique. Name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Write down three things you are grateful for right now.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Picture a favorite memory, like a vacation or a celebration. Focus on the details.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Say a positive affirmation out loud 10 times.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Watch a funny video or read a lighthearted article.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Try to recall the lyrics to your favorite song, word for word.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Look at a complex image or pattern and try to find a repeating element.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a quick Sudoku or word search puzzle.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Listen to a guided meditation for 5 minutes.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Imagine the feeling of the craving passing and how good it will feel.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Read a book or news article for 5 minutes.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a body scan. Focus on each part of your body from head to toe.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Mentally list all the cities or states you can remember.'},
 
-<script>
-const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Mindful 5‑min task 🧼", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Letter to future sober you 💌", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Visualize success 🌟", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "15‑min focused timer ⏱️", "suit_key": "green"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call or text a supportive friend 📱", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Reach out to your sponsor ☎️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a 'thinking of you' message 💬", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Find a recovery meeting 🔎", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Volunteer to help a friend 🤝", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a funny meme 😂", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Plan a sober weekend activity 📅", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Schedule a video call 🎥", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Scroll old happy photos 📸", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Encourage someone online 🌐", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Write a thank‑you note ✉️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call a warmline if needed 📞", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Share strength with someone 🤲", "suit_key": "orange"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Listen to a new podcast 🎙️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Sketch or color ✏️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Learn 5 phrases in new language 🌍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Work on a craft project 🧵", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Practice an instrument 🎸", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Research a hobby 🔍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Fix something small 🔧", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Organize your photos 🗂️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Watch a TED Talk 🎓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Set a 1‑week goal 🥅", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Browse library catalog 📚", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Start a journal entry 📓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Take a photo outside 📷", "suit_key": "purple"}];
-let deck = [...cards];
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Call or text a supportive friend or family member.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Check in with your sponsor or accountability partner.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Send a quick encouraging text to someone else in recovery.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write down a commitment you can share with a friend later.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read a few passages from an inspirational book or literature.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Go online to find a quick, virtual support meeting.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write a quick email or note to thank someone in your life.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Say your name and what you are feeling right now out loud to an empty room.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Think about who in your life you could help with something small today.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Reach out to a professional (therapist, doctor) for advice if the craving persists.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Talk to a pet or plant for 5 minutes.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Offer a genuine compliment to a stranger or person nearby.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read through old notes or cards from loved ones.'},
 
-function suitColor(key){
-  switch(key){
-    case 'blue': return '#DADFF9';
-    case 'green': return '#DFF5D8';
-    case 'orange': return '#FFF2E0';
-    case 'purple': return '#F1E6FF';
-    default: return '#fff';
-  }
-}
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write a short story or poem about your current feeling.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Listen to a piece of classical music you’ve never heard before.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Draw or doodle for 5 minutes without judging the result.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Watch a short documentary or educational video on a random topic.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one like a harmonica) and try it.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up a recipe and plan to make it later this week.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Browse an online museum or art gallery.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Start a journal entry about your goals for the next month.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Learn a few words in a new language using an app or website.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write down the ABCs backwards.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up the definition of a word you don’t know and use it in a sentence.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Do something tactile, like playing with modeling clay or sand.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
+    ];
 
-function renderCard(c){
-  document.getElementById('cardIcon').textContent = c.icon;
-  document.getElementById('cardSuit').textContent = c.suit;
-  document.getElementById('cardText').textContent = c.text;
-  document.getElementById('cardArea').style.background = suitColor(c.suit_key);
-}
+    let deck = [...cards]; // Full set of cards, initially available
 
-function drawRandom(){
-  if(deck.length === 0) return null;
-  const idx = Math.floor(Math.random()*deck.length);
-  const card = deck.splice(idx,1)[0];
-  return card;
-}
+    function suitColor(suit_key){
+      switch(suit_key){
+        case 'blue': return '#DADFF9';
+        case 'green': return '#DFF5D8';
+        case 'orange': return '#FFF2E0';
+        case 'purple': return '#F1E6FF';
+        default: return '#fff';
+      }
+    }
 
-document.getElementById('drawBtn').addEventListener('click', ()=>{
-  const card = drawRandom();
-  if(!card) return alert('Deck empty — shuffle or reset.');
-  renderCard(card);
-  document.getElementById('homeScreen').style.display = 'none';
-  document.getElementById('cardView').style.display = 'block';
-});
+    function updateStatus(){
+      document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
+    }
 
-document.getElementById('nextBtn').addEventListener('click', ()=>{
-  const card = drawRandom();
-  if(!card) return alert('Deck empty — shuffle or reset.');
-  renderCard(card);
-});
+    function renderCard(c){
+      document.getElementById('cardIcon').textContent = c.icon;
+      document.getElementById('cardSuit').textContent = c.suit;
+      document.getElementById('cardText').textContent = c.text;
+      document.getElementById('cardArea').style.background = suitColor(c.suit_key);
+      updateStatus();
+    }
 
-document.getElementById('shuffleBtn').addEventListener('click', ()=>{
-  deck = [...cards].sort(()=>Math.random()-0.5);
-  alert('Deck shuffled.');
-});
+    function drawRandom(){
+      if(deck.length === 0) return null;
+      const idx = Math.floor(Math.random()*deck.length);
+      const card = deck.splice(idx,1)[0];
+      return card;
+    }
+    
+    // Event Listeners
+    document.getElementById('drawBtn').addEventListener('click', ()=>{
+      const card = drawRandom();
+      if(!card) return alert('Deck empty — shuffle or reset.');
+      renderCard(card);
+      document.getElementById('homeScreen').style.display = 'none';
+      document.getElementById('cardView').style.display = 'block';
+    });
 
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  deck = [...cards];
-  document.getElementById('cardView').style.display = 'none';
-  document.getElementById('homeScreen').style.display = 'block';
-});
-</script>
+    document.getElementById('nextBtn').addEventListener('click', ()=>{
+      const card = drawRandom();
+      if(!card) return alert('Deck empty — shuffle or reset.');
+      renderCard(card);
+    });
 
+    document.getElementById('shuffleBtn').addEventListener('click', ()=>{
+      deck = [...cards].sort(()=>Math.random()-0.5);
+      updateStatus();
+      alert('Deck shuffled.');
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      deck = [...cards];
+      document.getElementById('homeScreen').style.display = 'block';
+      document.getElementById('cardView').style.display = 'none';
+      updateStatus();
+    });
+
+    // Initial status update
+    updateStatus();
+
+    // Register Service Worker
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(reg) {
+          console.log('Service Worker Registered');
+        })
+        .catch(function(err) {
+          console.log('Service Worker Registration Failed:', err);
+        });
+    }
+  </script>
 </body>
 </html>
