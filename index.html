@@ -13,6 +13,9 @@
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --color-blue: #2b77f0;
       --color-shadow: rgba(43, 119, 240, 0.3);
+      /* NEW: Define a neutral gray for secondary buttons */
+      --color-gray: #777;
+      --color-light-gray: #f0f0f0;
     }
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center}
     .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
@@ -24,8 +27,23 @@
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
     button.primary:hover{background:#2361c4}
 
-    /* Secondary/Action Buttons */
+    /* Secondary/Action Buttons (Styled as requested: gray) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
+    
+    /* NEW: Secondary style for shuffle/next/home buttons */
+    button.secondary {
+        background: var(--color-light-gray);
+        color: var(--color-gray);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.2s;
+        border: 1px solid #e0e0e0;
+    }
+    button.secondary:hover {
+        background: #e9e9e9;
+    }
+
     /* ADDED FOR ACCESSIBILITY */
     button:focus-visible {
       outline: 2px solid var(--color-blue);
@@ -85,8 +103,9 @@
         </div>
     </div>
     
-    <!-- CARD INTRO SCREEN (Original Home Screen) -->
+    <!-- CARD INTRO SCREEN (Original Home Screen - Now unused/hidden, but kept for clarity) -->
     <div id="cardIntro" style="display:none;">
+      <!-- This screen is skipped, as goToCardsBtn now jumps straight to cardView with a card drawn -->
       <div class="hero">
         <h1>52 Coping Cards</h1>
         <p class="sub">Need a quick strategy to manage a craving? Draw a card.</p>
@@ -103,10 +122,10 @@
         </div>
         <p id="cardText"></p>
         <div class="actions">
-          <button id="nextBtn">Next Card</button>
-          <button id="shuffleBtn">Shuffle Deck</button>
-          <!-- Changed Reset to go back to the main homepage -->
-          <button id="resetBtn">Home</button>
+          <!-- Applied new secondary style to action buttons -->
+          <button id="nextBtn" class="secondary">Next Card</button>
+          <button id="shuffleBtn" class="secondary">Shuffle Deck</button>
+          <button id="resetBtn" class="secondary">Home</button>
         </div>
         <div id="statusText" class="status-text"></div>
       </div>
@@ -224,6 +243,18 @@
         document.getElementById('cardView').style.display = 'none';
         document.getElementById(viewId).style.display = 'block';
     }
+    
+    // NEW: Function to draw a card and display the card view
+    function drawAndDisplayCard() {
+        const card = drawRandom();
+        if (!card) {
+            console.log('Deck empty — shuffle or reset.');
+            alert('Deck empty — please shuffle or return home.');
+            return;
+        }
+        renderCard(card);
+        displayAppView('cardView');
+    }
 
     function getDailyFact() {
         // Use the day of the year to cycle through facts
@@ -239,35 +270,18 @@
 
 
     // --- Event Listeners ---
-    // NEW: Go to Card Intro Screen from Home Screen
+    // UPDATED: Go to Coping Cards Button now draws a card and goes straight to cardView
     document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
-      displayAppView('cardIntro');
+      drawAndDisplayCard();
     });
     
-    // Original Draw Button: Start the game
+    // Original Draw Button (on the old cardIntro screen, kept just in case)
     document.getElementById('drawBtn').addEventListener('click', ()=>{
-      const card = drawRandom();
-      if(!card) { 
-        // Use a custom message style instead of alert()
-        console.log('Deck empty — shuffle or reset.'); 
-        // Note: In a real app, you'd use a custom modal for this message.
-        alert('Deck empty — please shuffle or return home.'); 
-        return;
-      }
-      renderCard(card);
-      displayAppView('cardView');
+      drawAndDisplayCard();
     });
 
     document.getElementById('nextBtn').addEventListener('click', ()=>{
-      const card = drawRandom();
-      if(!card) {
-        // Use a custom message style instead of alert()
-        console.log('Deck empty — shuffle or reset.'); 
-        // Note: In a real app, you'd use a custom modal for this message.
-        alert('Deck empty — please shuffle or return home.'); 
-        return;
-      }
-      renderCard(card);
+      drawAndDisplayCard();
     });
 
     document.getElementById('shuffleBtn').addEventListener('click', ()=>{
