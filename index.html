@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Addicts Agenda</title>
+  <title>52 Coping Cards for Cravings</title>
   <link rel="manifest" href="manifest.json">
   <style>
     :root {
@@ -13,11 +13,11 @@
     }
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center}
     .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
-    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; min-height: 400px; display: flex; flex-direction: column; justify-content: space-between;}
-    h1{margin:0;font-size:28px;}
+    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
+    h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:16px;cursor:pointer}
-    .card-view{margin-top:20px;display:none; padding: 24px 0;}
+    .card-view{margin-top:20px;display:none;}
     .card{padding:28px;border-radius:14px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}
     .card .top{display:flex;justify-content:space-between;align-items:center}
     .icon{font-size:48px}
@@ -25,129 +25,33 @@
     .text{font-size:24px;margin-top:20px}
     .controls{display:flex;gap:10px;justify-content:center;margin-top:16px}
     .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer}
-    /* Styles for the navigation bar */
-    .nav-bar{position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); padding: 10px 0; display: flex; justify-content: space-around; z-index: 100; max-width: 720px; margin: 0 auto; border-top-left-radius: 15px; border-top-right-radius: 15px;}
-    /* Style for the Clean Time display on the Home screen */
-    #homeCleanTime {
-        margin-top: 25px;
-        padding: 15px;
-        border-radius: 10px;
-        background: #e0f2f7; /* Light blue background for emphasis */
-        font-size: 1.1em;
-        font-weight: bold;
-        color: #2b77f0;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    #dailyFact {
-        margin-top: 20px;
-        padding: 20px;
-        border-radius: 10px;
-        background: #fff8e1; /* Light yellow background */
-        font-size: 1em;
-        color: #333;
-        text-align: left;
-        border-left: 4px solid #ffcc00;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    /* New tab for Card Selector */
-    .card-selector-view {
-        width: 100%;
-        max-width: 720px;
-        padding: 24px;
-        box-sizing: border-box;
-        display: none;
-        text-align: center;
-    }
   </style>
 </head>
 <body>
   <div class="app">
     <div class="hero" id="homeScreen">
-      <div>
-        <h1>The Addicts Agenda</h1>
-        <p class="sub">Welcome back. Stay connected, stay strong.</p>
-      </div>
-
-      <div id="homeCleanTime"></div>
-
-      <div id="dailyFact"></div>
-
-      <button class="primary" id="goToCardsBtn">Draw Today's Coping Card</button>
+      <h1>✨ 52 Coping Cards for Cravings</h1>
+      <p class="sub">Draw one. Take action. Stay strong.</p>
+      <button class="primary" id="drawBtn">Draw Card</button>
     </div>
-    <div class="card-selector-view" id="cardSelectorView">
-        <div class="card" id="cardArea">
-            <div class="top"><div class="icon" id="cardIcon">🏃‍♂️</div><div class="suit" id="cardSuit">Action & Movement</div></div>
-            <div class="text" id="cardText">Draw a card to get started.</div>
-        </div>
 
-        <div class="controls">
-            <button class="btn" id="nextBtn">Draw Next</button>
-            <button class="btn" id="shuffleBtn">Shuffle Deck</button>
-            <button class="btn" id="resetBtn">Reset Deck</button>
-        </div>
-    </div>
-    <div class="profile-view" id="profileView" style="display: none;">
-      <h2>Personal Progress 🗓️</h2>
-      <p class="sub">Track your clean date and progress.</p>
-      
-      <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(32,40,60,0.05);">
-        <label for="lastDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Date of Last Use:</label>
-        <input type="date" id="lastDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
-        <button class="primary" id="saveDateBtn" style="width: 100%; margin-top: 0;">Save Date</button>
+    <div class="card-view" id="cardView">
+      <div class="card" id="cardArea">
+        <div class="top"><div class="icon" id="cardIcon">🏃‍♂️</div><div class="suit" id="cardSuit">Action & Movement</div></div>
+        <div class="text" id="cardText">Take a brisk 10-minute walk</div>
       </div>
 
-      <div id="progressDisplay" style="margin-top: 20px; text-align: center; padding: 15px; border-radius: 10px; background: #f0f4f8; font-size: 1.1em; font-weight: bold; color: #2b77f0;">
-        Clean Time: --
-      </div>
-      
       <div class="controls">
-        <button class="btn" id="homeFromProfileBtn" style="background: #e0e0e0;">Home</button>
+        <button class="btn" id="nextBtn">Next</button>
+        <button class="btn" id="shuffleBtn">Shuffle</button>
+        <button class="btn" id="resetBtn">Reset</button>
       </div>
     </div>
-    <div class="journal-view" id="journalView" style="display: none;">
-      <h2>Daily Reflection 📝</h2>
-      <p class="sub">Write down your thoughts and experiences.</p>
-      
-      <div style="margin-top: 20px; padding: 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(32,40,60,0.05);">
-        <label for="journalDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Select Date:</label>
-        <input type="date" id="journalDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
-        
-        <label for="journalEntry" style="display: block; font-weight: bold; margin-bottom: 8px;">Entry:</label>
-        <textarea id="journalEntry" rows="8" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; resize: vertical;"></textarea>
-
-        <button class="primary" id="saveJournalBtn" style="width: 100%; margin-top: 0;">Save Entry</button>
-      </div>
-      
-      <div class="controls">
-        <button class="btn" id="homeFromJournalBtn" style="background: #e0e0e0;">Home</button>
-      </div>
-    </div>
-    <div class="nav-bar" id="navBar">
-        <button id="navHome" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #2b77f0;">🏠 Home</button>
-        <button id="navCards" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #556;">🃏 Cards</button>
-        <button id="navJournal" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #556;">📝 Journal</button>
-        <button id="navProfile" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 10px 10px; color: #556;">👤 Profile</button>
-    </div>
-    </div>
+  </div>
 
 <script>
 const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Mindful 5‑min task 🧼", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Letter to future sober you 💌", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Visualize success 🌟", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "15‑min focused timer ⏱️", "suit_key": "green"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call or text a supportive friend 📱", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Reach out to your sponsor ☎️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a 'thinking of you' message 💬", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Find a recovery meeting 🔎", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Volunteer to help a friend 🤝", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a funny meme 😂", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Plan a sober weekend activity 📅", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Schedule a video call 🎥", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Scroll old happy photos 📸", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Encourage someone online 🌐", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Write a thank‑you note ✉️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call a warmline if needed 📞", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Share strength with someone 🤲", "suit_key": "orange"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Listen to a new podcast 🎙️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Sketch or color ✏️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Learn 5 phrases in new language 🌍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Work on a craft project 🧵", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Practice an instrument 🎸", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Research a hobby 🔍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Fix something small 🔧", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Organize your photos 🗂️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Watch a TED Talk 🎓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Set a 1‑week goal 🥅", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Browse library catalog 📚", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Start a journal entry 📓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Take a photo outside 📷", "suit_key": "purple"}];
 let deck = [...cards];
-
-const recoveryFacts = [
-    "Fact: The average person in recovery attends their first mutual support group meeting after years of struggling on their own. Don't wait!",
-    "Fact: Long-term recovery often leads to improvements in brain structure and function, particularly in areas related to stress and decision-making.",
-    "Fact: Only about 1 in 10 people who meet the clinical criteria for a substance use disorder receive treatment.",
-    "Fact: The prefrontal cortex, responsible for planning and impulse control, is one of the last areas of the brain to fully mature—and it's heavily impacted by addiction.",
-    "Fact: Relapse is a normal part of the process for many. It doesn't mean failure; it means it's time to adjust the plan.",
-    "Fact: Engaging in hobbies (like the ones on these cards!) can actively rebuild neural pathways that addiction may have damaged.",
-    "Fact: The concept of 'Dry January' originated in Sweden in 1943 as a public health campaign.",
-    "Fact: Recovery is contagious! Seeing friends and family succeed can inspire others to seek help.",
-    "Fact: Gratitude journaling, even for just a few minutes, can significantly boost feelings of well-being and reduce anxiety.",
-    "Fact: Sleep quality dramatically improves in the first few months of sobriety, which is crucial for emotional stability.",
-];
 
 function suitColor(key){
   switch(key){
@@ -160,15 +64,10 @@ function suitColor(key){
 }
 
 function renderCard(c){
-  const cardIcon = document.getElementById('cardIcon');
-  const cardSuit = document.getElementById('cardSuit');
-  const cardText = document.getElementById('cardText');
-  const cardArea = document.getElementById('cardArea');
-    
-  if (cardIcon) cardIcon.textContent = c.icon;
-  if (cardSuit) cardSuit.textContent = c.suit;
-  if (cardText) cardText.textContent = c.text;
-  if (cardArea) cardArea.style.background = suitColor(c.suit_key);
+  document.getElementById('cardIcon').textContent = c.icon;
+  document.getElementById('cardSuit').textContent = c.suit;
+  document.getElementById('cardText').textContent = c.text;
+  document.getElementById('cardArea').style.background = suitColor(c.suit_key);
 }
 
 function drawRandom(){
@@ -178,65 +77,31 @@ function drawRandom(){
   return card;
 }
 
-// --- HOME SCREEN LOGIC ---
-function getDayOfYear(date) {
-    const start = new Date(date.getFullYear(), 0, 0);
-    const diff = date - start;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay);
-}
+document.getElementById('drawBtn').addEventListener('click', ()=>{
+  const card = drawRandom();
+  if(!card) return alert('Deck empty — shuffle or reset.');
+  renderCard(card);
+  document.getElementById('homeScreen').style.display = 'none';
+  document.getElementById('cardView').style.display = 'block';
+});
 
-function displayDailyFact() {
-    const today = new Date();
-    const day = getDayOfYear(today);
-    const factIndex = day % recoveryFacts.length;
-    const factDisplay = document.getElementById('dailyFact');
-    
-    if (factDisplay) {
-        factDisplay.innerHTML = `**Did you know?** ${recoveryFacts[factIndex]}`;
-    }
-}
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  const card = drawRandom();
+  if(!card) return alert('Deck empty — shuffle or reset.');
+  renderCard(card);
+});
 
+document.getElementById('shuffleBtn').addEventListener('click', ()=>{
+  deck = [...cards].sort(()=>Math.random()-0.5);
+  alert('Deck shuffled.');
+});
 
-// --- PROFILE/CLEAN TIME LOGIC ---
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  deck = [...cards];
+  document.getElementById('cardView').style.display = 'none';
+  document.getElementById('homeScreen').style.display = 'block';
+});
+</script>
 
-function calculateAndDisplayCleanTime() {
-    const lastUseDate = localStorage.getItem('lastUseDate');
-    const profileDisplay = document.getElementById('progressDisplay');
-    const homeDisplay = document.getElementById('homeCleanTime'); 
-    const input = document.getElementById('lastDate');
-
-    if (lastUseDate) {
-        // Update input in Profile view
-        if (input) input.value = lastUseDate; 
-
-        const start = new Date(lastUseDate);
-        const now = new Date();
-        
-        const diff = now - start;
-        const msInDay = 1000 * 60 * 60 * 24;
-        const days = Math.floor(diff / msInDay);
-        const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        
-        let timeString;
-        if (days >= 0) {
-             timeString = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
-        } else {
-             timeString = 'Clean Time: Date must be in the past.';
-        }
-       
-        // Update both displays
-        if (profileDisplay) profileDisplay.innerHTML = timeString;
-        if (homeDisplay) homeDisplay.innerHTML = timeString;
-       
-    } else {
-        const message = 'Clean Time: Set your date in the Profile tab.';
-        if (profileDisplay) profileDisplay.innerHTML = message;
-        if (homeDisplay) homeDisplay.innerHTML = message;
-    }
-}
-
-function saveDate() {
-    const dateInput = document.getElementById('lastDate');
-    if (date
+</body>
+</html>
