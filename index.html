@@ -273,6 +273,46 @@
         height: 150px;
         margin-top: 0;
     }
+    
+    /* NEW: Collapsible styles for Workbook */
+    .workbook-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        margin: 20px -24px 0 -24px; /* Extend full width of content-card */
+        background-color: var(--color-light-gray);
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .workbook-section-header:hover {
+        background-color: #e5e5e5;
+    }
+    .workbook-section-header h3 {
+        margin: 0;
+        font-size: 1em; /* Use 1em since parent is 1.2em */
+    }
+    .collapse-icon {
+        font-size: 1.5em;
+        transition: transform 0.3s;
+    }
+    .collapsed .collapse-icon {
+        transform: rotate(-90deg);
+    }
+    .section-content {
+        max-height: 2000px; /* large enough for content */
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    .section-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+    }
   </style>
 </head>
 <body>
@@ -1010,45 +1050,95 @@
         renderStepOneWorkbook();
     }
     
+    function toggleSection(headerElement) {
+        const content = headerElement.nextElementSibling;
+        const icon = headerElement.querySelector('.collapse-icon');
+        
+        // Toggle the 'collapsed' class on the content element
+        content.classList.toggle('collapsed');
+        headerElement.classList.toggle('collapsed');
+        
+        // Optional: Persist state if needed, but for simplicity, we just toggle UI
+    }
+    
     function renderStepOneWorkbook() {
         const container = document.getElementById('stepOneQuestions');
         container.innerHTML = '';
         const answers = getStepOneAnswers();
-        // Initialize questionIndex to track index in the answers array (which only stores answers, not sections)
         let answerIndex = 0; 
+        
+        let currentSectionContent = null;
+        let isFirstSection = true;
         
         WORKBOOK_STEP1_QUESTIONS.forEach((q, index) => {
             if (q.isSection) {
-                const section = document.createElement('h3');
-                section.textContent = q.title;
-                section.style.marginTop = '20px';
-                section.style.borderBottom = '1px solid #ddd';
-                section.style.paddingBottom = '5px';
-                container.appendChild(section);
-                return;
+                // If we finished a previous section, append its content container
+                if (currentSectionContent) {
+                    container.appendChild(currentSectionContent);
+                }
+                
+                // 1. Create the Header Element (clickable)
+                const header = document.createElement('div');
+                header.classList.add('workbook-section-header');
+                
+                // Collapse the section by default, except the first one
+                if (!isFirstSection) {
+                    header.classList.add('collapsed');
+                }
+                
+                const h3 = document.createElement('h3');
+                h3.textContent = q.title;
+                
+                const icon = document.createElement('span');
+                icon.classList.add('collapse-icon');
+                icon.textContent = '▼'; // Downwards arrow
+                
+                header.appendChild(h3);
+                header.appendChild(icon);
+                
+                // 2. Create the Content Container (to be toggled)
+                currentSectionContent = document.createElement('div');
+                currentSectionContent.classList.add('section-content');
+                if (!isFirstSection) {
+                    currentSectionContent.classList.add('collapsed');
+                }
+                
+                // 3. Set up the toggle listener
+                header.onclick = () => toggleSection(header);
+                
+                // Append the header to the main container
+                container.appendChild(header);
+                isFirstSection = false;
+                
+                return; // Stop processing and continue to next item (the questions)
             }
             
-            const div = document.createElement('div');
-            div.classList.add('workbook-question');
+            // If we are processing a question, append it to the current section content container
+            if (currentSectionContent) {
+                const div = document.createElement('div');
+                div.classList.add('workbook-question');
 
-            const h4 = document.createElement('h4');
-            // Use the current answerIndex (which correctly skips section headers) for question numbering
-            h4.textContent = `${answerIndex + 1}. ${q}`;
-            
-            const textarea = document.createElement('textarea');
-            // Link textarea back to its position in the answer array
-            textarea.setAttribute('data-question-index', answerIndex);
-            // Load answer using the correct index
-            textarea.value = answers[answerIndex] || ''; 
-            textarea.placeholder = 'Write your honest answer here...';
+                const h4 = document.createElement('h4');
+                h4.textContent = `${answerIndex + 1}. ${q}`;
+                
+                const textarea = document.createElement('textarea');
+                textarea.setAttribute('data-question-index', answerIndex);
+                textarea.value = answers[answerIndex] || ''; 
+                textarea.placeholder = 'Write your honest answer here...';
 
-            div.appendChild(h4);
-            div.appendChild(textarea);
-            container.appendChild(div);
-            
-            // IMPORTANT FIX: Increment the answer index only when a question (not a section) is processed
-            answerIndex++; 
+                div.appendChild(h4);
+                div.appendChild(textarea);
+                currentSectionContent.appendChild(div);
+                
+                answerIndex++; 
+            }
         });
+        
+        // IMPORTANT: Append the last section content after the loop finishes
+        if (currentSectionContent) {
+             container.appendChild(currentSectionContent);
+        }
+        
         document.getElementById('stepOneSaveStatus').textContent = '';
     }
 
