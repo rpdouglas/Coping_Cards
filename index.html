@@ -252,6 +252,23 @@
         border-bottom: 1px solid #eee;
         font-size: 16px;
     }
+    /* Workbook Styles */
+    .workbook-question {
+        margin-bottom: 30px;
+        border-left: 3px solid var(--color-blue);
+        padding-left: 15px;
+    }
+    .workbook-question h4 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #333;
+    }
+    .workbook-question textarea {
+        height: 150px;
+        margin-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -449,9 +466,30 @@
         <div class="content-card">
             <h2>Recovery Workbooks</h2>
             <p class="sub" style="text-align: center;">Tools and step work resources.</p>
-            <p style="margin-top: 20px; text-align: center; color: #777;">Structured workbooks and exercises will appear here.</p>
+            <!-- NEW: Button to Step 1 Workbook -->
+            <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 9. NEW STEP ONE WORKBOOK VIEW SCREEN -->
+    <div id="stepOneView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 1: Admitted Powerlessness</h2>
+            <p class="sub" style="text-align: center;">"We admitted we were powerless over cocaine and all other mind-altering substances—that our lives had become unmanageable."</p>
+            
+            <div id="stepOneQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepOneSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepOneBtn" class="secondary">Save Progress</button>
+                    <button id="stepOneWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
             </div>
         </div>
     </div>
@@ -538,6 +576,39 @@
         {name: "Today's Gratitude", template: "I am grateful for 3 big things today:\n1.\n2.\n3.\nI am grateful for 3 small things today:\n1.\n2.\n3."},
         {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
     ];
+    
+    // NEW: Step 1 Workbook Questions (parsed from "Cocaine - Step One.docx")
+    const WORKBOOK_STEP1_QUESTIONS = [
+        { title: "Part 1: Powerlessness", isSection: true },
+        "In your own words, what does powerless mean to you regarding cocaine and all other mind-altering substances?",
+        "Describe your attempts to control your use. Did you ever set rules like only using on weekends, never using alone, or only buying a certain amount? What was the result?",
+        "Once you start using, can you reliably control the amount you'll take or how long the run will last? Share examples of times you used much more than you planned.",
+        "Have you ever made sincere promises to yourself or others that you would stop, only to use again? How did breaking those promises make you feel?",
+        "How much of your daily thinking was obsessed with cocaine? (e.g., planning how to get it, finding the money, hiding your use, and recovering from the crash).",
+        "Did you ever continue to use even when you knew it would lead to negative consequences with your job, family, or health?",
+        "Have you done things while high or seeking drugs that went against your core values and filled you with shame or regret afterward?",
+        "Describe the physical craving you've experienced for cocaine. What did it feel like when the obsession to use hit you?",
+        "How did your personality change when you were using? Did you become paranoid, irritable, arrogant, or withdrawn?",
+        "Why haven't willpower and self-knowledge been enough to keep you from using?",
+        { title: "Part 2: Unmanageability", isSection: true },
+        "What does unmanageable mean in the context of your life? List five specific examples of how your life became unmanageable.",
+        "How has your drug use damaged your relationships with the people who care about you? Have dishonesty and unreliability become normal?",
+        "In what ways did your use affect your job or school performance? Have you lost a job, been disciplined, or dropped out because of it?",
+        "Be brutally honest about the financial cost of your addiction. How much money has it consumed? Have you gone into debt, sold possessions, or stolen to support your habit?",
+        "How has your use impacted your physical health? (Consider the crash, nosebleeds, weight loss, heart palpitations, lack of sleep, or other serious health issues).",
+        "What has been the effect of your use on your mental and emotional health? (Describe feelings of paranoia, anxiety, severe depression, hopelessness, or fear).",
+        "Have you neglected important responsibilities? (e.g., personal hygiene, paying bills, caring for your home or children).",
+        "Has your addiction ever put you or others in dangerous situations? (e.g., driving high, associating with dangerous people, unsafe sex).",
+        "Did you start isolating yourself or avoiding people and situations where you couldn't be high?",
+        "How has your addiction impacted your spiritual life? Do you feel a sense of emptiness or disconnection from your own moral compass?",
+        { title: "Part 3: Acceptance and Surrender", isSection: true },
+        "What doubts or reservations do you still have about admitting you are an addict? What are you afraid of losing?",
+        "What have been the consequences of denying the severity of your problem?",
+        "Looking back, can you identify when your use crossed the line from a \"party\" to a destructive obsession?",
+        "If nothing changes, what will your life look like in one year? In five years?",
+        "Do you truly believe, deep down, that you are powerless over cocaine and that your life has become unmanageable? Why is this total surrender the essential first step toward freedom?"
+    ];
+
 
     let deck = [...cards]; // Full set of cards, initially available
     let currentJournalKey = '';
@@ -547,6 +618,7 @@
     const SOBER_DATE_KEY = 'soberDate';
     const TODO_KEY = 'addictsAgendaTodoList'; 
     const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
+    const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; // NEW key for Step 1 workbook
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -563,6 +635,19 @@
         const entries = getSavedEntries();
         return entries[dateKey] || '';
     }
+    
+    // NEW: Workbook Storage Functions
+    function getStepOneAnswers() {
+        const answersJson = localStorage.getItem(WORKBOOK_STEP1_KEY);
+        // Default to an array matching the number of questions, filled with empty strings
+        const defaultAnswers = WORKBOOK_STEP1_QUESTIONS.map(q => q.isSection ? null : "");
+        return answersJson ? JSON.parse(answersJson) : defaultAnswers;
+    }
+
+    function saveStepOneAnswers(answers) {
+        localStorage.setItem(WORKBOOK_STEP1_KEY, JSON.stringify(answers));
+    }
+
 
     // --- Prompt Management Functions ---
     function getCustomPrompts() {
@@ -905,7 +990,70 @@
         soberDateInput.max = getFormattedDate(new Date());
         document.getElementById('sobrietyDuration').textContent = calculateDuration(savedDate);
     }
+    
+    // --- Workbook Logic ---
+    function showStepOneView() {
+        displayAppView('stepOneView');
+        renderStepOneWorkbook();
+    }
+    
+    function renderStepOneWorkbook() {
+        const container = document.getElementById('stepOneQuestions');
+        container.innerHTML = '';
+        const answers = getStepOneAnswers();
+        let questionIndex = 0;
+        
+        WORKBOOK_STEP1_QUESTIONS.forEach((q, index) => {
+            if (q.isSection) {
+                const section = document.createElement('h3');
+                section.textContent = q.title;
+                section.style.marginTop = '20px';
+                section.style.borderBottom = '1px solid #ddd';
+                section.style.paddingBottom = '5px';
+                container.appendChild(section);
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.classList.add('workbook-question');
 
+            const h4 = document.createElement('h4');
+            // Question numbers skip section headers
+            h4.textContent = `${questionIndex + 1}. ${q}`;
+            
+            const textarea = document.createElement('textarea');
+            // Data attribute to link textarea back to its position in the answer array
+            textarea.setAttribute('data-question-index', questionIndex);
+            textarea.value = answers[questionIndex] || '';
+            textarea.placeholder = 'Write your honest answer here...';
+
+            div.appendChild(h4);
+            div.appendChild(textarea);
+            container.appendChild(div);
+            
+            questionIndex++;
+        });
+        document.getElementById('stepOneSaveStatus').textContent = '';
+    }
+
+    function collectAndSaveStepOneAnswers() {
+        const textareas = document.querySelectorAll('#stepOneQuestions textarea');
+        let answers = getStepOneAnswers(); // Start with existing answers to preserve skipped sections
+        
+        textareas.forEach(textarea => {
+            const index = parseInt(textarea.getAttribute('data-question-index'));
+            answers[index] = textarea.value;
+        });
+
+        saveStepOneAnswers(answers);
+        document.getElementById('stepOneSaveStatus').textContent = 'Progress Saved!';
+        
+        // Clear status after 3 seconds
+        setTimeout(() => {
+            document.getElementById('stepOneSaveStatus').textContent = '';
+        }, 3000);
+    }
+    
     // --- Journal View Logic ---
     function showJournalEntryView(dateKey = null) {
         document.getElementById('journalEntryView').style.display = 'block';
@@ -1006,8 +1154,9 @@
         document.getElementById('journalView').style.display = 'none'; 
         document.getElementById('settingsView').style.display = 'none'; 
         document.getElementById('todoView').style.display = 'none'; 
-        document.getElementById('literatureView').style.display = 'none'; // NEW
-        document.getElementById('workbooksView').style.display = 'none'; // NEW
+        document.getElementById('literatureView').style.display = 'none'; 
+        document.getElementById('workbooksView').style.display = 'none'; 
+        document.getElementById('stepOneView').style.display = 'none'; // NEW
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -1063,27 +1212,42 @@
     document.getElementById('goToWorkbooksBtn').addEventListener('click', ()=>{
       displayAppView('workbooksView');
     });
+    
+    // 7. NEW: Go to Step 1 Workbook Button (from Workbooks Home)
+    document.getElementById('goToStep1Btn').addEventListener('click', ()=>{
+      showStepOneView();
+    });
 
-    // 7. Card View: Next Card Button
+    // 8. Card View: Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 8. Card View: Home Button
+    // 9. Card View: Home Button
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
     
-    // 9. NEW: Literature View Home Button
+    // 10. NEW: Literature View Home Button
     document.getElementById('literatureHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
 
-    // 10. NEW: Workbooks View Home Button
+    // 11. NEW: Workbooks View Home Button
     document.getElementById('workbooksHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
+    });
+    
+    // 12. NEW: Step 1 Workbook Home Button
+    document.getElementById('stepOneWorkbooksBtn').addEventListener('click', ()=>{
+        displayAppView('workbooksView');
+    });
+    
+    // 13. NEW: Step 1 Workbook Save Button
+    document.getElementById('saveStepOneBtn').addEventListener('click', ()=>{
+        collectAndSaveStepOneAnswers();
     });
     
     // --- Journal Listeners ---
