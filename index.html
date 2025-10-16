@@ -175,10 +175,18 @@
     .todo-input-group {
         display: flex;
         gap: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 10px; /* Reduced margin */
+        flex-wrap: wrap;
     }
-    .todo-input-group input {
+    .todo-input-group input[type="text"] {
         flex-grow: 1;
+        min-width: 150px;
+    }
+    /* NEW: Styling for recurrence and date inputs in the task form */
+    .todo-input-group input[type="date"], .todo-input-group select {
+        width: auto;
+        flex-grow: 0;
+        min-width: 100px;
     }
     .todo-list {
         list-style: none;
@@ -187,8 +195,8 @@
     }
     .todo-list li {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column; /* Stack details vertically */
+        align-items: flex-start;
         padding: 10px 0;
         border-bottom: 1px solid #eee;
         font-size: 16px;
@@ -196,10 +204,22 @@
     .todo-list li:last-child {
         border-bottom: none;
     }
+    .todo-main-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
     .todo-text {
         flex-grow: 1;
         cursor: pointer;
         padding: 0 5px;
+        font-weight: 500;
+    }
+    .todo-details {
+        font-size: 0.9em;
+        color: #777;
+        margin-top: 5px;
     }
     .todo-completed {
         text-decoration: line-through;
@@ -355,11 +375,21 @@
     <div id="todoView" style="display:none;">
         <div class="content-card">
             <h2>My To Do List</h2>
-            <p class="sub" style="text-align: center; margin-bottom: 20px;">Keep track of small, actionable tasks.</p>
-
+            <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
+            
+            <!-- NEW: Task Input Form with Date and Recurrence -->
             <div class="todo-input-group">
-                <input type="text" id="todoInput" placeholder="Add a new task (e.g., take a walk)">
-                <button id="addTodoBtn" class="secondary">Add</button>
+                <input type="text" id="todoInput" placeholder="Task description">
+                <input type="date" id="todoDateInput">
+                <select id="todoRecurrenceSelect">
+                    <option value="none">No Repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Every 2 Weeks</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+                <button id="addTodoBtn" class="secondary">Add Task</button>
             </div>
             
             <ul id="todoList" class="todo-list">
@@ -462,7 +492,7 @@
     const JOURNAL_KEY = 'addictsAgendaJournalEntries';
     const SOBER_DATE_KEY = 'soberDate';
     const TODO_KEY = 'addictsAgendaTodoList'; 
-    const PROMPT_KEY = 'addictsAgendaCustomPrompts'; // NEW KEY for custom prompts
+    const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -480,7 +510,7 @@
         return entries[dateKey] || '';
     }
 
-    // --- Prompt Management Functions (NEW) ---
+    // --- Prompt Management Functions ---
     function getCustomPrompts() {
         const promptsJson = localStorage.getItem(PROMPT_KEY);
         return promptsJson ? JSON.parse(promptsJson) : [];
@@ -573,8 +603,27 @@
         localStorage.setItem(TODO_KEY, JSON.stringify(list));
     }
     
+    function getRecurrenceLabel(key) {
+        switch(key) {
+            case 'daily': return 'Daily';
+            case 'weekly': return 'Weekly';
+            case 'biweekly': return 'Bi-Weekly';
+            case 'monthly': return 'Monthly';
+            case 'yearly': return 'Yearly';
+            default: return 'No Repeat';
+        }
+    }
+
     function renderTodoList() {
-        const list = getTodoList();
+        updateRecurringTasks(); // Check and update tasks before rendering
+        const list = getTodoList().sort((a, b) => {
+            // Sort by due date (tasks with no date last)
+            if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
+            if (a.dueDate) return -1;
+            if (b.dueDate) return 1;
+            return 0;
+        });
+
         const todoListElement = document.getElementById('todoList');
         todoListElement.innerHTML = '';
 
@@ -587,6 +636,9 @@
             const li = document.createElement('li');
             li.setAttribute('data-index', index);
             
+            const mainRow = document.createElement('div');
+            mainRow.classList.add('todo-main-row');
+
             const textSpan = document.createElement('span');
             textSpan.textContent = item.task;
             textSpan.classList.add('todo-text');
@@ -603,16 +655,41 @@
                 e.stopPropagation();
                 deleteTodo(index);
             };
+            
+            mainRow.appendChild(textSpan);
+            mainRow.appendChild(deleteBtn);
+            li.appendChild(mainRow);
+            
+            // NEW: Task details row
+            if (item.dueDate || item.recurrence !== 'none') {
+                const details = document.createElement('div');
+                details.classList.add('todo-details');
+                
+                let detailText = '';
+                if (item.dueDate) {
+                    detailText += `Due: ${formatDateForDisplayShort(item.dueDate)}`;
+                }
+                if (item.recurrence && item.recurrence !== 'none') {
+                    if (item.dueDate) detailText += ' | ';
+                    detailText += `Repeats: ${getRecurrenceLabel(item.recurrence)}`;
+                }
+                details.textContent = detailText;
+                li.appendChild(details);
+            }
 
-            li.appendChild(textSpan);
-            li.appendChild(deleteBtn);
             todoListElement.appendChild(li);
         });
     }
 
-    function addTodo(task) {
+    function addTodo(task, dueDate, recurrence) {
         const list = getTodoList();
-        list.push({ task: task, completed: false });
+        // New task structure includes date and recurrence
+        list.push({ 
+            task: task, 
+            completed: false,
+            dueDate: dueDate || '', 
+            recurrence: recurrence || 'none'
+        });
         saveTodoList(list);
         renderTodoList();
     }
@@ -632,6 +709,69 @@
         saveTodoList(list);
         renderTodoList();
     }
+    
+    // NEW: Function to check and update recurring tasks
+    function updateRecurringTasks() {
+        let list = getTodoList();
+        const now = getFormattedDate(new Date()); // Today's date string (YYYY-MM-DD)
+        let updated = false;
+
+        list.forEach((item) => {
+            // Only process completed tasks that have a recurrence and a due date
+            if (item.completed && item.recurrence !== 'none' && item.dueDate) {
+                
+                const taskDueDate = item.dueDate;
+
+                if (taskDueDate < now) {
+                    let nextDate = new Date(taskDueDate);
+                    
+                    // Keep calculating the next due date until it is today or later
+                    while (getFormattedDate(nextDate) < now) {
+                        const originalDate = new Date(nextDate);
+                        
+                        switch (item.recurrence) {
+                            case 'daily':
+                                nextDate.setDate(originalDate.getDate() + 1);
+                                break;
+                            case 'weekly':
+                                nextDate.setDate(originalDate.getDate() + 7);
+                                break;
+                            case 'biweekly':
+                                nextDate.setDate(originalDate.getDate() + 14);
+                                break;
+                            case 'monthly':
+                                // Preserve day of the month if possible
+                                nextDate.setMonth(originalDate.getMonth() + 1);
+                                if (nextDate.getDate() !== originalDate.getDate()) {
+                                    // Handle overflow (e.g., trying Feb 30)
+                                    nextDate.setDate(0); 
+                                }
+                                break;
+                            case 'yearly':
+                                nextDate.setFullYear(originalDate.getFullYear() + 1);
+                                break;
+                        }
+
+                        // If the next date is still in the past, continue loop
+                        if (getFormattedDate(nextDate) < now) {
+                            item.dueDate = getFormattedDate(nextDate);
+                        }
+                    }
+                    
+                    // Reset the task only if a future date was calculated
+                    if (item.dueDate !== taskDueDate) {
+                        item.completed = false; // Reset completion status
+                        item.dueDate = getFormattedDate(nextDate);
+                        updated = true;
+                    }
+                }
+            }
+        });
+
+        if (updated) {
+            saveTodoList(list);
+        }
+    }
     // --- End To Do List Functions ---
 
     // --- Date/Time Helpers ---
@@ -640,6 +780,13 @@
         const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months start at 0
         const dd = String(date.getDate()).padStart(2, '0');
         return `${yyyy}-${mm}-${dd}`;
+    }
+    
+    function formatDateForDisplayShort(dateKey) {
+        if (!dateKey) return '';
+        const date = new Date(dateKey);
+        // Returns Month/Day/Year (e.g., 10/16/2025)
+        return date.toLocaleDateString('en-US'); 
     }
 
     function formatDateForDisplay(dateKey) {
@@ -959,10 +1106,20 @@
     // --- To Do List Listeners ---
     document.getElementById('addTodoBtn').addEventListener('click', ()=>{
         const input = document.getElementById('todoInput');
+        const dateInput = document.getElementById('todoDateInput');
+        const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
+        
         const task = input.value.trim();
+        const dueDate = dateInput.value;
+        const recurrence = recurrenceSelect.value;
+        
         if (task) {
-            addTodo(task);
+            addTodo(task, dueDate, recurrence);
             input.value = ''; // Clear input
+            dateInput.value = ''; // Clear date
+            recurrenceSelect.value = 'none'; // Reset recurrence
+        } else {
+            alert('Please enter a task description.');
         }
     });
     document.getElementById('todoHomeBtn').addEventListener('click', ()=>{
@@ -982,6 +1139,9 @@
 
         // Ensure the home screen is the default view on load
         displayAppView('homeScreen');
+        
+        // Update recurring tasks on load
+        updateRecurringTasks();
     }
 
     initializeApp();
