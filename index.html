@@ -55,10 +55,13 @@
         font-style: italic;
     }
 
-    .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
-    #cardIcon{font-size:80px;line-height:1;margin-bottom:12px}
-    #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#444}
-    #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#333}
+    .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; transition: background 0.5s ease;}
+    
+    /* UPDATED: Card text colors set to white for contrast against dark gradients */
+    #cardIcon{font-size:80px;line-height:1;margin-bottom:12px; color: #fff;}
+    #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#fff}
+    #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#fff}
+    
     .actions button{margin:0 10px}
     .status-text{font-size:14px;color:#777;margin-top:10px}
   </style>
@@ -184,12 +187,13 @@
     let deck = [...cards]; // Full set of cards, initially available
 
     // --- Helper Functions ---
+    // UPDATED: Function now returns a bold, two-color linear gradient string
     function suitColor(suit_key){
       switch(suit_key){
-        case 'blue': return '#DADFF9';
-        case 'green': return '#DFF5D8';
-        case 'orange': return '#FFF2E0';
-        case 'purple': return '#F1E6FF';
+        case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)'; // Action & Movement
+        case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)'; // Mind & Focus
+        case 'orange': return 'linear-gradient(135deg, #F5B041 0%, #F8D383 100%)'; // Connection & Support
+        case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)'; // Creative & Learning
         default: return '#fff';
       }
     }
@@ -202,6 +206,7 @@
       document.getElementById('cardIcon').textContent = c.icon;
       document.getElementById('cardSuit').textContent = c.suit;
       document.getElementById('cardText').textContent = c.text;
+      // Set background using the new gradient
       document.getElementById('cardArea').style.background = suitColor(c.suit_key);
       updateStatus();
     }
@@ -245,6 +250,7 @@
       if(!card) { 
         // Use a custom message style instead of alert()
         console.log('Deck empty — shuffle or reset.'); 
+        // Note: In a real app, you'd use a custom modal for this message.
         alert('Deck empty — please shuffle or return home.'); 
         return;
       }
@@ -257,6 +263,7 @@
       if(!card) {
         // Use a custom message style instead of alert()
         console.log('Deck empty — shuffle or reset.'); 
+        // Note: In a real app, you'd use a custom modal for this message.
         alert('Deck empty — please shuffle or return home.'); 
         return;
       }
@@ -268,7 +275,6 @@
       updateStatus();
       // Use console log instead of alert
       console.log('Deck shuffled.');
-      // Optionally show a quick visual cue on the UI if needed, but keeping it simple for now.
     });
 
     // UPDATED: Reset button now goes to the main home screen
