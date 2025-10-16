@@ -19,9 +19,36 @@
     }
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center}
     .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
-    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
+    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; position: relative; /* Added for cog positioning */ }
     h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
+
+    /* NEW: Settings Cog Positioning */
+    .settings-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+    button.settings-cog {
+        font-size: 24px;
+        color: var(--color-gray); /* Dark gray color */
+        padding: 5px;
+        transition: transform 0.3s;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    button.settings-cog:hover {
+        transform: rotate(30deg);
+    }
+    .settings-group h3 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+        color: #333;
+        text-align: left;
+    }
 
     /* Primary Blue Button Style */
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
@@ -181,6 +208,11 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
+            <!-- NEW: Settings Cog -->
+            <div class="settings-container">
+                <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
+            </div>
+            
             <h1>The Addicts Agenda</h1>
             <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
             
@@ -222,7 +254,7 @@
       </div>
     </div>
 
-    <!-- 4. NEW JOURNAL VIEW SCREEN -->
+    <!-- 4. JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
         <div class="journal-content">
             
@@ -260,6 +292,25 @@
             </div>
         </div>
     </div>
+
+    <!-- 5. NEW SETTINGS VIEW SCREEN -->
+    <div id="settingsView" style="display:none;">
+        <div class="journal-content">
+            <h2>App Settings</h2>
+            <div class="settings-group">
+                <p class="sub" style="text-align: center; margin-bottom: 20px;">Track your journey.</p>
+                <h3>Sober Date Tracking</h3>
+                <label for="soberDateInput" style="display: block; margin-bottom: 8px; font-weight: 600;">Your Sober Date:</label>
+                <input type="date" id="soberDateInput" style="width: 100%; margin-bottom: 20px;">
+                <p id="sobrietyDuration" style="font-size: 1.1em; font-weight: bold; text-align: center; color: var(--color-blue); min-height: 20px;"></p>
+            </div>
+            <div class="journal-actions" style="justify-content: flex-end; gap: 10px;">
+                <button id="saveSettingsBtn" class="secondary">Save Date</button>
+                <button id="settingsHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+
   </div>
   
   <script>
@@ -338,6 +389,7 @@
 
     // --- Journal Storage Functions ---
     const JOURNAL_KEY = 'addictsAgendaJournalEntries';
+    const SOBER_DATE_KEY = 'soberDate'; // NEW KEY for sober date
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -355,6 +407,7 @@
         return entries[dateKey] || '';
     }
 
+    // --- Date/Time Helpers ---
     function getFormattedDate(date) {
         const yyyy = date.getFullYear();
         const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months start at 0
@@ -371,6 +424,54 @@
         return dateKey; // Fallback
     }
 
+    function calculateDuration(soberDateStr) {
+        if (!soberDateStr) return "Enter your date to start tracking!";
+        
+        const start = new Date(soberDateStr);
+        const now = new Date();
+        
+        if (start > now) return "Date must be in the past.";
+
+        const diffTime = Math.abs(now - start);
+        
+        const MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const days = Math.floor(diffTime / MS_PER_DAY);
+        
+        const years = Math.floor(days / 365.25);
+        const remainingDays = days % 365.25;
+        const months = Math.floor(remainingDays / 30.44); // Average days per month
+        const actualDays = Math.floor(remainingDays % 30.44);
+
+        let output = "Sober for: ";
+        if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
+        if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
+        output += `${days} day${days !== 1 ? 's' : ''} total.`;
+        
+        return output;
+    }
+
+    // --- Settings Logic ---
+    function loadSoberDate() {
+        return localStorage.getItem(SOBER_DATE_KEY) || '';
+    }
+
+    function saveSoberDate(dateStr) {
+        localStorage.setItem(SOBER_DATE_KEY, dateStr);
+        document.getElementById('sobrietyDuration').textContent = calculateDuration(dateStr);
+    }
+
+    function showSettingsView() {
+        displayAppView('settingsView');
+        const soberDateInput = document.getElementById('soberDateInput');
+        
+        // Load and display current date/duration
+        const savedDate = loadSoberDate();
+        soberDateInput.value = savedDate;
+        soberDateInput.max = getFormattedDate(new Date());
+        document.getElementById('sobrietyDuration').textContent = calculateDuration(savedDate);
+    }
+
+    // --- Journal View Logic ---
     function showJournalEntryView(dateKey = null) {
         document.getElementById('journalEntryView').style.display = 'block';
         document.getElementById('journalList').style.display = 'none';
@@ -460,6 +561,7 @@
         document.getElementById('cardIntro').style.display = 'none';
         document.getElementById('cardView').style.display = 'none';
         document.getElementById('journalView').style.display = 'none'; 
+        document.getElementById('settingsView').style.display = 'none'; // NEW: Hide Settings View
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -490,40 +592,45 @@
 
     // --- Event Listeners ---
     
-    // 1. Go to Coping Cards Button now draws a card and goes straight to cardView
+    // 1. Home Screen: Go to Coping Cards Button
     document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
+
+    // 2. Home Screen: Go to Settings Button (NEW)
+    document.getElementById('goToSettingsBtn').addEventListener('click', ()=>{
+      showSettingsView();
+    });
     
-    // 2. Go to Journal Page Button (on Home Screen)
+    // 3. Home Screen: Go to Journal Page Button
     document.getElementById('goToJournalBtn').addEventListener('click', ()=>{
       displayAppView('journalView');
       showJournalEntryView(); // Default to today's entry view
     });
 
-    // 3. Next Card Button
+    // 4. Card View: Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 4. Reset Button (on Card View)
+    // 5. Card View: Home Button
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
     
-    // 5. Journal View: Home Button (on Entry View)
+    // 6. Journal View: Home Button (on Entry View)
     document.getElementById('entryHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
 
-    // 6. Journal View: Home Button (on List View)
+    // 7. Journal View: Home Button (on List View)
     document.getElementById('openListHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
     
-    // 7. Journal View: Save Entry Button
+    // 8. Journal View: Save Entry Button
     document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
       const content = document.getElementById('journalEntry').value;
       const dateKey = document.getElementById('entryDate').value;
@@ -542,7 +649,7 @@
       }
     });
     
-    // 8. Journal View: Date Change Listener
+    // 9. Journal View: Date Change Listener
     document.getElementById('entryDate').addEventListener('change', (event) => {
         const dateKey = event.target.value;
         if (dateKey) {
@@ -550,14 +657,30 @@
         }
     });
 
-    // 9. Journal View: View All Entries Button
+    // 10. Journal View: View All Entries Button
     document.getElementById('viewAllEntriesBtn').addEventListener('click', ()=>{
         showJournalListView();
     });
     
-    // 10. Journal View: New Entry Button (from List View)
+    // 11. Journal View: New Entry Button (from List View)
     document.getElementById('newEntryBtn').addEventListener('click', ()=>{
         showJournalEntryView();
+    });
+
+    // 12. Settings View: Save Settings Button (NEW)
+    document.getElementById('saveSettingsBtn').addEventListener('click', ()=>{
+        const dateStr = document.getElementById('soberDateInput').value;
+        if (dateStr && new Date(dateStr) <= new Date()) {
+            saveSoberDate(dateStr);
+            alert('Sober Date Saved!');
+        } else {
+            alert('Please enter a valid Sober Date in the past.');
+        }
+    });
+
+    // 13. Settings View: Home Button (NEW)
+    document.getElementById('settingsHomeBtn').addEventListener('click', ()=>{
+        displayAppView('homeScreen');
     });
 
 
@@ -565,10 +688,12 @@
     function initializeApp() {
         getDailyFact();
         updateStatus();
+        
         // Set max date for input to today
         const todayKey = getFormattedDate(new Date());
         document.getElementById('entryDate').max = todayKey;
-        
+        document.getElementById('soberDateInput').max = todayKey;
+
         // Ensure the home screen is the default view on load
         displayAppView('homeScreen');
     }
