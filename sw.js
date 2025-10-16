@@ -1,9 +1,12 @@
 self.addEventListener('install', function(e) {
   e.waitUntil(
-    caches.open('coping-cards-v16').then(function(cache) {
+    caches.open('coping-cards-v17').then(function(cache) {
       return cache.addAll([
         './',
-        './index.html'
+        './index.html',
+        './manifest.json',
+        './icon-192.png',
+        './icon-512.png'
       ]);
     })
   );
