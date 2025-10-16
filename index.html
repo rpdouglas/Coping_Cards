@@ -312,6 +312,35 @@
     .section-content.collapsed {
         max-height: 0;
         opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* Literature Styles */
+    .literature-chapter {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+    .literature-chapter h3 {
+        color: var(--color-blue);
+        border-bottom: 2px solid var(--color-blue);
+        padding-bottom: 5px;
+        margin-top: 0;
+        font-size: 1.4em;
+    }
+    .literature-chapter p {
+        text-align: justify;
+        line-height: 1.6;
+        color: #555;
+        margin-top: 15px;
+    }
+    .literature-link {
+        display: block;
+        margin-top: 30px;
+        text-align: center;
+        font-style: italic;
     }
   </style>
 </head>
@@ -496,9 +525,28 @@
     <!-- 7. NEW RECOVERY LITERATURE VIEW SCREEN -->
     <div id="literatureView" style="display:none;">
         <div class="content-card">
-            <h2>Recovery Literature</h2>
-            <p class="sub" style="text-align: center;">A space for readings and motivational quotes.</p>
-            <p style="margin-top: 20px; text-align: center; color: #777;">Inspirational content and daily readings will appear here.</p>
+            <h2>Recovery Literature: Big Book Excerpts</h2>
+            <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
+            
+            <div id="literatureContent">
+                <!-- Chapter 1: Bill's Story -->
+                <div class="literature-chapter">
+                    <h3>Chapter 1: Bill's Story</h3>
+                    <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
+                </div>
+
+                <!-- Chapter 2: There is a Solution -->
+                <div class="literature-chapter">
+                    <h3>Chapter 2: There is a Solution</h3>
+                    <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
+                </div>
+            </div>
+
+            <p class="literature-link">
+                For the complete text, download the 
+                <a href="https://aa-netherlands.org/for-members/big-book-online/" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online (PDF)</a>.
+            </p>
+
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="literatureHomeBtn" class="secondary">Home</button>
             </div>
@@ -1054,11 +1102,9 @@
         const content = headerElement.nextElementSibling;
         const icon = headerElement.querySelector('.collapse-icon');
         
-        // Toggle the 'collapsed' class on the content element
+        // Toggle the 'collapsed' class on the content element and header
         content.classList.toggle('collapsed');
         headerElement.classList.toggle('collapsed');
-        
-        // Optional: Persist state if needed, but for simplicity, we just toggle UI
     }
     
     function renderStepOneWorkbook() {
