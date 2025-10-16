@@ -23,6 +23,16 @@
     h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
 
+    /* NEW: Version Number Positioning */
+    #appVersion {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 14px;
+        color: #888;
+        font-weight: 500;
+    }
+
     /* NEW: Settings Cog Positioning */
     .settings-container {
         position: absolute;
@@ -115,6 +125,14 @@
         color: #444;
         margin: 0;
         font-style: italic;
+    }
+    
+    /* Sobriety Duration on Home Screen */
+    #homeSobrietyDuration {
+        margin: 15px 0 0 0;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #555;
     }
 
     /* Card View Styles */
@@ -242,6 +260,9 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
+            <!-- NEW: App Version Number -->
+            <div id="appVersion">V0.1</div>
+
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
@@ -249,6 +270,9 @@
             
             <h1>The Addicts Agenda</h1>
             <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
+            
+            <!-- NEW: Sobriety Duration Display -->
+            <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
             
             <div class="fact-box">
                 <h2>Recovery Fact of the Day</h2>
@@ -823,6 +847,12 @@
         
         return output;
     }
+    
+    // NEW: Helper function to display sober duration on the home screen
+    function updateHomeSobrietyDuration() {
+        const savedDate = loadSoberDate();
+        document.getElementById('homeSobrietyDuration').textContent = calculateDuration(savedDate);
+    }
 
     // --- Settings Logic ---
     function loadSoberDate() {
@@ -832,6 +862,7 @@
     function saveSoberDate(dateStr) {
         localStorage.setItem(SOBER_DATE_KEY, dateStr);
         document.getElementById('sobrietyDuration').textContent = calculateDuration(dateStr);
+        updateHomeSobrietyDuration(); // Update home screen when date is saved
     }
 
     function showSettingsView() {
@@ -1101,6 +1132,7 @@
     });
     document.getElementById('settingsHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
+        updateHomeSobrietyDuration(); // Refresh home duration when returning
     });
 
     // --- To Do List Listeners ---
@@ -1137,6 +1169,9 @@
         document.getElementById('entryDate').max = todayKey;
         document.getElementById('soberDateInput').max = todayKey;
 
+        // NEW: Update sobriety duration on homepage when app loads
+        updateHomeSobrietyDuration();
+        
         // Ensure the home screen is the default view on load
         displayAppView('homeScreen');
         
