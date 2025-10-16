@@ -33,30 +33,25 @@
     .hero { text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: space-between; }
     h2 { font-size: 1.5rem; margin-top: 0; }
     p.sub{color:#556;opacity:0.8;margin-top:8px}
+
+    /* Primary Button Style (Applied to all nav buttons now) */
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:16px;cursor:pointer; transition: background 0.2s; width: 100%;}
     button.primary:hover{background: #1e5ab8;}
 
-    /* Navigation/Secondary Buttons on Home */
+    /* Navigation/Secondary Buttons on Home (Using .primary style) */
     .nav-buttons {
         display: flex;
         flex-direction: column;
         gap: 10px;
         margin-top: 15px;
         width: 100%;
+        max-width: 400px; /* Constrain buttons on home screen */
+        margin: 15px auto;
     }
-    .nav-buttons .btn {
-        background: #f0f4f8;
-        color: #2b77f0;
-        font-weight: bold;
-        padding: 12px 20px;
-        border-radius: 12px;
-        border: 1px solid #dcdcdc;
-        cursor: pointer;
-        transition: background 0.2s;
+    .nav-buttons .primary {
+        margin-top: 0; /* Remove extra margin */
     }
-    .nav-buttons .btn:hover {
-        background: #d4e0eb;
-    }
+
 
     /* View Containers */
     #cardView, #profileView, #journalView {
@@ -157,11 +152,11 @@
 
         <div id="dailyFact"></div>
 
-        <button class="primary" id="goToCardsBtn">🃏 Draw Coping Card Now</button>
+        <button class="primary" id="goToCardsBtn" style="max-width: 400px; margin: 20px auto 0 auto;">🃏 Draw Coping Card Now</button>
 
         <div class="nav-buttons">
-            <button class="btn" id="goToJournalBtn">📝 Daily Journal</button>
-            <button class="btn" id="goToProfileBtn">👤 My Progress Tracker</button>
+            <button class="primary" id="goToJournalBtn">📝 Daily Journal</button>
+            <button class="primary" id="goToProfileBtn">👤 My Progress Tracker</button>
         </div>
     </div>
     <div id="cardView">
@@ -184,7 +179,7 @@
         <h2 style="margin-top: 0;">Daily Reflection 📝</h2>
         <p class="sub">Write down your thoughts and experiences.</p>
         
-        <div class="card-base">
+        <div class="card-base" style="max-width: 400px; margin: 20px auto;">
             <label for="journalDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Select Date:</label>
             <input type="date" id="journalDate">
             
@@ -221,4 +216,4 @@
     </div>
 
 <script>
-const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Mindful 5‑min task 🧼", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Letter to future sober you 💌", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Visualize success 🌟", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "15‑min focused timer ⏱️", "suit_key": "green"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call or text a supportive friend 📱", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Reach out to your sponsor ☎️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a 'thinking of you' message 💬", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Find a recovery meeting 🔎", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Volunteer to help a friend 🤝", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Send a funny meme 😂", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Plan a sober weekend activity 📅", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Schedule a video call 🎥", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Scroll old happy photos 📸", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Encourage someone online 🌐", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Write a thank‑you note ✉️", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Call a warmline if needed 📞", "suit_key": "orange"}, {"suit": "Connection & Support", "color": [255, 224, 178], "icon": "💬", "text": "Share strength with someone 🤲", "suit_key": "orange"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Listen to a new podcast 🎙️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Sketch or color ✏️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Learn 5 phrases in new language 🌍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Work on a craft project 🧵", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Practice an instrument 🎸", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Research a hobby 🔍", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Fix something small 🔧", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Organize your photos 🗂️", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Watch a TED Talk 🎓", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Set a 1‑week goal 🥅", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Browse library catalog 📚", "suit_key": "purple"}, {"suit": "Creative & Learning", "color": [221, 198, 255], "icon": "🎨", "text": "Start a journal entry 📓
+const cards = [{"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Brisk 10‑min walk 🏃‍♂️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "15 min stretching/yoga 🧘", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Tidy one small area 🧹", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hot shower or bath 🚿", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "5 min wall push‑ups 💪", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Chew strong gum 🍬", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Hold an ice cube ❄️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Cook a simple recipe 🍳", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Play a quick game 🎮", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Listen to an upbeat album 🎧", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Go to the gym 🏋️", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Dance to 3 songs 💃", "suit_key": "blue"}, {"suit": "Action & Movement", "color": [173, 216, 230], "icon": "🏃‍♂️", "text": "Step outside, notice 5 things 🌳", "suit_key": "blue"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Read 15 minutes 📚", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Do a sudoku or crossword ✍️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Box breathing — 5 rounds 🫁", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write 3 things you're grateful for 🙏", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Plan tomorrow in detail 🗓️", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Watch a short documentary 🎬", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Name the feeling behind craving 📝", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "List 10 reasons to stay sober 💡", "suit_key": "green"}, {"suit": "Mind & Focus", "color": [187, 230, 182], "icon": "🧠", "text": "Write a short story ✒️", "suit_key": "
