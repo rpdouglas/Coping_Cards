@@ -992,14 +992,8 @@
     }
 
     function getDailyFact() {
-        // Use the day of the year to cycle through facts
-        const today = new Date();
-        const start = new Date(today.getFullYear(), 0, 0);
-        const diff = today - start;
-        const oneDay = 1000 * 60 * 60 * 24;
-        const dayOfYear = Math.floor(diff / oneDay);
-        
-        const factIndex = dayOfYear % POP_FACTS.length;
+        // UPDATED: Use a random index instead of day of the year for fresh fact on every load
+        const factIndex = Math.floor(Math.random() * POP_FACTS.length);
         document.getElementById('dailyFactText').textContent = POP_FACTS[factIndex];
     }
 
