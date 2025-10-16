@@ -301,4 +301,209 @@ function drawRandom(){
 function getDayOfYear(date) {
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = date - start;
-    const oneDay = 1
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+}
+
+function displayDailyFact() {
+    const today = new Date();
+    const day = getDayOfYear(today);
+    const factIndex = day % recoveryFacts.length;
+    const factDisplay = document.getElementById('dailyFact');
+    
+    if (factDisplay) {
+        factDisplay.innerHTML = `**Daily Fact** ${recoveryFacts[factIndex]}`;
+    }
+}
+
+// --- PROFILE/CLEAN TIME LOGIC ---
+
+function calculateAndDisplayCleanTime() {
+    const lastUseDate = localStorage.getItem('lastUseDate');
+    const profileDisplay = document.getElementById('progressDisplay');
+    const homeDisplay = document.getElementById('homeCleanTime'); 
+    const input = document.getElementById('lastDate');
+
+    if (lastUseDate) {
+        if (input) input.value = lastUseDate; 
+
+        const start = new Date(lastUseDate);
+        const now = new Date();
+        
+        const diff = now - start;
+        const msInDay = 1000 * 60 * 60 * 24;
+        const days = Math.floor(diff / msInDay);
+        const hours = Math.floor((diff % msInDay) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        let timeString;
+        if (days >= 0) {
+             timeString = `Clean Time: ${days} days, ${hours} hours, ${minutes} minutes`;
+        } else {
+             timeString = 'Clean Time: Date must be in the past.';
+        }
+       
+        if (profileDisplay) profileDisplay.innerHTML = timeString;
+        if (homeDisplay) homeDisplay.innerHTML = timeString;
+       
+    } else {
+        const message = 'Clean Time: Set your date in the Progress tab.';
+        if (profileDisplay) profileDisplay.innerHTML = message;
+        if (homeDisplay) homeDisplay.innerHTML = message;
+    }
+}
+
+function saveDate() {
+    const dateInput = document.getElementById('lastDate');
+    if (dateInput && dateInput.value) {
+        localStorage.setItem('lastUseDate', dateInput.value);
+        calculateAndDisplayCleanTime();
+        alert('Clean date saved!');
+    } else {
+        alert('Please select a date first.');
+    }
+}
+
+// --- JOURNAL LOGIC ---
+
+const JOURNAL_PREFIX = 'journal_';
+
+function loadJournalEntry(dateString) {
+    const journalEntryTextArea = document.getElementById('journalEntry');
+    const entry = localStorage.getItem(JOURNAL_PREFIX + dateString);
+    if (journalEntryTextArea) journalEntryTextArea.value = entry || '';
+}
+
+function saveJournalEntry() {
+    const journalDateInput = document.getElementById('journalDate');
+    const journalEntryTextArea = document.getElementById('journalEntry');
+    
+    if (!journalDateInput || !journalEntryTextArea) return;
+
+    const dateString = journalDateInput.value;
+    const entryText = journalEntryTextArea.value.trim();
+
+    if (!dateString) {
+        return alert('Please select a date for the journal entry.');
+    }
+
+    if (entryText === '') {
+        localStorage.removeItem(JOURNAL_PREFIX + dateString);
+        alert('Entry cleared.');
+    } else {
+        localStorage.setItem(JOURNAL_PREFIX + dateString, entryText);
+        alert('Journal entry saved for ' + dateString + '!');
+    }
+}
+
+// --- VIEW SWITCHING LOGIC ---
+
+function showView(viewId) {
+    // Hide all views
+    document.getElementById('homeView').style.display = 'none';
+    document.getElementById('cardView').style.display = 'none'; 
+    document.getElementById('profileView').style.display = 'none';
+    document.getElementById('journalView').style.display = 'none';
+    
+    // Show the requested view
+    const viewElement = document.getElementById(viewId);
+    if (viewElement) viewElement.style.display = 'flex';
+
+    // Update active nav item class
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+    if (activeNav) activeNav.classList.add('active');
+
+    // Trigger updates for specific views
+    if(viewId === 'homeView') {
+        calculateAndDisplayCleanTime(); 
+        displayDailyFact(); 
+    } else if (viewId === 'profileView') {
+        calculateAndDisplayCleanTime(); 
+    } else if (viewId === 'journalView') {
+        const journalDateInput = document.getElementById('journalDate');
+        if (journalDateInput) {
+             const today = new Date();
+             journalDateInput.value = journalDateInput.value || today.toISOString().split('T')[0];
+             loadJournalEntry(journalDateInput.value); 
+        }
+    }
+}
+
+
+// --- EVENT LISTENERS ---
+function setupEventListeners() {
+    // Initial Date Setup for Journal (run once)
+    const initialJournalDateInput = document.getElementById('journalDate');
+    if (initialJournalDateInput) {
+        const today = new Date();
+        initialJournalDateInput.value = today.toISOString().split('T')[0];
+        initialJournalDateInput.addEventListener('change', (e) => {
+            loadJournalEntry(e.target.value);
+        });
+    }
+
+    // Set up navigation listeners
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            // Use dataset to get the target view ID
+            const targetView = e.target.getAttribute('data-view');
+            if (targetView) {
+                showView(targetView);
+            }
+        });
+    });
+
+    // Cards Controls
+    const goToCardsBtn = document.getElementById('goToCardsBtn');
+    if (goToCardsBtn) goToCardsBtn.addEventListener('click', ()=>{
+        const card = drawRandom();
+        if (card) renderCard(card);
+        showView('cardView');
+    });
+
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) nextBtn.addEventListener('click', ()=>{
+      const card = drawRandom();
+      if(!card) return alert('Deck empty — shuffle or reset.');
+      renderCard(card);
+    });
+
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    if (shuffleBtn) shuffleBtn.addEventListener('click', ()=>{
+      deck = [...cards].sort(()=>Math.random()-0.5);
+      alert('Deck shuffled.');
+    });
+
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', ()=>{
+      deck = [...cards];
+      document.getElementById('cardText').textContent = 'Deck reset. Ready to draw.';
+      document.getElementById('cardArea').style.background = suitColor('default');
+      document.getElementById('cardIcon').textContent = '❓';
+      document.getElementById('cardSuit').textContent = 'Welcome';
+    });
+
+
+    // Profile Controls
+    const saveDateBtn = document.getElementById('saveDateBtn');
+    if (saveDateBtn) saveDateBtn.addEventListener('click', saveDate);
+
+    // Journal Controls
+    const saveJournalBtn = document.getElementById('saveJournalBtn');
+    if (saveJournalBtn) saveJournalBtn.addEventListener('click', saveJournalEntry);
+}
+
+
+// --- INITIALIZATION ---
+window.onload = function() {
+    setupEventListeners();
+    showView('homeView'); // Start on the Home view
+    setInterval(calculateAndDisplayCleanTime, 60000); 
+};
+</script>
+
+</body>
+</html>
