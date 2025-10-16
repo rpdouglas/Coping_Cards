@@ -640,8 +640,17 @@
     function getStepOneAnswers() {
         const answersJson = localStorage.getItem(WORKBOOK_STEP1_KEY);
         // Default to an array matching the number of questions, filled with empty strings
-        const defaultAnswers = WORKBOOK_STEP1_QUESTIONS.map(q => q.isSection ? null : "");
-        return answersJson ? JSON.parse(answersJson) : defaultAnswers;
+        const defaultAnswers = WORKBOOK_STEP1_QUESTIONS.filter(q => !q.isSection).map(q => "");
+        // Check if the saved array matches the expected length. If not, pad or slice it.
+        if (answersJson) {
+            const savedAnswers = JSON.parse(answersJson);
+            if (savedAnswers.length === defaultAnswers.length) {
+                return savedAnswers;
+            }
+            // If length doesn't match (e.g., questions changed), return a hybrid
+            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
+        }
+        return defaultAnswers;
     }
 
     function saveStepOneAnswers(answers) {
@@ -1001,7 +1010,8 @@
         const container = document.getElementById('stepOneQuestions');
         container.innerHTML = '';
         const answers = getStepOneAnswers();
-        let questionIndex = 0;
+        // Initialize questionIndex to track index in the answers array (which only stores answers, not sections)
+        let answerIndex = 0; 
         
         WORKBOOK_STEP1_QUESTIONS.forEach((q, index) => {
             if (q.isSection) {
@@ -1018,31 +1028,36 @@
             div.classList.add('workbook-question');
 
             const h4 = document.createElement('h4');
-            // Question numbers skip section headers
-            h4.textContent = `${questionIndex + 1}. ${q}`;
+            // Use the current answerIndex (which correctly skips section headers) for question numbering
+            h4.textContent = `${answerIndex + 1}. ${q}`;
             
             const textarea = document.createElement('textarea');
-            // Data attribute to link textarea back to its position in the answer array
-            textarea.setAttribute('data-question-index', questionIndex);
-            textarea.value = answers[questionIndex] || '';
+            // Link textarea back to its position in the answer array
+            textarea.setAttribute('data-question-index', answerIndex);
+            // Load answer using the correct index
+            textarea.value = answers[answerIndex] || ''; 
             textarea.placeholder = 'Write your honest answer here...';
 
             div.appendChild(h4);
             div.appendChild(textarea);
             container.appendChild(div);
             
-            questionIndex++;
+            // IMPORTANT FIX: Increment the answer index only when a question (not a section) is processed
+            answerIndex++; 
         });
         document.getElementById('stepOneSaveStatus').textContent = '';
     }
 
     function collectAndSaveStepOneAnswers() {
         const textareas = document.querySelectorAll('#stepOneQuestions textarea');
-        let answers = getStepOneAnswers(); // Start with existing answers to preserve skipped sections
+        let answers = getStepOneAnswers(); // Start with existing answers
         
         textareas.forEach(textarea => {
             const index = parseInt(textarea.getAttribute('data-question-index'));
-            answers[index] = textarea.value;
+            // Ensure the index is valid before trying to set the value
+            if (index >= 0 && index < answers.length) {
+                answers[index] = textarea.value;
+            }
         });
 
         saveStepOneAnswers(answers);
