@@ -54,8 +54,6 @@
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
     button.primary:hover{background:#2361c4}
 
-    /* REMOVED: Old .journal-btn style */
-    
     /* Secondary/Action Buttons (Default) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
     
@@ -83,13 +81,17 @@
       outline: 2px solid var(--color-blue);
       outline-offset: 2px;
     }
-    input[type="date"], input[type="text"] {
+    input[type="date"], input[type="text"], select {
         padding: 8px 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
         font-family: var(--font-family);
         font-size: 16px;
         box-sizing: border-box;
+    }
+    select {
+        width: 100%;
+        cursor: pointer;
     }
 
     /* Fact Box Styling */
@@ -162,6 +164,12 @@
     .list-view-actions button {
         margin: 0;
     }
+    .prompt-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
 
     /* To Do List Specific Styles */
     .todo-input-group {
@@ -196,6 +204,15 @@
     .todo-completed {
         text-decoration: line-through;
         color: #888;
+    }
+    /* Prompt Manager Styles */
+    .prompt-list-manager li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
     }
   </style>
 </head>
@@ -270,6 +287,22 @@
                 </ul>
             </div>
 
+            <!-- Journal Prompt Manager (NEW, initially hidden) -->
+            <div id="promptManagerView" style="display:none;">
+                <h2>Manage Custom Prompts</h2>
+                <div class="prompt-row">
+                    <input type="text" id="customPromptInput" placeholder="Enter new prompt text (e.g., What did I learn today?)" style="flex-grow: 1;">
+                    <button id="addCustomPromptBtn" class="secondary">Add</button>
+                </div>
+                <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
+                <ul id="customPromptList" class="journal-entry-list prompt-list-manager">
+                    <!-- Custom Prompts will be rendered here -->
+                </ul>
+                <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
+                    <button id="backToEntryBtn" class="secondary">Back to Journal</button>
+                </div>
+            </div>
+
             <!-- Journal Entry View (today's entry) -->
             <div id="journalEntryView">
                 <h2>Today's Reflection</h2>
@@ -278,6 +311,13 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <label for="entryDate">Date:</label>
                     <input type="date" id="entryDate">
+                </div>
+                
+                <div class="prompt-row" style="margin-top: 15px;">
+                    <select id="promptSelect">
+                        <!-- Prompts loaded here -->
+                    </select>
+                    <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
                 </div>
 
                 <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
@@ -405,6 +445,15 @@
         "Actor Danny Trejo has been sober for over 50 years, having gotten clean well before his career took off.",
         "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
     ];
+    
+    // NEW: Default Journal Prompts
+    const DEFAULT_PROMPTS = [
+        {name: "None (Free Write)", template: ""},
+        {name: "HALT Check-in", template: "Hungry: Am I hungry? What can I eat?\nAngry: What am I angry about? How can I safely express it?\nLonely: Who can I reach out to right now?\nTired: What rest do I need? How can I relax?"},
+        {name: "Coping Card Reflection", template: "The card I drew today was: [Insert Card Text Here]\nHow did I use this coping skill?\nWhat was the result?\nWhat craving did I overcome today?"},
+        {name: "Today's Gratitude", template: "I am grateful for 3 big things today:\n1.\n2.\n3.\nI am grateful for 3 small things today:\n1.\n2.\n3."},
+        {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
+    ];
 
     let deck = [...cards]; // Full set of cards, initially available
     let currentJournalKey = '';
@@ -412,7 +461,8 @@
     // --- Journal Storage Functions ---
     const JOURNAL_KEY = 'addictsAgendaJournalEntries';
     const SOBER_DATE_KEY = 'soberDate';
-    const TODO_KEY = 'addictsAgendaTodoList'; // NEW KEY for To Do List
+    const TODO_KEY = 'addictsAgendaTodoList'; 
+    const PROMPT_KEY = 'addictsAgendaCustomPrompts'; // NEW KEY for custom prompts
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -428,6 +478,89 @@
     function loadEntry(dateKey) {
         const entries = getSavedEntries();
         return entries[dateKey] || '';
+    }
+
+    // --- Prompt Management Functions (NEW) ---
+    function getCustomPrompts() {
+        const promptsJson = localStorage.getItem(PROMPT_KEY);
+        return promptsJson ? JSON.parse(promptsJson) : [];
+    }
+
+    function getAllPrompts() {
+        return [...DEFAULT_PROMPTS, ...getCustomPrompts()];
+    }
+
+    function saveCustomPrompts(prompts) {
+        localStorage.setItem(PROMPT_KEY, JSON.stringify(prompts));
+    }
+
+    function addCustomPrompt(name, template) {
+        const prompts = getCustomPrompts();
+        prompts.push({ name, template });
+        saveCustomPrompts(prompts);
+    }
+    
+    function deleteCustomPrompt(index) {
+        let prompts = getCustomPrompts();
+        // Adjust index because default prompts are not stored here
+        if (index >= 0 && index < prompts.length) {
+            prompts.splice(index, 1);
+            saveCustomPrompts(prompts);
+        }
+    }
+
+    function renderPromptSelect() {
+        const select = document.getElementById('promptSelect');
+        select.innerHTML = '';
+        const allPrompts = getAllPrompts();
+
+        allPrompts.forEach((prompt, index) => {
+            const option = document.createElement('option');
+            option.value = prompt.template;
+            option.textContent = prompt.name;
+            option.setAttribute('data-is-custom', index >= DEFAULT_PROMPTS.length);
+            select.appendChild(option);
+        });
+    }
+
+    function showPromptManagerView() {
+        document.getElementById('journalEntryView').style.display = 'none';
+        document.getElementById('journalList').style.display = 'none';
+        document.getElementById('promptManagerView').style.display = 'block';
+        renderCustomPromptList();
+    }
+
+    function renderCustomPromptList() {
+        const list = getCustomPrompts();
+        const listElement = document.getElementById('customPromptList');
+        listElement.innerHTML = '';
+
+        if (list.length === 0) {
+            listElement.innerHTML = '<li style="justify-content: center; color: #888;">No custom prompts saved.</li>';
+            return;
+        }
+
+        list.forEach((prompt, index) => {
+            const li = document.createElement('li');
+            li.textContent = prompt.name;
+            li.style.cursor = 'pointer'; // Indicate clickability
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('secondary');
+            deleteBtn.style.padding = '5px 10px';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (confirm(`Are you sure you want to delete the prompt: "${prompt.name}"?`)) {
+                    deleteCustomPrompt(index);
+                    renderCustomPromptList();
+                    renderPromptSelect(); // Update the dropdown too
+                }
+            };
+
+            li.appendChild(deleteBtn);
+            listElement.appendChild(li);
+        });
     }
 
     // --- To Do List Storage/Render Functions ---
@@ -569,6 +702,7 @@
     function showJournalEntryView(dateKey = null) {
         document.getElementById('journalEntryView').style.display = 'block';
         document.getElementById('journalList').style.display = 'none';
+        document.getElementById('promptManagerView').style.display = 'none'; // NEW: Hide prompt manager
 
         const today = new Date();
         if (dateKey === null) {
@@ -577,13 +711,22 @@
 
         currentJournalKey = dateKey;
         document.getElementById('entryDate').value = dateKey;
-        document.getElementById('journalEntry').value = loadEntry(dateKey);
+        
+        // Load content for the specific date
+        const entryContent = loadEntry(dateKey);
+        document.getElementById('journalEntry').value = entryContent;
+        
         document.querySelector('#journalEntryView h2').textContent = formatDateForDisplay(new Date(dateKey));
+        
+        // Render prompts on entry view
+        renderPromptSelect(); 
+        document.getElementById('promptSelect').value = ''; // Reset selection
     }
 
     function showJournalListView() {
         document.getElementById('journalEntryView').style.display = 'none';
         document.getElementById('journalList').style.display = 'block';
+        document.getElementById('promptManagerView').style.display = 'none';
         renderEntryList();
     }
 
@@ -654,7 +797,7 @@
         document.getElementById('cardView').style.display = 'none';
         document.getElementById('journalView').style.display = 'none'; 
         document.getElementById('settingsView').style.display = 'none'; 
-        document.getElementById('todoView').style.display = 'none'; // NEW: Hide To Do List View
+        document.getElementById('todoView').style.display = 'none'; 
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -701,7 +844,7 @@
       showJournalEntryView(); // Default to today's entry view
     });
     
-    // 4. Home Screen: Go to To Do List Button (NEW)
+    // 4. Home Screen: Go to To Do List Button
     document.getElementById('goToTodoBtn').addEventListener('click', ()=>{
       displayAppView('todoView');
       renderTodoList();
@@ -726,6 +869,49 @@
     document.getElementById('openListHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
+    
+    // NEW: Manage Prompts Button
+    document.getElementById('managePromptsBtn').addEventListener('click', ()=>{
+        showPromptManagerView();
+    });
+
+    // NEW: Back to Entry Button from Prompt Manager
+    document.getElementById('backToEntryBtn').addEventListener('click', ()=>{
+        displayAppView('journalView');
+        showJournalEntryView(currentJournalKey);
+    });
+
+    // NEW: Add Custom Prompt Button
+    document.getElementById('addCustomPromptBtn').addEventListener('click', ()=>{
+        const input = document.getElementById('customPromptInput');
+        const template = input.value.trim();
+        if (template) {
+            addCustomPrompt(template, template); // Use the text as both name and template
+            input.value = '';
+            renderCustomPromptList();
+            alert('Custom Prompt Added!');
+        } else {
+            alert('Please enter prompt text.');
+        }
+    });
+
+    // NEW: Prompt Select Change Listener - applies prompt text to textarea
+    document.getElementById('promptSelect').addEventListener('change', (event) => {
+        const template = event.target.value;
+        const textarea = document.getElementById('journalEntry');
+        
+        if (template) {
+            // Check if textarea is empty before applying template
+            if (textarea.value.trim() === "" || confirm("Applying a template will overwrite your current entry. Continue?")) {
+                textarea.value = template;
+            } else {
+                // If user cancels overwrite, reset dropdown selection
+                event.target.value = ''; 
+            }
+        }
+    });
+
+
     document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
       const content = document.getElementById('journalEntry').value;
       const dateKey = document.getElementById('entryDate').value;
@@ -770,7 +956,7 @@
         displayAppView('homeScreen');
     });
 
-    // --- To Do List Listeners (NEW) ---
+    // --- To Do List Listeners ---
     document.getElementById('addTodoBtn').addEventListener('click', ()=>{
         const input = document.getElementById('todoInput');
         const task = input.value.trim();
