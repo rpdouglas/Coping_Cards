@@ -122,14 +122,14 @@
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:16px;cursor:pointer; transition: background 0.2s;}
     button.primary:hover{background: #1e5ab8;}
 
-    /* **CARD SPECIFIC STYLES (UPDATED)** */
-    #cardView {
-        /* Ensure the card view takes full vertical space minus header/footer elements */
+    /* Card Specific Styles */
+    #cardView, #profileView {
         display: flex;
         flex-direction: column;
         align-items: center;
         padding-top: 0;
     }
+    /* Unified Card Styling */
     .card{
         width: 100%;
         max-width: 400px; /* Limit max size for readability */
@@ -139,23 +139,40 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Added box shadow */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         margin-top: 20px;
     }
     .card .top{display:flex;justify-content:space-between;align-items:center}
-    .icon{font-size:56px} /* Increased icon size */
+    .icon{font-size:56px}
     .suit{font-size:16px;opacity:0.9}
     .text{font-size:24px;margin-top:20px}
     .controls{
         display:flex;
         gap:10px;
         justify-content:center;
-        margin-top:24px; /* Space below the card */
+        margin-top:24px;
         width: 100%;
         max-width: 400px;
     }
     .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer; background: #e0e0e0; transition: background 0.2s; flex-grow: 1;}
     .btn:hover{background: #ccc;}
+
+    /* Profile Card Specific Adjustments */
+    .profile-content {
+        margin-top: 15px;
+        padding: 15px 0;
+        text-align: left;
+    }
+    .progress-display {
+        margin-top: 15px;
+        text-align: center;
+        padding: 15px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.8); /* Slightly transparent white for contrast */
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #2b77f0;
+    }
 
     /* Feature Styles */
     #homeCleanTime {
@@ -235,16 +252,26 @@
 
                 <button class="primary" id="saveJournalBtn" style="width: 100%; margin-top: 0;">Save Entry</button>
             </div>
-            <div id="profileView" class="card-base" style="display: none;">
-                <h2>Personal Progress 🗓️</h2>
-                <p class="sub">Set your clean date to track your time.</p>
-                
-                <label for="lastDate" style="display: block; font-weight: bold; margin-bottom: 8px;">Date of Last Use:</label>
-                <input type="date" id="lastDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
-                <button class="primary" id="saveDateBtn" style="width: 100%; margin-top: 0;">Save Date</button>
+            <div id="profileView" style="display: none; width: 100%; text-align: center;">
+                <h2 style="margin-top: 0;">My Progress Tracker</h2>
+                <p class="sub">Your clean date is your greatest motivation.</p>
 
-                <div id="progressDisplay" style="margin-top: 20px; text-align: center; padding: 15px; border-radius: 10px; background: #f0f4f8; font-size: 1.1em; font-weight: bold; color: #2b77f0;">
-                    Clean Time: --
+                <div class="card" id="progressCardArea">
+                    <div class="top">
+                        <div class="icon">🧠</div>
+                        <div class="suit">Mind & Focus</div>
+                    </div>
+                    
+                    <div class="profile-content">
+                        <label for="lastDate" style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Date of Last Use:</label>
+                        <input type="date" id="lastDate" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;">
+                        
+                        <button class="primary" id="saveDateBtn" style="width: 100%; margin-top: 0; margin-bottom: 10px;">Save Date</button>
+                        
+                        <div id="progressDisplay" class="progress-display">
+                            Clean Time: --
+                        </div>
+                    </div>
                 </div>
             </div>
             </div>
@@ -323,6 +350,12 @@ function calculateAndDisplayCleanTime() {
     const profileDisplay = document.getElementById('progressDisplay');
     const homeDisplay = document.getElementById('homeCleanTime'); 
     const input = document.getElementById('lastDate');
+    const progressCardArea = document.getElementById('progressCardArea'); // New: Target progress card
+
+    // Apply color to the progress card area (using green/Mind & Focus theme)
+    if (progressCardArea) {
+        progressCardArea.style.background = suitColor('green');
+    }
 
     if (lastUseDate) {
         if (input) input.value = lastUseDate; 
