@@ -3,27 +3,58 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>52 Coping Cards for Cravings</title>
+  <!-- UPDATED: Title for the application -->
+  <title>The Addicts Agenda</title>
   <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --bg: #f7f7f9;
       --card-radius: 16px;
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --color-blue: #2b77f0;
+      --color-shadow: rgba(43, 119, 240, 0.3);
     }
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center}
     .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
     .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
     h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
-    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:#2b77f0;color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px rgba(43,119,240,0.3);cursor:pointer;transition:background 0.2s}
+
+    /* Primary Blue Button Style */
+    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
     button.primary:hover{background:#2361c4}
-    button{cursor:pointer;background:none;border:none;color:#2b77f0;font-size:16px;padding:8px;font-weight:500}
+
+    /* Secondary/Action Buttons */
+    button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
     /* ADDED FOR ACCESSIBILITY */
     button:focus-visible {
-      outline: 2px solid #2b77f0;
+      outline: 2px solid var(--color-blue);
       outline-offset: 2px;
     }
+
+    /* Fact Box Styling */
+    .fact-box {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f0f7ff;
+        border: 1px solid #d0e4ff;
+        border-radius: 12px;
+        text-align: center;
+    }
+    .fact-box h2 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--color-blue);
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .fact-box p {
+        font-size: 16px;
+        color: #444;
+        margin: 0;
+        font-style: italic;
+    }
+
     .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center}
     #cardIcon{font-size:80px;line-height:1;margin-bottom:12px}
     #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#444}
@@ -34,7 +65,25 @@
 </head>
 <body>
   <div class="app">
-    <div id="homeScreen">
+
+    <!-- NEW HOME SCREEN -->
+    <div id="homeScreen" style="display:block;">
+        <div class="hero">
+            <h1>The Addicts Agenda</h1>
+            <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
+            
+            <div class="fact-box">
+                <h2>Recovery Fact of the Day</h2>
+                <p id="dailyFactText">Loading daily inspiration...</p>
+            </div>
+
+            <!-- Button to Coping Cards (Card Intro Screen) -->
+            <button id="goToCardsBtn" class="primary">Go to Coping Cards</button>
+        </div>
+    </div>
+    
+    <!-- CARD INTRO SCREEN (Original Home Screen) -->
+    <div id="cardIntro" style="display:none;">
       <div class="hero">
         <h1>52 Coping Cards</h1>
         <p class="sub">Need a quick strategy to manage a craving? Draw a card.</p>
@@ -42,6 +91,7 @@
       </div>
     </div>
     
+    <!-- CARD VIEW SCREEN -->
     <div id="cardView" style="display:none;">
       <div id="cardArea" class="card-area">
         <div>
@@ -52,7 +102,8 @@
         <div class="actions">
           <button id="nextBtn">Next Card</button>
           <button id="shuffleBtn">Shuffle Deck</button>
-          <button id="resetBtn">Reset</button>
+          <!-- Changed Reset to go back to the main homepage -->
+          <button id="resetBtn">Home</button>
         </div>
         <div id="statusText" class="status-text"></div>
       </div>
@@ -60,7 +111,6 @@
   </div>
   
   <script>
-    // CLEANED UP: RGB colors removed as they were not used by the suitColor function.
     const cards = [
       {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
       {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
@@ -119,8 +169,21 @@
       {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
     ];
 
+    // Array of Pop Culture Recovery Facts
+    const POP_FACTS = [
+        "In his recovery, actor Robert Downey Jr. pursued martial arts and therapy, stating: 'Job one is get out of that cave.'",
+        "Actress Jamie Lee Curtis became addicted to prescription painkillers after a cosmetic surgery but has been sober since 1999, crediting her sobriety with giving her everything of value in her life.",
+        "Bradley Cooper, who has been sober since 2004, credits his sobriety with saving his career and allowing him to become an A-list actor.",
+        "Musician Elton John, who entered recovery in 1990, established the Elton John AIDS Foundation two years later, using his energy to help others.",
+        "Actor Daniel Radcliffe sought sobriety in 2010 to cope with anxiety and stress after the Harry Potter series wrapped up, finding greater peace without alcohol.",
+        "After battling substance abuse in her youth, Drew Barrymore went to rehab at age 13 and is now a successful actress and talk show host, openly sharing her journey.",
+        "Actor Danny Trejo has been sober for over 50 years, having gotten clean well before his career took off.",
+        "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
+    ];
+
     let deck = [...cards]; // Full set of cards, initially available
 
+    // --- Helper Functions ---
     function suitColor(suit_key){
       switch(suit_key){
         case 'blue': return '#DADFF9';
@@ -150,36 +213,81 @@
       return card;
     }
     
-    // Event Listeners
+    function displayAppView(viewId) {
+        document.getElementById('homeScreen').style.display = 'none';
+        document.getElementById('cardIntro').style.display = 'none';
+        document.getElementById('cardView').style.display = 'none';
+        document.getElementById(viewId).style.display = 'block';
+    }
+
+    function getDailyFact() {
+        // Use the day of the year to cycle through facts
+        const today = new Date();
+        const start = new Date(today.getFullYear(), 0, 0);
+        const diff = today - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+        
+        const factIndex = dayOfYear % POP_FACTS.length;
+        document.getElementById('dailyFactText').textContent = POP_FACTS[factIndex];
+    }
+
+
+    // --- Event Listeners ---
+    // NEW: Go to Card Intro Screen from Home Screen
+    document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
+      displayAppView('cardIntro');
+    });
+    
+    // Original Draw Button: Start the game
     document.getElementById('drawBtn').addEventListener('click', ()=>{
       const card = drawRandom();
-      if(!card) return alert('Deck empty — shuffle or reset.');
+      if(!card) { 
+        // Use a custom message style instead of alert()
+        console.log('Deck empty — shuffle or reset.'); 
+        alert('Deck empty — please shuffle or return home.'); 
+        return;
+      }
       renderCard(card);
-      document.getElementById('homeScreen').style.display = 'none';
-      document.getElementById('cardView').style.display = 'block';
+      displayAppView('cardView');
     });
 
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       const card = drawRandom();
-      if(!card) return alert('Deck empty — shuffle or reset.');
+      if(!card) {
+        // Use a custom message style instead of alert()
+        console.log('Deck empty — shuffle or reset.'); 
+        alert('Deck empty — please shuffle or return home.'); 
+        return;
+      }
       renderCard(card);
     });
 
     document.getElementById('shuffleBtn').addEventListener('click', ()=>{
       deck = [...cards].sort(()=>Math.random()-0.5);
       updateStatus();
-      alert('Deck shuffled.');
+      // Use console log instead of alert
+      console.log('Deck shuffled.');
+      // Optionally show a quick visual cue on the UI if needed, but keeping it simple for now.
     });
 
+    // UPDATED: Reset button now goes to the main home screen
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
-      document.getElementById('homeScreen').style.display = 'block';
-      document.getElementById('cardView').style.display = 'none';
+      displayAppView('homeScreen');
       updateStatus();
     });
 
-    // Initial status update
-    updateStatus();
+    // --- Initialization ---
+    function initializeApp() {
+        getDailyFact();
+        updateStatus();
+        // Ensure the home screen is the default view on load
+        displayAppView('homeScreen');
+    }
+
+    initializeApp();
+
 
     // Register Service Worker
     if('serviceWorker' in navigator) {
