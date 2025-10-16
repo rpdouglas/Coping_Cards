@@ -187,12 +187,12 @@
     let deck = [...cards]; // Full set of cards, initially available
 
     // --- Helper Functions ---
-    // UPDATED: Function now returns a bold, two-color linear gradient string
+    // UPDATED: Function now returns a bold, two-color linear gradient string. Changed 'orange' to a darker red gradient.
     function suitColor(suit_key){
       switch(suit_key){
         case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)'; // Action & Movement
         case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)'; // Mind & Focus
-        case 'orange': return 'linear-gradient(135deg, #F5B041 0%, #F8D383 100%)'; // Connection & Support
+        case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)'; // Connection & Support (Darker Red)
         case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)'; // Creative & Learning
         default: return '#fff';
       }
