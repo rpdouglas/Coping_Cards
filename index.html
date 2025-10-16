@@ -50,33 +50,16 @@
         text-align: left;
     }
 
-    /* Primary Blue Button Style */
+    /* Primary Blue Button Style (Used for Cards, Journal, and To Do List) */
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
     button.primary:hover{background:#2361c4}
 
-    /* NEW: Journal Button Style (Secondary prominence but on homepage) */
-    button.journal-btn {
-        margin-top: 15px;
-        padding: 12px 18px;
-        border-radius: 10px;
-        border: 1px solid var(--color-blue);
-        background: #fff;
-        color: var(--color-blue);
-        font-size: 16px;
-        font-weight: 600;
-        width: 100%;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    button.journal-btn:hover {
-        background: #f0f7ff;
-    }
-
-
+    /* REMOVED: Old .journal-btn style */
+    
     /* Secondary/Action Buttons (Default) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
     
-    /* UPDATED: Secondary style for shuffle/next/home buttons with high contrast */
+    /* UPDATED: Secondary style for next/home buttons with high contrast */
     button.secondary {
         /* Set background to white */
         background: #ffffff; 
@@ -100,7 +83,7 @@
       outline: 2px solid var(--color-blue);
       outline-offset: 2px;
     }
-    input[type="date"] {
+    input[type="date"], input[type="text"] {
         padding: 8px 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
@@ -140,14 +123,14 @@
     .actions button{margin:0 10px}
     .status-text{font-size:14px;color:#777;margin-top:10px}
 
-    /* Journal View Styles */
-    .journal-content {
+    /* Shared Content Styles */
+    .content-card {
         background: #ffffff;
         padding: 24px;
         border-radius: 18px;
         box-shadow: 0 6px 18px rgba(32,40,60,0.08);
     }
-    .journal-content h2 {
+    .content-card h2 {
         font-size: 24px;
         margin-top: 0;
         color: #333;
@@ -165,33 +148,12 @@
         box-sizing: border-box;
         margin-top: 15px;
     }
-    .journal-actions {
+    .actions-row {
         margin-top: 15px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-    }
-    .journal-entry-list {
-        list-style: none;
-        padding: 0;
-        margin-top: 20px;
-    }
-    .journal-entry-list li {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background 0.1s;
-        font-size: 16px;
-    }
-    .journal-entry-list li:hover {
-        background: #f9f9f9;
-    }
-    .journal-entry-list li:last-child {
-        border-bottom: none;
     }
     .list-view-actions {
         display: flex;
@@ -199,6 +161,41 @@
     }
     .list-view-actions button {
         margin: 0;
+    }
+
+    /* To Do List Specific Styles */
+    .todo-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .todo-input-group input {
+        flex-grow: 1;
+    }
+    .todo-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 0;
+    }
+    .todo-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+    }
+    .todo-list li:last-child {
+        border-bottom: none;
+    }
+    .todo-text {
+        flex-grow: 1;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+    .todo-completed {
+        text-decoration: line-through;
+        color: #888;
     }
   </style>
 </head>
@@ -221,11 +218,14 @@
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
 
-            <!-- Button to Coping Cards -->
-            <button id="goToCardsBtn" class="primary">Go to Coping Cards</button>
+            <!-- Button 1: Draw Coping Cards (Text Changed) -->
+            <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
 
-            <!-- Button to Journal Page -->
-            <button id="goToJournalBtn" class="journal-btn">Start Journaling</button>
+            <!-- Button 2: Start Journaling (Style Changed to Primary) -->
+            <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
+            
+            <!-- Button 3: To Do List (NEW) -->
+            <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
         </div>
     </div>
     
@@ -256,7 +256,7 @@
 
     <!-- 4. JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
-        <div class="journal-content">
+        <div class="content-card">
             
             <!-- Journal List View (initially hidden) -->
             <div id="journalList" style="display:none;">
@@ -282,7 +282,7 @@
 
                 <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
                 
-                <div class="journal-actions">
+                <div class="actions-row">
                     <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
                     <div class="list-view-actions">
                         <button id="saveJournalBtn" class="secondary">Save Entry</button>
@@ -293,9 +293,9 @@
         </div>
     </div>
 
-    <!-- 5. NEW SETTINGS VIEW SCREEN -->
+    <!-- 5. SETTINGS VIEW SCREEN -->
     <div id="settingsView" style="display:none;">
-        <div class="journal-content">
+        <div class="content-card">
             <h2>App Settings</h2>
             <div class="settings-group">
                 <p class="sub" style="text-align: center; margin-bottom: 20px;">Track your journey.</p>
@@ -304,12 +304,34 @@
                 <input type="date" id="soberDateInput" style="width: 100%; margin-bottom: 20px;">
                 <p id="sobrietyDuration" style="font-size: 1.1em; font-weight: bold; text-align: center; color: var(--color-blue); min-height: 20px;"></p>
             </div>
-            <div class="journal-actions" style="justify-content: flex-end; gap: 10px;">
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
                 <button id="saveSettingsBtn" class="secondary">Save Date</button>
                 <button id="settingsHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
+    
+    <!-- 6. NEW TO DO LIST VIEW SCREEN -->
+    <div id="todoView" style="display:none;">
+        <div class="content-card">
+            <h2>My To Do List</h2>
+            <p class="sub" style="text-align: center; margin-bottom: 20px;">Keep track of small, actionable tasks.</p>
+
+            <div class="todo-input-group">
+                <input type="text" id="todoInput" placeholder="Add a new task (e.g., take a walk)">
+                <button id="addTodoBtn" class="secondary">Add</button>
+            </div>
+            
+            <ul id="todoList" class="todo-list">
+                <!-- To Do Items will be rendered here -->
+            </ul>
+            
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
+                <button id="todoHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+
 
   </div>
   
@@ -389,7 +411,8 @@
 
     // --- Journal Storage Functions ---
     const JOURNAL_KEY = 'addictsAgendaJournalEntries';
-    const SOBER_DATE_KEY = 'soberDate'; // NEW KEY for sober date
+    const SOBER_DATE_KEY = 'soberDate';
+    const TODO_KEY = 'addictsAgendaTodoList'; // NEW KEY for To Do List
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -406,6 +429,77 @@
         const entries = getSavedEntries();
         return entries[dateKey] || '';
     }
+
+    // --- To Do List Storage/Render Functions ---
+    function getTodoList() {
+        const todoJson = localStorage.getItem(TODO_KEY);
+        return todoJson ? JSON.parse(todoJson) : [];
+    }
+
+    function saveTodoList(list) {
+        localStorage.setItem(TODO_KEY, JSON.stringify(list));
+    }
+    
+    function renderTodoList() {
+        const list = getTodoList();
+        const todoListElement = document.getElementById('todoList');
+        todoListElement.innerHTML = '';
+
+        if (list.length === 0) {
+            todoListElement.innerHTML = '<li style="justify-content: center; color: #888;">Your list is clear!</li>';
+            return;
+        }
+
+        list.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.setAttribute('data-index', index);
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = item.task;
+            textSpan.classList.add('todo-text');
+            if (item.completed) {
+                textSpan.classList.add('todo-completed');
+            }
+            textSpan.onclick = () => toggleTodoComplete(index);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.classList.add('secondary');
+            deleteBtn.style.padding = '5px 10px';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteTodo(index);
+            };
+
+            li.appendChild(textSpan);
+            li.appendChild(deleteBtn);
+            todoListElement.appendChild(li);
+        });
+    }
+
+    function addTodo(task) {
+        const list = getTodoList();
+        list.push({ task: task, completed: false });
+        saveTodoList(list);
+        renderTodoList();
+    }
+
+    function toggleTodoComplete(index) {
+        const list = getTodoList();
+        if (list[index]) {
+            list[index].completed = !list[index].completed;
+            saveTodoList(list);
+            renderTodoList();
+        }
+    }
+
+    function deleteTodo(index) {
+        const list = getTodoList();
+        list.splice(index, 1);
+        saveTodoList(list);
+        renderTodoList();
+    }
+    // --- End To Do List Functions ---
 
     // --- Date/Time Helpers ---
     function getFormattedDate(date) {
@@ -524,8 +618,6 @@
     }
 
     // --- Core App Functions ---
-
-    // UPDATED: Function now returns a bold, two-color linear gradient string. Changed 'orange' to a darker red gradient.
     function suitColor(suit_key){
       switch(suit_key){
         case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)'; // Action & Movement
@@ -561,7 +653,8 @@
         document.getElementById('cardIntro').style.display = 'none';
         document.getElementById('cardView').style.display = 'none';
         document.getElementById('journalView').style.display = 'none'; 
-        document.getElementById('settingsView').style.display = 'none'; // NEW: Hide Settings View
+        document.getElementById('settingsView').style.display = 'none'; 
+        document.getElementById('todoView').style.display = 'none'; // NEW: Hide To Do List View
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -592,12 +685,12 @@
 
     // --- Event Listeners ---
     
-    // 1. Home Screen: Go to Coping Cards Button
+    // 1. Home Screen: Draw Coping Cards Button
     document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
 
-    // 2. Home Screen: Go to Settings Button (NEW)
+    // 2. Home Screen: Go to Settings Button
     document.getElementById('goToSettingsBtn').addEventListener('click', ()=>{
       showSettingsView();
     });
@@ -607,30 +700,32 @@
       displayAppView('journalView');
       showJournalEntryView(); // Default to today's entry view
     });
+    
+    // 4. Home Screen: Go to To Do List Button (NEW)
+    document.getElementById('goToTodoBtn').addEventListener('click', ()=>{
+      displayAppView('todoView');
+      renderTodoList();
+    });
 
-    // 4. Card View: Next Card Button
+    // 5. Card View: Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 5. Card View: Home Button
+    // 6. Card View: Home Button
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
     
-    // 6. Journal View: Home Button (on Entry View)
+    // --- Journal Listeners ---
     document.getElementById('entryHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
-
-    // 7. Journal View: Home Button (on List View)
     document.getElementById('openListHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
-    
-    // 8. Journal View: Save Entry Button
     document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
       const content = document.getElementById('journalEntry').value;
       const dateKey = document.getElementById('entryDate').value;
@@ -648,26 +743,20 @@
         alert('Please select a date.');
       }
     });
-    
-    // 9. Journal View: Date Change Listener
     document.getElementById('entryDate').addEventListener('change', (event) => {
         const dateKey = event.target.value;
         if (dateKey) {
             showJournalEntryView(dateKey);
         }
     });
-
-    // 10. Journal View: View All Entries Button
     document.getElementById('viewAllEntriesBtn').addEventListener('click', ()=>{
         showJournalListView();
     });
-    
-    // 11. Journal View: New Entry Button (from List View)
     document.getElementById('newEntryBtn').addEventListener('click', ()=>{
         showJournalEntryView();
     });
 
-    // 12. Settings View: Save Settings Button (NEW)
+    // --- Settings Listeners ---
     document.getElementById('saveSettingsBtn').addEventListener('click', ()=>{
         const dateStr = document.getElementById('soberDateInput').value;
         if (dateStr && new Date(dateStr) <= new Date()) {
@@ -677,9 +766,20 @@
             alert('Please enter a valid Sober Date in the past.');
         }
     });
-
-    // 13. Settings View: Home Button (NEW)
     document.getElementById('settingsHomeBtn').addEventListener('click', ()=>{
+        displayAppView('homeScreen');
+    });
+
+    // --- To Do List Listeners (NEW) ---
+    document.getElementById('addTodoBtn').addEventListener('click', ()=>{
+        const input = document.getElementById('todoInput');
+        const task = input.value.trim();
+        if (task) {
+            addTodo(task);
+            input.value = ''; // Clear input
+        }
+    });
+    document.getElementById('todoHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
 
