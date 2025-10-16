@@ -73,6 +73,14 @@
       outline: 2px solid var(--color-blue);
       outline-offset: 2px;
     }
+    input[type="date"] {
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-family: var(--font-family);
+        font-size: 16px;
+        box-sizing: border-box;
+    }
 
     /* Fact Box Styling */
     .fact-box {
@@ -133,7 +141,37 @@
     .journal-actions {
         margin-top: 15px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .journal-entry-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+    .journal-entry-list li {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.1s;
+        font-size: 16px;
+    }
+    .journal-entry-list li:hover {
+        background: #f9f9f9;
+    }
+    .journal-entry-list li:last-child {
+        border-bottom: none;
+    }
+    .list-view-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .list-view-actions button {
+        margin: 0;
     }
   </style>
 </head>
@@ -154,7 +192,7 @@
             <!-- Button to Coping Cards -->
             <button id="goToCardsBtn" class="primary">Go to Coping Cards</button>
 
-            <!-- NEW: Button to Journal Page -->
+            <!-- Button to Journal Page -->
             <button id="goToJournalBtn" class="journal-btn">Start Journaling</button>
         </div>
     </div>
@@ -187,13 +225,38 @@
     <!-- 4. NEW JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
         <div class="journal-content">
-            <h2>Today's Reflection</h2>
-            <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
-            <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
-            <div class="journal-actions">
-                <!-- For a real PWA, this would save to local storage/Firestore -->
-                <button id="saveJournalBtn" class="secondary">Save Entry</button>
-                <button id="journalHomeBtn" class="secondary" style="margin-left: 10px;">Home</button>
+            
+            <!-- Journal List View (initially hidden) -->
+            <div id="journalList" style="display:none;">
+                <h2>Journal Entries</h2>
+                <div class="list-view-actions">
+                    <button id="openListHomeBtn" class="secondary">Home</button>
+                    <button id="newEntryBtn" class="secondary">Write Today's Entry</button>
+                </div>
+                <ul id="entryList" class="journal-entry-list">
+                    <li>No entries saved yet.</li>
+                </ul>
+            </div>
+
+            <!-- Journal Entry View (today's entry) -->
+            <div id="journalEntryView">
+                <h2>Today's Reflection</h2>
+                <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <label for="entryDate">Date:</label>
+                    <input type="date" id="entryDate">
+                </div>
+
+                <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
+                
+                <div class="journal-actions">
+                    <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
+                    <div class="list-view-actions">
+                        <button id="saveJournalBtn" class="secondary">Save Entry</button>
+                        <button id="entryHomeBtn" class="secondary">Home</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -271,8 +334,96 @@
     ];
 
     let deck = [...cards]; // Full set of cards, initially available
+    let currentJournalKey = '';
 
-    // --- Helper Functions ---
+    // --- Journal Storage Functions ---
+    const JOURNAL_KEY = 'addictsAgendaJournalEntries';
+
+    function getSavedEntries() {
+        const entriesJson = localStorage.getItem(JOURNAL_KEY);
+        return entriesJson ? JSON.parse(entriesJson) : {};
+    }
+
+    function saveEntry(dateKey, content) {
+        const entries = getSavedEntries();
+        entries[dateKey] = content;
+        localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
+    }
+
+    function loadEntry(dateKey) {
+        const entries = getSavedEntries();
+        return entries[dateKey] || '';
+    }
+
+    function getFormattedDate(date) {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months start at 0
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatDateForDisplay(dateKey) {
+        const parts = dateKey.split('-');
+        if (parts.length === 3) {
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
+            return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        return dateKey; // Fallback
+    }
+
+    function showJournalEntryView(dateKey = null) {
+        document.getElementById('journalEntryView').style.display = 'block';
+        document.getElementById('journalList').style.display = 'none';
+
+        const today = new Date();
+        if (dateKey === null) {
+            dateKey = getFormattedDate(today);
+        }
+
+        currentJournalKey = dateKey;
+        document.getElementById('entryDate').value = dateKey;
+        document.getElementById('journalEntry').value = loadEntry(dateKey);
+        document.querySelector('#journalEntryView h2').textContent = formatDateForDisplay(new Date(dateKey));
+    }
+
+    function showJournalListView() {
+        document.getElementById('journalEntryView').style.display = 'none';
+        document.getElementById('journalList').style.display = 'block';
+        renderEntryList();
+    }
+
+    function renderEntryList() {
+        const entries = getSavedEntries();
+        const entryListElement = document.getElementById('entryList');
+        entryListElement.innerHTML = '';
+        const sortedKeys = Object.keys(entries).sort().reverse(); // Sort descending by date
+
+        if (sortedKeys.length === 0) {
+            entryListElement.innerHTML = '<li>No entries saved yet.</li>';
+            return;
+        }
+
+        sortedKeys.forEach(key => {
+            const li = document.createElement('li');
+            li.textContent = formatDateForDisplay(key);
+            li.setAttribute('data-date-key', key);
+            
+            const viewButton = document.createElement('button');
+            viewButton.textContent = 'View';
+            viewButton.classList.add('secondary');
+            viewButton.style.marginLeft = '10px';
+            
+            viewButton.onclick = () => {
+                showJournalEntryView(key);
+            };
+
+            li.appendChild(viewButton);
+            entryListElement.appendChild(li);
+        });
+    }
+
+    // --- Core App Functions ---
+
     // UPDATED: Function now returns a bold, two-color linear gradient string. Changed 'orange' to a darker red gradient.
     function suitColor(suit_key){
       switch(suit_key){
@@ -308,11 +459,11 @@
         document.getElementById('homeScreen').style.display = 'none';
         document.getElementById('cardIntro').style.display = 'none';
         document.getElementById('cardView').style.display = 'none';
-        document.getElementById('journalView').style.display = 'none'; // NEW: Hide Journal View
+        document.getElementById('journalView').style.display = 'none'; 
         document.getElementById(viewId).style.display = 'block';
     }
     
-    // NEW: Function to draw a card and display the card view
+    // Function to draw a card and display the card view
     function drawAndDisplayCard() {
         const card = drawRandom();
         if (!card) {
@@ -338,14 +489,16 @@
 
 
     // --- Event Listeners ---
+    
     // 1. Go to Coping Cards Button now draws a card and goes straight to cardView
     document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 2. NEW: Go to Journal Page Button
+    // 2. Go to Journal Page Button (on Home Screen)
     document.getElementById('goToJournalBtn').addEventListener('click', ()=>{
       displayAppView('journalView');
+      showJournalEntryView(); // Default to today's entry view
     });
 
     // 3. Next Card Button
@@ -359,18 +512,52 @@
       displayAppView('homeScreen');
       updateStatus();
     });
-
-    // 5. NEW: Home Button (on Journal View)
-    document.getElementById('journalHomeBtn').addEventListener('click', ()=>{
-      displayAppView('homeScreen');
+    
+    // 5. Journal View: Home Button (on Entry View)
+    document.getElementById('entryHomeBtn').addEventListener('click', ()=>{
+        displayAppView('homeScreen');
     });
 
-    // 6. NEW: Save Journal Button (Placeholder)
+    // 6. Journal View: Home Button (on List View)
+    document.getElementById('openListHomeBtn').addEventListener('click', ()=>{
+        displayAppView('homeScreen');
+    });
+    
+    // 7. Journal View: Save Entry Button
     document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
       const content = document.getElementById('journalEntry').value;
-      // In a real PWA, save logic (e.g., to Firestore) would go here.
-      console.log('Journal Entry Saved (In console for now):', content);
-      alert('Entry Saved!');
+      const dateKey = document.getElementById('entryDate').value;
+      
+      if (content.trim() === '') {
+        alert('Journal entry cannot be empty.');
+        return;
+      }
+      
+      if (dateKey) {
+        saveEntry(dateKey, content);
+        console.log('Journal Entry Saved:', dateKey, content);
+        alert(`Entry for ${dateKey} Saved!`);
+      } else {
+        alert('Please select a date.');
+      }
+    });
+    
+    // 8. Journal View: Date Change Listener
+    document.getElementById('entryDate').addEventListener('change', (event) => {
+        const dateKey = event.target.value;
+        if (dateKey) {
+            showJournalEntryView(dateKey);
+        }
+    });
+
+    // 9. Journal View: View All Entries Button
+    document.getElementById('viewAllEntriesBtn').addEventListener('click', ()=>{
+        showJournalListView();
+    });
+    
+    // 10. Journal View: New Entry Button (from List View)
+    document.getElementById('newEntryBtn').addEventListener('click', ()=>{
+        showJournalEntryView();
     });
 
 
@@ -378,6 +565,10 @@
     function initializeApp() {
         getDailyFact();
         updateStatus();
+        // Set max date for input to today
+        const todayKey = getFormattedDate(new Date());
+        document.getElementById('entryDate').max = todayKey;
+        
         // Ensure the home screen is the default view on load
         displayAppView('homeScreen');
     }
