@@ -13,8 +13,8 @@
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --color-blue: #2b77f0;
       --color-shadow: rgba(43, 119, 240, 0.3);
-      /* NEW: Define a neutral gray for secondary buttons */
-      --color-gray: #777;
+      /* Define a neutral gray for secondary text/borders, now darker for contrast */
+      --color-gray: #444; 
       --color-light-gray: #f0f0f0;
     }
     html,body{height:100%;margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center}
@@ -27,21 +27,45 @@
     button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
     button.primary:hover{background:#2361c4}
 
-    /* Secondary/Action Buttons (Styled as requested: gray) */
+    /* NEW: Journal Button Style (Secondary prominence but on homepage) */
+    button.journal-btn {
+        margin-top: 15px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--color-blue);
+        background: #fff;
+        color: var(--color-blue);
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    button.journal-btn:hover {
+        background: #f0f7ff;
+    }
+
+
+    /* Secondary/Action Buttons (Default) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
     
-    /* NEW: Secondary style for shuffle/next/home buttons */
+    /* UPDATED: Secondary style for shuffle/next/home buttons with high contrast */
     button.secondary {
-        background: var(--color-light-gray);
-        color: var(--color-gray);
+        /* Set background to white */
+        background: #ffffff; 
+        /* Set text color to a dark gray for high contrast */
+        color: var(--color-gray); 
         padding: 10px 15px;
         border-radius: 8px;
         font-weight: 600;
-        transition: background 0.2s;
-        border: 1px solid #e0e0e0;
+        transition: all 0.2s;
+        /* Give it a subtle shadow to lift it off the card background */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        border: 1px solid #d0d0d0;
     }
     button.secondary:hover {
-        background: #e9e9e9;
+        background: #f5f5f5;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
     }
 
     /* ADDED FOR ACCESSIBILITY */
@@ -73,21 +97,50 @@
         font-style: italic;
     }
 
+    /* Card View Styles */
     .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; transition: background 0.5s ease;}
-    
-    /* UPDATED: Card text colors set to white for contrast against dark gradients */
     #cardIcon{font-size:80px;line-height:1;margin-bottom:12px; color: #fff;}
     #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#fff}
     #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#fff}
-    
     .actions button{margin:0 10px}
     .status-text{font-size:14px;color:#777;margin-top:10px}
+
+    /* Journal View Styles */
+    .journal-content {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(32,40,60,0.08);
+    }
+    .journal-content h2 {
+        font-size: 24px;
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+    }
+    textarea {
+        width: 100%;
+        height: 300px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-family: var(--font-family);
+        font-size: 16px;
+        resize: vertical;
+        box-sizing: border-box;
+        margin-top: 15px;
+    }
+    .journal-actions {
+        margin-top: 15px;
+        display: flex;
+        justify-content: flex-end;
+    }
   </style>
 </head>
 <body>
   <div class="app">
 
-    <!-- NEW HOME SCREEN -->
+    <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <h1>The Addicts Agenda</h1>
@@ -98,14 +151,16 @@
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
 
-            <!-- Button to Coping Cards (Card Intro Screen) -->
+            <!-- Button to Coping Cards -->
             <button id="goToCardsBtn" class="primary">Go to Coping Cards</button>
+
+            <!-- NEW: Button to Journal Page -->
+            <button id="goToJournalBtn" class="journal-btn">Start Journaling</button>
         </div>
     </div>
     
-    <!-- CARD INTRO SCREEN (Original Home Screen - Now unused/hidden, but kept for clarity) -->
+    <!-- 2. CARD INTRO SCREEN (Unused) -->
     <div id="cardIntro" style="display:none;">
-      <!-- This screen is skipped, as goToCardsBtn now jumps straight to cardView with a card drawn -->
       <div class="hero">
         <h1>52 Coping Cards</h1>
         <p class="sub">Need a quick strategy to manage a craving? Draw a card.</p>
@@ -113,7 +168,7 @@
       </div>
     </div>
     
-    <!-- CARD VIEW SCREEN -->
+    <!-- 3. CARD VIEW SCREEN -->
     <div id="cardView" style="display:none;">
       <div id="cardArea" class="card-area">
         <div>
@@ -122,13 +177,25 @@
         </div>
         <p id="cardText"></p>
         <div class="actions">
-          <!-- Applied new secondary style to action buttons -->
           <button id="nextBtn" class="secondary">Next Card</button>
-          <button id="shuffleBtn" class="secondary">Shuffle Deck</button>
           <button id="resetBtn" class="secondary">Home</button>
         </div>
         <div id="statusText" class="status-text"></div>
       </div>
+    </div>
+
+    <!-- 4. NEW JOURNAL VIEW SCREEN -->
+    <div id="journalView" style="display:none;">
+        <div class="journal-content">
+            <h2>Today's Reflection</h2>
+            <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
+            <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
+            <div class="journal-actions">
+                <!-- For a real PWA, this would save to local storage/Firestore -->
+                <button id="saveJournalBtn" class="secondary">Save Entry</button>
+                <button id="journalHomeBtn" class="secondary" style="margin-left: 10px;">Home</button>
+            </div>
+        </div>
     </div>
   </div>
   
@@ -241,6 +308,7 @@
         document.getElementById('homeScreen').style.display = 'none';
         document.getElementById('cardIntro').style.display = 'none';
         document.getElementById('cardView').style.display = 'none';
+        document.getElementById('journalView').style.display = 'none'; // NEW: Hide Journal View
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -270,33 +338,41 @@
 
 
     // --- Event Listeners ---
-    // UPDATED: Go to Coping Cards Button now draws a card and goes straight to cardView
+    // 1. Go to Coping Cards Button now draws a card and goes straight to cardView
     document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // Original Draw Button (on the old cardIntro screen, kept just in case)
-    document.getElementById('drawBtn').addEventListener('click', ()=>{
-      drawAndDisplayCard();
+    // 2. NEW: Go to Journal Page Button
+    document.getElementById('goToJournalBtn').addEventListener('click', ()=>{
+      displayAppView('journalView');
     });
 
+    // 3. Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
-
-    document.getElementById('shuffleBtn').addEventListener('click', ()=>{
-      deck = [...cards].sort(()=>Math.random()-0.5);
-      updateStatus();
-      // Use console log instead of alert
-      console.log('Deck shuffled.');
-    });
-
-    // UPDATED: Reset button now goes to the main home screen
+    
+    // 4. Reset Button (on Card View)
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
+
+    // 5. NEW: Home Button (on Journal View)
+    document.getElementById('journalHomeBtn').addEventListener('click', ()=>{
+      displayAppView('homeScreen');
+    });
+
+    // 6. NEW: Save Journal Button (Placeholder)
+    document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
+      const content = document.getElementById('journalEntry').value;
+      // In a real PWA, save logic (e.g., to Firestore) would go here.
+      console.log('Journal Entry Saved (In console for now):', content);
+      alert('Entry Saved!');
+    });
+
 
     // --- Initialization ---
     function initializeApp() {
