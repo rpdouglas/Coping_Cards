@@ -348,6 +348,51 @@
         text-align: center;
         font-style: italic;
     }
+
+    /* Daily Reflection Styles */
+    #reflectionContent {
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        background: #f7f7f9;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin-top: 15px;
+    }
+
+    #reflectionDateInput {
+        max-width: 200px;
+        margin: 15px auto 5px auto;
+        display: block;
+    }
+
+    #reflectionQuote {
+        font-size: 1.2em;
+        font-style: italic;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    #reflectionReading {
+        color: #555;
+        line-height: 1.6;
+    }
+    .loading-spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid var(--color-blue);
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -384,10 +429,13 @@
             <!-- Button 3: To Do List (NEW) -->
             <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
             
-            <!-- NEW Button 4: Recovery Literature -->
+            <!-- NEW Button 4: Daily Reflection -->
+            <button id="goToReflectionBtn" class="primary" style="margin-top: 15px;">Daily Reflection</button>
+
+            <!-- NEW Button 5: Recovery Literature -->
             <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
 
-            <!-- NEW Button 5: Recovery Workbooks -->
+            <!-- NEW Button 6: Recovery Workbooks -->
             <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
         </div>
     </div>
@@ -654,6 +702,27 @@
                     <button id="saveStepFourBtn" class="secondary">Save Progress</button>
                     <button id="stepFourWorkbooksBtn" class="secondary">Workbooks Home</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. NEW DAILY REFLECTION VIEW SCREEN -->
+    <div id="reflectionView" style="display:none;">
+        <div class="content-card">
+            <h2>Daily Reflection</h2>
+            <p class="sub" style="text-align: center;">A daily quote and meditation to guide your thoughts.</p>
+            
+            <label for="reflectionDateInput" style="display: block; text-align: center; font-weight: 600; margin-top: 10px;">Select Date:</label>
+            <input type="date" id="reflectionDateInput">
+
+            <div id="reflectionContent">
+                <div class="loading-spinner" id="reflectionSpinner"></div>
+                <p id="reflectionQuote" style="display: none;">Quote goes here.</p>
+                <p id="reflectionReading" style="display: none;">Reading goes here.</p>
+            </div>
+            
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
+                <button id="reflectionHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
@@ -978,6 +1047,8 @@
     // App State
     let deck = [...AppData.cards];
     let currentJournalKey = '';
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+    const GEMINI_API_KEY = "";
 
     // --- Date/Time Helpers ---
     const DateUtils = {
@@ -1029,7 +1100,7 @@
     // --- View Management ---
     const ViewManager = {
         displayAppView: (viewId) => {
-            const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView'];
+            const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView', 'reflectionView'];
             views.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
@@ -1493,6 +1564,91 @@
             }, 3000);
         }
     };
+    
+    // --- Daily Reflection Logic ---
+    const ReflectionLogic = {
+        showReflectionView: () => {
+            ViewManager.displayAppView('reflectionView');
+            
+            const dateInput = document.getElementById('reflectionDateInput');
+            dateInput.max = DateUtils.getFormattedDate(new Date());
+            
+            // Default to today's date
+            const today = DateUtils.getFormattedDate(new Date());
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
+            
+            ReflectionLogic.getDailyReflection(dateInput.value);
+        },
+
+        getDailyReflection: async (dateStr) => {
+            const date = new Date(dateStr);
+            const dateDisplay = DateUtils.formatDateForDisplay(dateStr);
+            
+            const spinner = document.getElementById('reflectionSpinner');
+            const quoteEl = document.getElementById('reflectionQuote');
+            const readingEl = document.getElementById('reflectionReading');
+
+            quoteEl.style.display = 'none';
+            readingEl.style.display = 'none';
+            spinner.style.display = 'block';
+
+            const userQuery = `Find the AA Daily Reflection for ${dateDisplay}. Provide only the central quote and the main reflection/meditation text. Format the response with the quote first, followed by a double newline, then the reading.`;
+            const systemPrompt = "You are a helpful assistant that uses Google Search to find and format the AA Daily Reflection for a given date. Extract the content accurately.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            const apiUrl = GEMINI_API_URL + GEMINI_API_KEY;
+            let resultText = "Could not load reflection.";
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    resultText = candidate.content.parts[0].text;
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                resultText = "Error fetching reflection. Please check your connection.";
+            }
+
+            spinner.style.display = 'none';
+            
+            // Parse result (expecting quote \n\n reading)
+            const parts = resultText.split('\n\n');
+            if (parts.length >= 2) {
+                quoteEl.textContent = parts[0].trim().replace(/^['"]|['"]$/g, ''); // Remove surrounding quotes if present
+                readingEl.innerHTML = parts.slice(1).join('<br><br>').trim();
+                quoteEl.style.display = 'block';
+                readingEl.style.display = 'block';
+            } else {
+                quoteEl.textContent = resultText.includes("Quote") ? "Error in formatting or content not found." : resultText;
+                readingEl.textContent = "";
+                quoteEl.style.display = 'block';
+            }
+        }
+    };
+    
+    // --- Journal View Logic ---
+    function showJournalEntryView(dateKey = null) {
+        JournalLogic.showJournalEntryView(dateKey);
+    }
+    function showJournalListView() {
+        JournalLogic.showJournalListView();
+    }
 
 
     // --- Initialization and Event Binding ---
@@ -1504,6 +1660,8 @@
             if (entryDate) entryDate.max = todayKey;
             const soberDateInput = document.getElementById('soberDateInput');
             if (soberDateInput) soberDateInput.max = todayKey;
+            const reflectionDateInput = document.getElementById('reflectionDateInput'); // NEW
+            if (reflectionDateInput) reflectionDateInput.max = todayKey; // NEW
 
             // Initial view setup
             ViewManager.getDailyFact();
@@ -1518,7 +1676,7 @@
         bindEventListeners: () => {
             // --- General Nav ---
             document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
-            document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary').forEach(btn => {
+            document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary').forEach(btn => {
                 if (btn.id.includes('Home')) {
                     btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
                 }
@@ -1530,16 +1688,22 @@
             document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
             document.getElementById('goToLiteratureBtn').addEventListener('click', () => ViewManager.displayAppView('literatureView'));
             document.getElementById('goToWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); // NEW
+
+            // --- Daily Reflection Listener ---
+            document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
+                ReflectionLogic.getDailyReflection(e.target.value);
+            });
 
             // --- Workbooks Nav ---
             document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
             document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
             document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-            document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); // NEW
+            document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
             document.getElementById('stepOneWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
             document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
             document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
-            document.getElementById('stepFourWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView')); // NEW
+            document.getElementById('stepFourWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
             
             // Workbook Save Buttons are bound dynamically in renderWorkbook
             
