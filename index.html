@@ -62,8 +62,14 @@
     }
 
     /* Primary Blue Button Style (Used for Cards, Journal, and To Do List) */
-    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s}
+    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s; text-align: center;} /* Default centered text */
     button.primary:hover{background:#2361c4}
+    
+    /* WORKBOOKS PAGE BUTTON FIX: Align text left only for workbook buttons */
+    #workbooksView button.primary {
+        text-align: left;
+        padding-left: 20px;
+    }
 
     /* Secondary/Action Buttons (Default) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
@@ -562,6 +568,8 @@
             <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
             <!-- NEW: Button to Step 2 Workbook -->
             <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
+            <!-- NEW: Button to Step 3 Workbook -->
+            <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
             </div>
@@ -603,6 +611,26 @@
                 <div class="list-view-actions">
                     <button id="saveStepTwoBtn" class="secondary">Save Progress</button>
                     <button id="stepTwoWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 11. NEW STEP THREE WORKBOOK VIEW SCREEN -->
+    <div id="stepThreeView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 3: Turning It Over</h2>
+            <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
+            
+            <div id="stepThreeQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepThreeSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepThreeBtn" class="secondary">Save Progress</button>
+                    <button id="stepThreeWorkbooksBtn" class="secondary">Workbooks Home</button>
                 </div>
             </div>
         </div>
@@ -756,6 +784,48 @@
         "How can you stay open-minded as you continue to explore your own understanding of a Higher Power?",
         "How do you plan to strengthen your spiritual connection moving into Step Three?",
     ];
+    
+    // NEW: Step 3 Workbook Questions (parsed from "Step_Three_Workbook.docx")
+    const WORKBOOK_STEP3_QUESTIONS = [
+        { title: "Part 1: Understanding the Decision", isSection: true },
+        "In your own words, what does “making a decision” mean in the context of recovery? (Is it a feeling, an action, a surrender, or all three?)",
+        "How do you understand the difference between believing in a Higher Power (Step Two) and deciding to turn your will and life over (Step Three)?",
+        "What fears or reservations do you have about giving up control of your will and life?",
+        "What does “your will” mean to you? How have self-will, pride, or ego influenced your past decisions?",
+        "What has been the result when you tried to control everything yourself?",
+        "In what areas of your life do you still struggle to let go and trust a Power greater than yourself?",
+        "What might your life look like if you truly surrendered those areas to spiritual care and guidance?",
+        { title: "Part 2: Turning It Over", isSection: true },
+        "What does “turning your will and your life over” look like in practical terms for you?",
+        "How can you begin to rely on a Higher Power instead of your own impulses and fears?",
+        "Have you experienced moments when you felt genuine guidance, peace, or strength beyond yourself? Describe them.",
+        "What actions or daily practices can help you maintain this connection (e.g., prayer, meditation, service, honesty)?",
+        "What would it take for you to fully trust that this Power wants what’s best for you?",
+        "How does humility play a role in Step Three?",
+        "What does it mean to you to live “in God’s care” rather than under your own direction?",
+        { title: "Part 3: Willingness and Action", isSection: true },
+        "How do you know when you are being guided by self-will instead of spiritual will?",
+        "What are some signs that you are resisting guidance or trying to take back control?",
+        "How do you feel when you finally let go of something you’ve been clinging to?",
+        "What actions can you take today to show your willingness to live according to spiritual principles rather than your old habits?",
+        "How do prayer and meditation (or quiet reflection) help you align your will with your Higher Power’s will?",
+        "How can you remind yourself each day that surrender is not weakness, but strength?",
+        "How might turning your will and life over improve your relationships with others?",
+        { title: "Part 4: Faith and Trust", isSection: true },
+        "What does faith mean to you — and how has it changed since entering recovery?",
+        "What does “trusting the process” look like in your daily life?",
+        "How can you show gratitude for the guidance and care you’re beginning to experience?",
+        "What would it feel like to live with complete trust in your Higher Power?",
+        "How do you handle doubt or fear when you feel disconnected from that Power?",
+        "Who or what helps you stay accountable to your decision to live spiritually?",
+        "What is one situation right now that you can practice turning over — fully — to your Higher Power?",
+        { title: "Part 5: Commitment and Renewal", isSection: true },
+        "Have you said or written your own version of the Step Three prayer? What does it mean to you personally?",
+        "How can you demonstrate your decision to turn your will and life over in your everyday choices?",
+        "What kind of person do you believe your Higher Power is helping you become?",
+        "How do you want your recovery to reflect your growing faith and surrender?",
+        "How will you keep renewing this decision — one day at a time?",
+    ];
 
 
     let deck = [...cards]; // Full set of cards, initially available
@@ -768,6 +838,7 @@
     const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
     const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; 
     const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; // NEW key for Step 2 workbook
+    const WORKBOOK_STEP3_KEY = 'addictsAgendaWorkbookStep3'; // NEW key for Step 3 workbook
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -822,6 +893,24 @@
 
     function saveStepTwoAnswers(answers) {
         localStorage.setItem(WORKBOOK_STEP2_KEY, JSON.stringify(answers));
+    }
+
+    // NEW: Step Three Workbook Storage Functions
+    function getStepThreeAnswers() {
+        const answersJson = localStorage.getItem(WORKBOOK_STEP3_KEY);
+        const defaultAnswers = WORKBOOK_STEP3_QUESTIONS.filter(q => !q.isSection).map(q => "");
+        if (answersJson) {
+            const savedAnswers = JSON.parse(answersJson);
+            if (savedAnswers.length === defaultAnswers.length) {
+                return savedAnswers;
+            }
+            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
+        }
+        return defaultAnswers;
+    }
+
+    function saveStepThreeAnswers(answers) {
+        localStorage.setItem(WORKBOOK_STEP3_KEY, JSON.stringify(answers));
     }
 
 
@@ -1177,6 +1266,11 @@
         displayAppView('stepTwoView');
         renderStepTwoWorkbook();
     }
+    
+    function showStepThreeView() {
+        displayAppView('stepThreeView');
+        renderStepThreeWorkbook();
+    }
 
     function toggleSection(headerElement) {
         const content = headerElement.nextElementSibling;
@@ -1273,10 +1367,16 @@
     function renderStepTwoWorkbook() {
         renderWorkbook('stepTwoQuestions', WORKBOOK_STEP2_QUESTIONS, getStepTwoAnswers, 'stepTwoSaveStatus');
     }
+    
+    function renderStepThreeWorkbook() {
+        renderWorkbook('stepThreeQuestions', WORKBOOK_STEP3_QUESTIONS, getStepThreeAnswers, 'stepThreeSaveStatus');
+    }
 
     function collectAndSaveWorkbookAnswers(containerId, saveAnswersFn, saveStatusId) {
         const textareas = document.querySelectorAll(`#${containerId} textarea`);
-        const answers = saveAnswersFn.name === 'saveStepOneAnswers' ? getStepOneAnswers() : getStepTwoAnswers();
+        const answers = saveAnswersFn.name === 'saveStepOneAnswers' ? getStepOneAnswers() : 
+                        saveAnswersFn.name === 'saveStepTwoAnswers' ? getStepTwoAnswers() : 
+                        getStepThreeAnswers();
         
         textareas.forEach(textarea => {
             const index = parseInt(textarea.getAttribute('data-question-index'));
@@ -1299,6 +1399,10 @@
     
     function collectAndSaveStepTwoAnswers() {
         collectAndSaveWorkbookAnswers('stepTwoQuestions', saveStepTwoAnswers, 'stepTwoSaveStatus');
+    }
+    
+    function collectAndSaveStepThreeAnswers() {
+        collectAndSaveWorkbookAnswers('stepThreeQuestions', saveStepThreeAnswers, 'stepThreeSaveStatus');
     }
 
     // --- Journal View Logic ---
@@ -1404,7 +1508,8 @@
         document.getElementById('literatureView').style.display = 'none'; 
         document.getElementById('workbooksView').style.display = 'none'; 
         document.getElementById('stepOneView').style.display = 'none'; 
-        document.getElementById('stepTwoView').style.display = 'none'; // NEW
+        document.getElementById('stepTwoView').style.display = 'none';
+        document.getElementById('stepThreeView').style.display = 'none'; // NEW
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -1470,47 +1575,62 @@
     document.getElementById('goToStep2Btn').addEventListener('click', ()=>{
       showStepTwoView();
     });
+    
+    // 9. NEW: Go to Step 3 Workbook Button (from Workbooks Home)
+    document.getElementById('goToStep3Btn').addEventListener('click', ()=>{
+      showStepThreeView();
+    });
 
-    // 9. Card View: Next Card Button
+    // 10. Card View: Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 10. Card View: Home Button
+    // 11. Card View: Home Button
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
     
-    // 11. NEW: Literature View Home Button
+    // 12. NEW: Literature View Home Button
     document.getElementById('literatureHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
 
-    // 12. NEW: Workbooks View Home Button
+    // 13. NEW: Workbooks View Home Button
     document.getElementById('workbooksHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
     
-    // 13. NEW: Step 1 Workbook Home Button
+    // 14. NEW: Step 1 Workbook Home Button
     document.getElementById('stepOneWorkbooksBtn').addEventListener('click', ()=>{
         displayAppView('workbooksView');
     });
     
-    // 14. NEW: Step 2 Workbook Home Button
+    // 15. NEW: Step 2 Workbook Home Button
     document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', ()=>{
         displayAppView('workbooksView');
     });
     
-    // 15. NEW: Step 1 Workbook Save Button
+    // 16. NEW: Step 3 Workbook Home Button
+    document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', ()=>{
+        displayAppView('workbooksView');
+    });
+    
+    // 17. NEW: Step 1 Workbook Save Button
     document.getElementById('saveStepOneBtn').addEventListener('click', ()=>{
         collectAndSaveStepOneAnswers();
     });
     
-    // 16. NEW: Step 2 Workbook Save Button
+    // 18. NEW: Step 2 Workbook Save Button
     document.getElementById('saveStepTwoBtn').addEventListener('click', ()=>{
         collectAndSaveStepTwoAnswers();
+    });
+    
+    // 19. NEW: Step 3 Workbook Save Button
+    document.getElementById('saveStepThreeBtn').addEventListener('click', ()=>{
+        collectAndSaveStepThreeAnswers();
     });
     
     // --- Journal Listeners ---
