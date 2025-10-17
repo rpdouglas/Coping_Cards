@@ -560,6 +560,8 @@
             <p class="sub" style="text-align: center;">Tools and step work resources.</p>
             <!-- NEW: Button to Step 1 Workbook -->
             <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
+            <!-- NEW: Button to Step 2 Workbook -->
+            <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
             </div>
@@ -581,6 +583,26 @@
                 <div class="list-view-actions">
                     <button id="saveStepOneBtn" class="secondary">Save Progress</button>
                     <button id="stepOneWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. NEW STEP TWO WORKBOOK VIEW SCREEN -->
+    <div id="stepTwoView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 2: Coming to Believe</h2>
+            <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
+            
+            <div id="stepTwoQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepTwoSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepTwoBtn" class="secondary">Save Progress</button>
+                    <button id="stepTwoWorkbooksBtn" class="secondary">Workbooks Home</button>
                 </div>
             </div>
         </div>
@@ -669,7 +691,7 @@
         {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
     ];
     
-    // NEW: Step 1 Workbook Questions (parsed from "Cocaine - Step One.docx")
+    // Step 1 Workbook Questions
     const WORKBOOK_STEP1_QUESTIONS = [
         { title: "Part 1: Powerlessness", isSection: true },
         "In your own words, what does powerless mean to you regarding cocaine and all other mind-altering substances?",
@@ -701,6 +723,40 @@
         "Do you truly believe, deep down, that you are powerless over cocaine and that your life has become unmanageable? Why is this total surrender the essential first step toward freedom?"
     ];
 
+    // NEW: Step 2 Workbook Questions (parsed from "Step_Two_Workbook.docx")
+    const WORKBOOK_STEP2_QUESTIONS = [
+        { title: "Part 1: Understanding Insanity", isSection: true },
+        "In your own words, what does “insanity” mean when it comes to addiction? (Think of the cycle of repeating the same destructive behavior while expecting different results.)",
+        "What specific behaviors or thought patterns in your addiction could be considered “insane”? (Examples: lying to yourself, believing you could control it next time, thinking one hit wouldn’t hurt.)",
+        "How did your thinking become distorted while using? (Did you justify, minimize, or deny consequences?)",
+        "Can you describe times when you made irrational or risky decisions because of your addiction?",
+        "How did you try to manage or control your use after things clearly became unmanageable? What were the results?",
+        "In what ways did your addiction separate you from reality, your loved ones, or your true self?",
+        "When you think about your life during active addiction, what evidence shows that your best thinking wasn’t enough to keep you safe or sober?",
+        { title: "Part 2: Coming to Believe", isSection: true },
+        "What does the phrase “came to believe” mean to you personally? Does it suggest a process or a sudden realization?",
+        "What are your current beliefs about a Power greater than yourself? (This can be God, nature, the universe, the fellowship, or even the collective strength of others in recovery.)",
+        "Have you ever experienced something greater than yourself helping you through a difficult time — even before recovery?",
+        "What are some moments in early recovery where you’ve seen evidence of something working in your life that isn’t just your own willpower?",
+        "How does the idea of surrendering control make you feel — fearful, hopeful, relieved, or resistant?",
+        "What people, places, or experiences have helped you begin to trust that change is possible?",
+        "How does seeing others in recovery influence your belief that you can also recover?",
+        { title: "Part 3: Restoration to Sanity", isSection: true },
+        "What does “sanity” look like to you? How would a sane and balanced life differ from your old patterns?",
+        "In what areas of your life do you feel restoration is already beginning?",
+        "How do you imagine a Power greater than yourself could help you heal your thinking and behavior?",
+        "What does spiritual growth or awakening mean to you at this stage of recovery?",
+        "What signs of hope have you experienced since beginning this journey?",
+        "What would it mean to truly trust the recovery process instead of trying to control it?",
+        "How would your life look if you allowed yourself to fully believe that recovery — and peace of mind — are possible for you?",
+        { title: "Part 4: Acceptance and Openness", isSection: true },
+        "What fears or doubts do you still have about turning your life over to a Power greater than yourself?",
+        "What is holding you back from fully believing that you can be restored to sanity?",
+        "What would you need to let go of to move forward in faith?",
+        "How can you stay open-minded as you continue to explore your own understanding of a Higher Power?",
+        "How do you plan to strengthen your spiritual connection moving into Step Three?",
+    ];
+
 
     let deck = [...cards]; // Full set of cards, initially available
     let currentJournalKey = '';
@@ -710,7 +766,8 @@
     const SOBER_DATE_KEY = 'soberDate';
     const TODO_KEY = 'addictsAgendaTodoList'; 
     const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
-    const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; // NEW key for Step 1 workbook
+    const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; 
+    const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; // NEW key for Step 2 workbook
 
     function getSavedEntries() {
         const entriesJson = localStorage.getItem(JOURNAL_KEY);
@@ -747,6 +804,24 @@
 
     function saveStepOneAnswers(answers) {
         localStorage.setItem(WORKBOOK_STEP1_KEY, JSON.stringify(answers));
+    }
+    
+    // NEW: Step Two Workbook Storage Functions
+    function getStepTwoAnswers() {
+        const answersJson = localStorage.getItem(WORKBOOK_STEP2_KEY);
+        const defaultAnswers = WORKBOOK_STEP2_QUESTIONS.filter(q => !q.isSection).map(q => "");
+        if (answersJson) {
+            const savedAnswers = JSON.parse(answersJson);
+            if (savedAnswers.length === defaultAnswers.length) {
+                return savedAnswers;
+            }
+            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
+        }
+        return defaultAnswers;
+    }
+
+    function saveStepTwoAnswers(answers) {
+        localStorage.setItem(WORKBOOK_STEP2_KEY, JSON.stringify(answers));
     }
 
 
@@ -1098,6 +1173,11 @@
         renderStepOneWorkbook();
     }
     
+    function showStepTwoView() {
+        displayAppView('stepTwoView');
+        renderStepTwoWorkbook();
+    }
+
     function toggleSection(headerElement) {
         const content = headerElement.nextElementSibling;
         const icon = headerElement.querySelector('.collapse-icon');
@@ -1107,18 +1187,17 @@
         headerElement.classList.toggle('collapsed');
     }
     
-    function renderStepOneWorkbook() {
-        const container = document.getElementById('stepOneQuestions');
+    function renderWorkbook(containerId, questions, getAnswersFn, saveStatusId) {
+        const container = document.getElementById(containerId);
         container.innerHTML = '';
-        const answers = getStepOneAnswers();
+        const answers = getAnswersFn();
         let answerIndex = 0; 
         
         let currentSectionContent = null;
         let isFirstSection = true;
         
-        WORKBOOK_STEP1_QUESTIONS.forEach((q, index) => {
+        questions.forEach((q, index) => {
             if (q.isSection) {
-                // If we finished a previous section, append its content container
                 if (currentSectionContent) {
                     container.appendChild(currentSectionContent);
                 }
@@ -1127,7 +1206,6 @@
                 const header = document.createElement('div');
                 header.classList.add('workbook-section-header');
                 
-                // Collapse the section by default, except the first one
                 if (!isFirstSection) {
                     header.classList.add('collapsed');
                 }
@@ -1156,7 +1234,7 @@
                 container.appendChild(header);
                 isFirstSection = false;
                 
-                return; // Stop processing and continue to next item (the questions)
+                return;
             }
             
             // If we are processing a question, append it to the current section content container
@@ -1185,30 +1263,44 @@
              container.appendChild(currentSectionContent);
         }
         
-        document.getElementById('stepOneSaveStatus').textContent = '';
+        document.getElementById(saveStatusId).textContent = '';
     }
 
-    function collectAndSaveStepOneAnswers() {
-        const textareas = document.querySelectorAll('#stepOneQuestions textarea');
-        let answers = getStepOneAnswers(); // Start with existing answers
+    function renderStepOneWorkbook() {
+        renderWorkbook('stepOneQuestions', WORKBOOK_STEP1_QUESTIONS, getStepOneAnswers, 'stepOneSaveStatus');
+    }
+    
+    function renderStepTwoWorkbook() {
+        renderWorkbook('stepTwoQuestions', WORKBOOK_STEP2_QUESTIONS, getStepTwoAnswers, 'stepTwoSaveStatus');
+    }
+
+    function collectAndSaveWorkbookAnswers(containerId, saveAnswersFn, saveStatusId) {
+        const textareas = document.querySelectorAll(`#${containerId} textarea`);
+        const answers = saveAnswersFn.name === 'saveStepOneAnswers' ? getStepOneAnswers() : getStepTwoAnswers();
         
         textareas.forEach(textarea => {
             const index = parseInt(textarea.getAttribute('data-question-index'));
-            // Ensure the index is valid before trying to set the value
             if (index >= 0 && index < answers.length) {
                 answers[index] = textarea.value;
             }
         });
 
-        saveStepOneAnswers(answers);
-        document.getElementById('stepOneSaveStatus').textContent = 'Progress Saved!';
+        saveAnswersFn(answers);
+        document.getElementById(saveStatusId).textContent = 'Progress Saved!';
         
-        // Clear status after 3 seconds
         setTimeout(() => {
-            document.getElementById('stepOneSaveStatus').textContent = '';
+            document.getElementById(saveStatusId).textContent = '';
         }, 3000);
     }
     
+    function collectAndSaveStepOneAnswers() {
+        collectAndSaveWorkbookAnswers('stepOneQuestions', saveStepOneAnswers, 'stepOneSaveStatus');
+    }
+    
+    function collectAndSaveStepTwoAnswers() {
+        collectAndSaveWorkbookAnswers('stepTwoQuestions', saveStepTwoAnswers, 'stepTwoSaveStatus');
+    }
+
     // --- Journal View Logic ---
     function showJournalEntryView(dateKey = null) {
         document.getElementById('journalEntryView').style.display = 'block';
@@ -1311,7 +1403,8 @@
         document.getElementById('todoView').style.display = 'none'; 
         document.getElementById('literatureView').style.display = 'none'; 
         document.getElementById('workbooksView').style.display = 'none'; 
-        document.getElementById('stepOneView').style.display = 'none'; // NEW
+        document.getElementById('stepOneView').style.display = 'none'; 
+        document.getElementById('stepTwoView').style.display = 'none'; // NEW
         document.getElementById(viewId).style.display = 'block';
     }
     
@@ -1372,37 +1465,52 @@
     document.getElementById('goToStep1Btn').addEventListener('click', ()=>{
       showStepOneView();
     });
+    
+    // 8. NEW: Go to Step 2 Workbook Button (from Workbooks Home)
+    document.getElementById('goToStep2Btn').addEventListener('click', ()=>{
+      showStepTwoView();
+    });
 
-    // 8. Card View: Next Card Button
+    // 9. Card View: Next Card Button
     document.getElementById('nextBtn').addEventListener('click', ()=>{
       drawAndDisplayCard();
     });
     
-    // 9. Card View: Home Button
+    // 10. Card View: Home Button
     document.getElementById('resetBtn').addEventListener('click', ()=>{
       deck = [...cards];
       displayAppView('homeScreen');
       updateStatus();
     });
     
-    // 10. NEW: Literature View Home Button
+    // 11. NEW: Literature View Home Button
     document.getElementById('literatureHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
 
-    // 11. NEW: Workbooks View Home Button
+    // 12. NEW: Workbooks View Home Button
     document.getElementById('workbooksHomeBtn').addEventListener('click', ()=>{
         displayAppView('homeScreen');
     });
     
-    // 12. NEW: Step 1 Workbook Home Button
+    // 13. NEW: Step 1 Workbook Home Button
     document.getElementById('stepOneWorkbooksBtn').addEventListener('click', ()=>{
         displayAppView('workbooksView');
     });
     
-    // 13. NEW: Step 1 Workbook Save Button
+    // 14. NEW: Step 2 Workbook Home Button
+    document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', ()=>{
+        displayAppView('workbooksView');
+    });
+    
+    // 15. NEW: Step 1 Workbook Save Button
     document.getElementById('saveStepOneBtn').addEventListener('click', ()=>{
         collectAndSaveStepOneAnswers();
+    });
+    
+    // 16. NEW: Step 2 Workbook Save Button
+    document.getElementById('saveStepTwoBtn').addEventListener('click', ()=>{
+        collectAndSaveStepTwoAnswers();
     });
     
     // --- Journal Listeners ---
