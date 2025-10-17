@@ -1605,6 +1605,8 @@
             }
 
             spinner.style.display = 'block';
+            quoteEl.textContent = "Loading reflection..."; // Show loading text
+            quoteEl.style.display = 'block';
 
             const userQuery = `Find the AA Daily Reflection for ${dateDisplay}. Provide only the central quote and the main reflection/meditation text. Format the response with the quote first, followed by a double newline, then the reading.`;
             const systemPrompt = "You are a helpful assistant that uses Google Search to find and format the AA Daily Reflection for a given date. Extract the content accurately.";
@@ -1616,7 +1618,7 @@
             };
 
             const apiUrl = GEMINI_API_URL + GEMINI_API_KEY;
-            let resultText = "Could not load reflection.";
+            let resultText = "Could not load reflection. Check connectivity or try a different date.";
 
             // Implement exponential backoff for robustness
             const maxRetries = 3;
@@ -1646,7 +1648,7 @@
                     attempt++;
                     console.error(`Attempt ${attempt} failed:`, error.message);
                     if (attempt >= maxRetries) {
-                        resultText = "Error fetching reflection after multiple retries. Check connection and API Key.";
+                        resultText = "Error fetching reflection after multiple retries. Check connectivity.";
                         break;
                     }
                     // Wait with exponential backoff (1s, 2s, 4s...)
@@ -1660,15 +1662,18 @@
             
             // Parse result (expecting quote \n\n reading)
             const parts = resultText.split('\n\n');
+            
             if (parts.length >= 2 && !resultText.includes("Error")) {
                 quoteEl.textContent = parts[0].trim().replace(/^['"]|['"]$/g, ''); // Remove surrounding quotes if present
                 readingEl.innerHTML = parts.slice(1).join('<br><br>').trim();
                 quoteEl.style.display = 'block';
                 readingEl.style.display = 'block';
             } else {
-                quoteEl.textContent = resultText.includes("Quote") ? "Error in formatting or content not found." : resultText;
-                readingEl.textContent = "";
+                // If parsing fails or an error was caught, display the error message.
+                quoteEl.textContent = "Error: " + resultText;
+                readingEl.textContent = "The reflection could not be loaded for this date.";
                 quoteEl.style.display = 'block';
+                readingEl.style.display = 'block';
             }
         }
     };
