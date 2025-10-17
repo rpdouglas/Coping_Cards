@@ -1,6 +1,5 @@
 import { AppData } from './data.js';
-// Import only necessary helpers from app.js; pass in dependencies otherwise
-import { ViewManager, DateUtils } from './app.js'; 
+import { DateUtils, ViewManager } from './global_events.js'; 
 import { 
     getSavedEntries, 
     saveEntry, 
