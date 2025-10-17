@@ -1,6 +1,9 @@
 import { AppData } from './data.js';
 import { Storage } from './storage.js';
 import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
+import { LiteratureLogic } from './literature.js'; 
+import { CardLogic } from './coping_cards.js'; 
+import { WorkbookLogic } from './workbooks.js';
 
 // ----------------------------------------------------------------------
 // Global Constants and State
@@ -74,50 +77,6 @@ export const ViewManager = {
     getDailyFact: () => {
         const factIndex = Math.floor(Math.random() * AppData.POP_FACTS.length);
         document.getElementById('dailyFactText').textContent = AppData.POP_FACTS[factIndex];
-    }
-};
-
-// --- Card Logic ---
-export const CardLogic = {
-    suitColor: (suit_key) => {
-        switch(suit_key){
-            case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
-            case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)';
-            case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)';
-            case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)';
-            default: return '#fff';
-        }
-    },
-    updateStatus: () => {
-        document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
-    },
-    renderCard: (card) => {
-        document.getElementById('cardIcon').textContent = card.icon;
-        document.getElementById('cardSuit').textContent = card.suit;
-        document.getElementById('cardText').textContent = card.text;
-        document.getElementById('cardArea').style.background = CardLogic.suitColor(card.suit_key);
-        CardLogic.updateStatus();
-    },
-    drawRandom: () => {
-        if(deck.length === 0) return null;
-        const idx = Math.floor(Math.random()*deck.length);
-        const card = deck.splice(idx,1)[0];
-        return card;
-    },
-    drawAndDisplayCard: () => {
-        const card = CardLogic.drawRandom();
-        if (!card) {
-            console.log('Deck empty — shuffle or reset.');
-            alert('Deck empty — please shuffle or return home.');
-            return;
-        }
-        CardLogic.renderCard(card);
-        ViewManager.displayAppView('cardView');
-    },
-    resetDeck: () => {
-        deck = [...AppData.cards];
-        CardLogic.updateStatus();
-        ViewManager.displayAppView('homeScreen');
     }
 };
 
@@ -270,150 +229,6 @@ export const TodoLogic = {
         if (updated) {
             Storage.saveTodoList(list);
         }
-    }
-};
-
-// --- Workbook Logic ---
-export const WorkbookLogic = {
-    showStepOneView: () => {
-        ViewManager.displayAppView('stepOneView');
-        WorkbookLogic.renderWorkbook('stepOneQuestions', AppData.WORKBOOK_STEP1_QUESTIONS, Storage.getStepOneAnswers, 'saveStepOneBtn', 'stepOneSaveStatus');
-    },
-    showStepTwoView: () => {
-        ViewManager.displayAppView('stepTwoView');
-        WorkbookLogic.renderWorkbook('stepTwoQuestions', AppData.WORKBOOK_STEP2_QUESTIONS, Storage.getStepTwoAnswers, 'saveStepTwoBtn', 'stepTwoSaveStatus');
-    },
-    showStepThreeView: () => {
-        ViewManager.displayAppView('stepThreeView');
-        WorkbookLogic.renderWorkbook('stepThreeQuestions', AppData.WORKBOOK_STEP3_QUESTIONS, Storage.getStepThreeAnswers, 'saveStepThreeBtn', 'stepThreeSaveStatus');
-    },
-    showStepFourView: () => { 
-        ViewManager.displayAppView('stepFourView');
-        WorkbookLogic.renderWorkbook('stepFourQuestions', AppData.WORKBOOK_STEP4_QUESTIONS, Storage.getStepFourAnswers, 'saveStepFourBtn', 'stepFourSaveStatus');
-    },
-    toggleSection: (headerElement) => {
-        const content = headerElement.nextElementSibling;
-        const icon = headerElement.querySelector('.collapse-icon');
-        content.classList.toggle('collapsed');
-        headerElement.classList.toggle('collapsed');
-    },
-    renderWorkbook: (containerId, questions, getAnswersFn, saveButtonId, saveStatusId) => {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        const answers = getAnswersFn(questions);
-        let answerIndex = 0; 
-        
-        let currentSectionContent = null;
-        let isFirstSection = true;
-        
-        questions.forEach((q) => {
-            if (q.isSection) {
-                if (currentSectionContent) {
-                    container.appendChild(currentSectionContent);
-                }
-                
-                const header = document.createElement('div');
-                header.classList.add('workbook-section-header');
-                
-                if (!isFirstSection) {
-                    header.classList.add('collapsed');
-                }
-                
-                const h3 = document.createElement('h3');
-                h3.textContent = q.title;
-                
-                const icon = document.createElement('span');
-                icon.classList.add('collapse-icon');
-                icon.textContent = '▼';
-                
-                header.appendChild(h3);
-                header.appendChild(icon);
-                
-                currentSectionContent = document.createElement('div');
-                currentSectionContent.classList.add('section-content');
-                if (!isFirstSection) {
-                    currentSectionContent.classList.add('collapsed');
-                }
-                
-                header.onclick = () => WorkbookLogic.toggleSection(header);
-                
-                container.appendChild(header);
-                isFirstSection = false;
-                
-                return;
-            }
-            
-            if (currentSectionContent) {
-                const div = document.createElement('div');
-                div.classList.add('workbook-question');
-
-                const h4 = document.createElement('h4');
-                h4.textContent = `${answerIndex + 1}. ${q}`;
-                
-                const textarea = document.createElement('textarea');
-                textarea.setAttribute('data-question-index', answerIndex);
-                textarea.value = answers[answerIndex] || ''; 
-                textarea.placeholder = 'Write your honest answer here...';
-
-                div.appendChild(h4);
-                div.appendChild(textarea);
-                currentSectionContent.appendChild(div);
-                
-                answerIndex++; 
-            }
-        });
-        
-        if (currentSectionContent) {
-             container.appendChild(currentSectionContent);
-        }
-        
-        document.getElementById(saveStatusId).textContent = '';
-        
-        // Re-bind save listener since content is dynamically generated
-        const saveBtn = document.getElementById(saveButtonId);
-        if (saveBtn) {
-            saveBtn.onclick = () => WorkbookLogic.collectAndSaveWorkbookAnswers(containerId, saveButtonId, saveStatusId);
-        }
-    },
-    collectAndSaveWorkbookAnswers: (containerId, saveButtonId, saveStatusId) => {
-        const textareas = document.querySelectorAll(`#${containerId} textarea`);
-        
-        let getAnswersFn, saveAnswersFn, questions;
-        if (containerId === 'stepOneQuestions') {
-            getAnswersFn = Storage.getStepOneAnswers;
-            saveAnswersFn = Storage.saveStepOneAnswers;
-            questions = AppData.WORKBOOK_STEP1_QUESTIONS;
-        } else if (containerId === 'stepTwoQuestions') {
-            getAnswersFn = Storage.getStepTwoAnswers;
-            saveAnswersFn = Storage.saveStepTwoAnswers;
-            questions = AppData.WORKBOOK_STEP2_QUESTIONS;
-        } else if (containerId === 'stepThreeQuestions') {
-            getAnswersFn = Storage.getStepThreeAnswers;
-            saveAnswersFn = Storage.saveStepThreeAnswers;
-            questions = AppData.WORKBOOK_STEP3_QUESTIONS;
-        } else if (containerId === 'stepFourQuestions') {
-            getAnswersFn = Storage.getStepFourAnswers;
-            saveAnswersFn = Storage.saveStepFourAnswers;
-            questions = AppData.WORKBOOK_STEP4_QUESTIONS;
-        } else {
-            return;
-        }
-        
-        let answers = getAnswersFn(questions);
-        
-        textareas.forEach(textarea => {
-            const index = parseInt(textarea.getAttribute('data-question-index'));
-            if (index >= 0 && index < answers.length) {
-                answers[index] = textarea.value;
-            }
-        });
-
-        saveAnswersFn(answers);
-        document.getElementById(saveStatusId).textContent = 'Progress Saved!';
-        
-        setTimeout(() => {
-            document.getElementById(saveStatusId).textContent = '';
-        }, 3000);
     }
 };
 
@@ -655,13 +470,11 @@ export const App = {
                 btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
             }
         });
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
+        
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
-        document.getElementById('goToLiteratureBtn').addEventListener('click', () => ViewManager.displayAppView('literatureView'));
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
+        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); // Using WorkbookLogic module
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
 
@@ -680,13 +493,12 @@ export const App = {
         document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
         document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
         document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         
-        // Workbook Save Buttons are bound dynamically in renderWorkbook
-        // Re-adding explicit save button bindings for non-dynamic elements for safety
+        // Workbook Save Bindings: Must be explicitly bound
         document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
@@ -738,5 +550,8 @@ export const App = {
             }
         });
         document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+
+        // Initialize Card Listeners, now imported from coping_cards.js
+        CardLogic.bindEventListeners();
     }
 };
