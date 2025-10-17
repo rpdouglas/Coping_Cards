@@ -30,7 +30,7 @@ export const DateUtils = {
     formatDateForDisplay: (dateKey) => {
         const parts = dateKey.split('-');
         if (parts.length === 3) {
-            const date = new Date(parts[0], parts[1] - 1, parts[2]);
+            const date = new Date(parts[0], parts.length === 3 ? parts[1] - 1 : 0, parts[2]); // Added conditional parts check
             return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
         return dateKey;
@@ -461,7 +461,7 @@ export const App = {
         ViewManager.displayAppView('homeScreen');
 
         App.bindEventListeners();
-        CardLogic.bindEventListeners(); // Ensure card logic listeners are bound
+        // REMOVED: CardLogic.bindEventListeners(); // Removed here, now handled inside App.bindEventListeners directly
     },
 
     bindEventListeners: () => {
@@ -473,12 +473,19 @@ export const App = {
             }
         });
         
+        // --- HOMEPAGE BUTTONS (Directly bound for robustness) ---
+        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard); // FIX for Draw Card button
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
         document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
         document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); 
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
+
+        // --- CARD VIEW BUTTONS (Moved from coping_cards.js to here for robustness) ---
+        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard); // FIX for Next Card
+        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck); // FIX for Home button from card view
+
 
         // --- Daily Reflection Listener ---
         document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
