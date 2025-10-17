@@ -1,6 +1,6 @@
 self.addEventListener('install', function(e) {
   e.waitUntil(
-    caches.open('coping-cards-v40').then(function(cache) {
+    caches.open('coping-cards-v50').then(function(cache) {
       return cache.addAll([
         './',
         './index.html',
