@@ -483,7 +483,7 @@
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.15</div>
+            <div id="appVersion">V0.16</div>
 
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
@@ -902,8 +902,8 @@
         });
     }
 
-    // --- Main App Initialization ---
-    // This function will be called by App.bootstrap (imported from global_events.js)
+
+    // The main binding function exposed by global_events.js is now called App.bindEventListeners
     const initAppBindings = () => {
         // Bind the general high-level events here (defined in global_events.js App.bindEventListeners)
         App.bindEventListeners(); 
@@ -914,7 +914,8 @@
         bindReflectionHandlers();
     };
 
-    // Attach the main binding function to the window, allowing the non-module script to access it
+    // Attach the bootstrap function to the window to be called by a non-module script later
+    window.AppBootstrap = App.bootstrap;
     window.AppInitBindings = initAppBindings;
 
     // Register Service Worker
@@ -933,18 +934,16 @@
   <!-- FIX: Final Non-Module Script to Guarantee Execution After DOM Load -->
   <script>
     // This script runs *after* all HTML is parsed and module loading is initiated.
-    // It calls the App.bootstrap() function exported by global_events.js.
+    // We explicitly wait for the DOMContentLoaded event to ensure all elements are available.
     document.addEventListener('DOMContentLoaded', () => {
-        // We ensure the module has loaded and exposed its bootstrap function before calling it.
-        // The App module automatically initializes UI components and calls bindEventListeners.
-        if (window.AppBootstrap) {
-            window.AppBootstrap();
+        // Check if the App module loaded successfully and exposed its binding function
+        if (window.AppInitBindings) {
+            window.AppInitBindings();
         } else {
-             // Fallback to directly call the internal binding function if AppBootstrap isn't exposed (for safety)
-             // This uses the explicit export from the script type="module" block above.
-             document.querySelector('script[type="module"]').onload = () => {
-                 if(window.AppBootstrap) window.AppBootstrap();
-             };
+             // Fallback for extreme cases where module loading is delayed/broken
+             // If AppInitBindings isn't immediately available, we rely on AppBootstrap to handle it, 
+             // but if that also fails, we log an error.
+             console.error("Critical Error: Modular application binding function not found.");
         }
     });
   </script>
