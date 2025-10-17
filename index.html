@@ -308,7 +308,6 @@
         font-weight: 700;
         color: #333;
         cursor: pointer;
-        transition: background-color 0.2s;
     }
     .workbook-section-header:hover {
         background-color: #e5e5e5;
@@ -416,7 +415,7 @@
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.2</div>
+            <div id="appVersion">V0.1</div>
 
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
@@ -777,129 +776,12 @@
     // Import all necessary data and module helpers
     import { AppData } from './data.js';
     import { Storage } from './storage.js';
+    import { DateUtils, ViewManager, deck, CardLogic, GEMINI_API_KEY, GEMINI_API_URL } from './global_events.js'; // NEW IMPORTS
     // Journal Logic Imports
     import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
     
-    // ----------------------------------------------------------------------
-    // Global Constants and State (minimal)
-    // ----------------------------------------------------------------------
-    let deck = [...AppData.cards];
-    const GEMINI_API_KEY = typeof __api_key !== 'undefined' ? __api_key : ""; 
-    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
 
-
-    // --- Date/Time Helpers ---
-    const DateUtils = {
-        getFormattedDate: (date) => {
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, '0');
-            const dd = String(date.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
-        },
-        formatDateForDisplayShort: (dateKey) => {
-            if (!dateKey) return '';
-            const date = new Date(dateKey);
-            return date.toLocaleDateString('en-US'); 
-        },
-        formatDateForDisplay: (dateKey) => {
-            const parts = dateKey.split('-');
-            if (parts.length === 3) {
-                const date = new Date(parts[0], parts[1] - 1, parts[2]);
-                return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            }
-            return dateKey;
-        },
-        calculateDuration: (soberDateStr) => {
-            if (!soberDateStr) return "Enter your date to start tracking!";
-            
-            const start = new Date(soberDateStr);
-            const now = new Date();
-            
-            if (start > now) return "Date must be in the past.";
-
-            const diffTime = Math.abs(now - start);
-            const MS_PER_DAY = 1000 * 60 * 60 * 24;
-            const days = Math.floor(diffTime / MS_PER_DAY);
-            
-            const years = Math.floor(days / 365.25);
-            const remainingDays = days % 365.25;
-            const months = Math.floor(remainingDays / 30.44);
-            
-            let output = "Sober for: ";
-            if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
-            if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
-            output += `${days} day${days !== 1 ? 's' : ''} total.`;
-            
-            return output;
-        }
-    };
-    
-    // --- View Management ---
-    const ViewManager = {
-        displayAppView: (viewId) => {
-            const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView', 'reflectionView', 'jftView'];
-            views.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.style.display = id === viewId ? 'block' : 'none';
-                }
-            });
-        },
-        updateHomeSobrietyDuration: () => {
-            const savedDate = Storage.loadSoberDate();
-            document.getElementById('homeSobrietyDuration').textContent = DateUtils.calculateDuration(savedDate);
-        },
-        getDailyFact: () => {
-            const factIndex = Math.floor(Math.random() * AppData.POP_FACTS.length);
-            document.getElementById('dailyFactText').textContent = AppData.POP_FACTS[factIndex];
-        }
-    };
-
-    // --- Card Logic ---
-    const CardLogic = {
-        suitColor: (suit_key) => {
-            switch(suit_key){
-                case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
-                case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)';
-                case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)';
-                case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)';
-                default: return '#fff';
-            }
-        },
-        updateStatus: () => {
-            document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
-        },
-        renderCard: (card) => {
-            document.getElementById('cardIcon').textContent = card.icon;
-            document.getElementById('cardSuit').textContent = card.suit;
-            document.getElementById('cardText').textContent = card.text;
-            document.getElementById('cardArea').style.background = CardLogic.suitColor(card.suit_key);
-            CardLogic.updateStatus();
-        },
-        drawRandom: () => {
-            if(deck.length === 0) return null;
-            const idx = Math.floor(Math.random()*deck.length);
-            const card = deck.splice(idx,1)[0];
-            return card;
-        },
-        drawAndDisplayCard: () => {
-            const card = CardLogic.drawRandom();
-            if (!card) {
-                console.log('Deck empty — shuffle or reset.');
-                alert('Deck empty — please shuffle or return home.');
-                return;
-            }
-            CardLogic.renderCard(card);
-            ViewManager.displayAppView('cardView');
-        },
-        resetDeck: () => {
-            deck = [...AppData.cards];
-            CardLogic.updateStatus();
-            ViewManager.displayAppView('homeScreen');
-        }
-    };
-
-    // --- To Do List Logic ---
+    // --- To Do List Logic (Contained Logic, Minimal Changes) ---
     const TodoLogic = {
         getRecurrenceLabel: (key) => {
             switch(key) {
