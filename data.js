@@ -1,66 +1,65 @@
-// --- Data Module (Refactored from index.html) ---
+// Static data moved to constants
 
-// Static Cards Data
-export const cards = [
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Stretch your entire body for 60 seconds.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Go for a walk, even if it is just a lap around the house.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Take 5 deep breaths, focusing only on the air moving in and out.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Clean an area of your home for 5 minutes (e.g., wash a few dishes).'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a quick chore like taking out the trash or folding one piece of laundry.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Drink a full glass of water or a soothing hot beverage.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Splash cold water on your face.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Change your location. Move to another room or step outside.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a 2-minute wall sit or plank.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Hold ice in your hand for a minute until the feeling subsides.'},
-    {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Eat a small, healthy snack, like a piece of fruit.'},
-    
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Use a grounding technique. Name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Write down three things you are grateful for right now.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Picture a favorite memory, like a vacation or a celebration. Focus on the details.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Say a positive affirmation out loud 10 times.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Watch a funny video or read a lighthearted article.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Try to recall the lyrics to your favorite song, word for word.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Look at a complex image or pattern and try to find a repeating element.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a quick Sudoku or word search puzzle.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Listen to a guided meditation for 5 minutes.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Imagine the feeling of the craving passing and how good it will feel.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Read a book or news article for 5 minutes.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a body scan. Focus on each part of your body from head to toe.'},
-    {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Mentally list all the cities or states you can remember.'},
+const cards = [
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Stretch your entire body for 60 seconds.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Go for a walk, even if it is just a lap around the house.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Take 5 deep breaths, focusing only on the air moving in and out.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Clean an area of your home for 5 minutes (e.g., wash a few dishes).'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a quick chore like taking out the trash or folding one piece of laundry.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Drink a full glass of water or a soothing hot beverage.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Splash cold water on your face.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Change your location. Move to another room or step outside.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a 2-minute wall sit or plank.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Hold ice in your hand for a minute until the feeling subsides.'},
+  {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Eat a small, healthy snack, like a piece of fruit.'},
+  
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Use a grounding technique. Name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Write down three things you are grateful for right now.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Picture a favorite memory, like a vacation or a celebration. Focus on the details.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Say a positive affirmation out loud 10 times.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Watch a funny video or read a lighthearted article.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Try to recall the lyrics to your favorite song, word for word.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Look at a complex image or pattern and try to find a repeating element.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a quick Sudoku or word search puzzle.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Listen to a guided meditation for 5 minutes.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Imagine the feeling of the craving passing and how good it will feel.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Read a book or news article for 5 minutes.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a body scan. Focus on each part of your body from head to toe.'},
+  {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Mentally list all the cities or states you can remember.'},
 
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Call or text a supportive friend or family member.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Check in with your sponsor or accountability partner.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Send a quick encouraging text to someone else in recovery.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write down a commitment you can share with a friend later.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read a few passages from an inspirational book or literature.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Go online to find a quick, virtual support meeting.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write a quick email or note to thank someone in your life.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Say your name and what you are feeling right now out loud to an empty room.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Think about who in your life you could help with something small today.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Reach out to a professional (therapist, doctor) for advice if the craving persists.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Talk to a pet or plant for 5 minutes.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Offer a genuine compliment to a stranger or person nearby.'},
-    {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read through old notes or cards from loved ones.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Call or text a supportive friend or family member.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Check in with your sponsor or accountability partner.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Send a quick encouraging text to someone else in recovery.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write down a commitment you can share with a friend later.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read a few passages from an inspirational book or literature.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Go online to find a quick, virtual support meeting.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write a quick email or note to thank someone in your life.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Say your name and what you are feeling right now out loud to an empty room.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Think about who in your life you could help with something small today.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Reach out to a professional (therapist, doctor) for advice if the craving persists.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Talk to a pet or plant for 5 minutes.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Offer a genuine compliment to a stranger or person nearby.'},
+  {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read through old notes or cards from loved ones.'},
 
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write a short story or poem about your current feeling.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Listen to a piece of classical music you’ve never heard before.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Draw or doodle for 5 minutes without judging the result.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Watch a short documentary or educational video on a random topic.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one like a harmonica) and try it.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up a recipe and plan to make it later this week.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Browse an online museum or art gallery.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Start a journal entry about your goals for the next month.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Learn a few words in a new language using an app or website.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write down the ABCs backwards.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up the definition of a word you don’t know and use it in a sentence.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Do something tactile, like playing with modeling clay or sand.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write a short story or poem about your current feeling.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Listen to a piece of classical music you’ve never heard before.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Draw or doodle for 5 minutes without judging the result.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Watch a short documentary or educational video on a random topic.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one like a harmonica) and try it.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up a recipe and plan to make it later this week.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Browse an online museum or art gallery.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Start a journal entry about your goals for the next month.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Learn a few words in a new language using an app or website.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write down the ABCs backwards.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up the definition of a word you don’t know and use it in a sentence.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Do something tactile, like playing with modeling clay or sand.'},
+  {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
 ];
 
-// Array of Pop Culture Recovery Facts
-export const POP_FACTS = [
+// Array of Pop Culture Recovery Facts (Expanded list including AA)
+const POP_FACTS = [
     "In his recovery, actor Robert Downey Jr. pursued martial arts and therapy, stating: 'Job one is get out of that cave.'",
     "Actress Jamie Lee Curtis became addicted to prescription painkillers after a cosmetic surgery but has been sober since 1999, crediting her sobriety with giving her everything of value in her life.",
     "Bradley Cooper, who has been sober since 2004, credits his sobriety with saving his career and allowing him to become an A-list actor.",
@@ -69,10 +68,35 @@ export const POP_FACTS = [
     "After battling substance abuse in her youth, Drew Barrymore went to rehab at age 13 and is now a successful actress and talk show host, openly sharing her journey.",
     "Actor Danny Trejo has been sober for over 50 years, having gotten clean well before his career took off.",
     "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
+    "AA was founded in 1935 in Akron, Ohio, by stockbroker Bill Wilson (Bill W.) and surgeon Dr. Robert Smith (Dr. Bob).",
+    "The 12 Traditions of AA govern how the fellowship functions, focusing on unity, anonymity, and non-professionalism.",
+    "The only requirement for AA membership is a desire to stop drinking.",
+    "The book 'Alcoholics Anonymous' (the Big Book) is the primary text of the fellowship, first published in 1939.",
+    "The 'Third Step Prayer' is one of the most widely used prayers in the program, focusing on turning one's will over to a Higher Power.",
+    "AA's principle of 'Anonymity' serves as a spiritual reminder that principles come before personalities.",
+    "The original title of the Big Book's first chapter, 'Bill's Story,' was 'The Doctor's Nightmare' in early drafts.",
+    "AA's slogan 'One Day at a Time' encourages members to focus on maintaining sobriety for the present day, not worrying about the past or future.",
+    "The famous 'Serenity Prayer' was not written by AA's founders but was adopted and popularized by the fellowship in the early 1940s.",
+    "AA's 'closed' meetings are for members only, while 'open' meetings welcome non-alcoholic observers.",
+    "The '12 Steps' are based on six steps derived from the Oxford Group, a spiritual movement influential in AA's founding.",
+    "AA is non-denominational and non-political, focusing entirely on recovery from alcoholism.",
+    "The Big Book states that the primary purpose of AA is to carry its message to the alcoholic who still suffers.",
+    "AA does not charge dues or fees; it is self-supporting through member contributions.",
+    "The first edition of the Big Book was printed on paper so thick the book swelled to 400 pages, inspiring the name 'Big Book'.",
+    "The longest-running continuously meeting AA group is believed to be in Cleveland, Ohio.",
+    "AA literature consistently reminds members that a Higher Power can be 'God as we understand Him,' emphasizing personal interpretation.",
+    "The term 'Sponsor' comes from early AA, referring to an experienced member guiding a newcomer through the Twelve Steps.",
+    "AA's founders initially thought professionals would lead the movement, but quickly learned peer support was the most effective method.",
+    "The 'Twelve Concepts for World Service' provide guidelines for the global service structure of AA, ensuring its survival and function.",
+    "AA's singleness of purpose means it doesn't take sides on outside issues like medical treatments or politics.",
+    "The three legacies of AA are Recovery (the Steps), Unity (the Traditions), and Service (the Concepts).",
+    "AA estimates that millions of people worldwide have achieved sobriety through its principles.",
+    "AA's structure operates as a democracy, where the groups are the ultimate authority.",
+    "The phrase 'Easy Does It' is one of the most cherished AA slogans, encouraging patience and self-compassion.",
 ];
 
 // Default Journal Prompts
-export const DEFAULT_PROMPTS = [
+const DEFAULT_PROMPTS = [
     {name: "None (Free Write)", template: ""},
     {name: "HALT Check-in", template: "Hungry: Am I hungry? What can I eat?\nAngry: What am I angry about? How can I safely express it?\nLonely: Who can I reach out to right now?\nTired: What rest do I need? How can I relax?"},
     {name: "Coping Card Reflection", template: "The card I drew today was: [Insert Card Text Here]\nHow did I use this coping skill?\nWhat was the result?\nWhat craving did I overcome today?"},
@@ -81,7 +105,7 @@ export const DEFAULT_PROMPTS = [
 ];
 
 // Step 1 Workbook Questions
-export const WORKBOOK_STEP1_QUESTIONS = [
+const WORKBOOK_STEP1_QUESTIONS = [
     { title: "Part 1: Powerlessness", isSection: true },
     "In your own words, what does powerless mean to you regarding cocaine and all other mind-altering substances?",
     "Describe your attempts to control your use. Did you ever set rules like only using on weekends, never using alone, or only buying a certain amount? What was the result?",
@@ -113,7 +137,7 @@ export const WORKBOOK_STEP1_QUESTIONS = [
 ];
 
 // Step 2 Workbook Questions
-export const WORKBOOK_STEP2_QUESTIONS = [
+const WORKBOOK_STEP2_QUESTIONS = [
     { title: "Part 1: Understanding Insanity", isSection: true },
     "In your own words, what does “insanity” mean when it comes to addiction? (Think of the cycle of repeating the same destructive behavior while expecting different results.)",
     "What specific behaviors or thought patterns in your addiction could be considered “insane”? (Examples: lying to yourself, believing you could control it next time, thinking one hit wouldn’t hurt.)",
@@ -147,7 +171,7 @@ export const WORKBOOK_STEP2_QUESTIONS = [
 ];
 
 // Step 3 Workbook Questions
-export const WORKBOOK_STEP3_QUESTIONS = [
+const WORKBOOK_STEP3_QUESTIONS = [
     { title: "Part 1: Understanding the Decision", isSection: true },
     "In your own words, what does “making a decision” mean in the context of recovery? (Is it a feeling, an action, a surrender, or all three?)",
     "How do you understand the difference between believing in a Higher Power (Step Two) and deciding to turn your will and life over (Step Three)?",
@@ -189,7 +213,7 @@ export const WORKBOOK_STEP3_QUESTIONS = [
 ];
 
 // Step 4 Workbook Questions
-export const WORKBOOK_STEP4_QUESTIONS = [
+const WORKBOOK_STEP4_QUESTIONS = [
     { title: "Part 1: Understanding Moral Inventory", isSection: true },
     "What does the phrase 'searching and fearless moral inventory' mean to you?",
     "Why do you think it’s important to examine your resentments, fears, and harms to others?",
@@ -222,6 +246,7 @@ export const WORKBOOK_STEP4_QUESTIONS = [
     "What would your life look like without these destructive patterns dominating your thoughts and actions?",
 ];
 
+// Exporting all data constants
 export const AppData = {
     cards,
     POP_FACTS,
