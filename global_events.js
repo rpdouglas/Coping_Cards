@@ -1,6 +1,8 @@
 import { AppData } from './data.js';
 import { Storage } from './storage.js';
 import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
+import { LiteratureLogic } from './literature.js'; // NEW: Literature module import
+import { CardLogic } from './coping_cards.js'; // Coping Cards module import
 
 // ----------------------------------------------------------------------
 // Global Constants and State
@@ -76,10 +78,6 @@ export const ViewManager = {
         document.getElementById('dailyFactText').textContent = AppData.POP_FACTS[factIndex];
     }
 };
-
-// --- Card Logic ---
-// Note: CardLogic itself is now imported from './coping_cards.js'
-import { CardLogic } from './coping_cards.js';
 
 // --- To Do List Logic (minimal functions exported) ---
 export const TodoLogic = {
@@ -615,11 +613,10 @@ export const App = {
                 btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
             }
         });
-        // Card event listeners are now in coping_cards.js, but we re-bind them in the main app module
         
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
-        document.getElementById('goToLiteratureBtn').addEventListener('click', () => ViewManager.displayAppView('literatureView'));
+        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); // Using LiteratureLogic module
         document.getElementById('goToWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
@@ -644,8 +641,7 @@ export const App = {
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
         
-        // Workbook Save Buttons are bound dynamically in renderWorkbook
-        // Re-adding explicit save button bindings for non-dynamic elements for safety
+        // Workbook Save Bindings: Must be explicitly bound
         document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
