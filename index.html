@@ -483,7 +483,7 @@
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.13</div>
+            <div id="appVersion">V0.6</div>
 
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
@@ -851,21 +851,16 @@
     // --- START: MODULAR JAVASCRIPT ---
     
     // Import all necessary data and module helpers
-    import { AppData } from './data.js';
-    import { Storage } from './storage.js';
     import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
     import { LiteratureLogic } from './literature.js'; 
-    import { CardLogic } from './coping_cards.js'; 
     import { WorkbookLogic } from './workbooks.js'; 
-    import { App, DateUtils, ViewManager, TodoLogic, ReflectionLogic } from './global_events.js'; 
+    import { App } from './global_events.js'; 
     
 
-    // --- Initialization and Event Binding ---
-    
     // Bind the journal handlers that were separated into the journal module
     const bindJournalHandlers = () => {
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('entryHomeBtn').addEventListener('click', () => App.ViewManager.displayAppView('homeScreen'));
+        document.getElementById('openListHomeBtn').addEventListener('click', () => App.ViewManager.displayAppView('homeScreen'));
         document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
         document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
         
@@ -898,12 +893,12 @@
     const bindReflectionHandlers = () => {
         // --- Daily Reflection Listener ---
         document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
+            App.ReflectionLogic.getDailyReflection(e.target.value);
         });
         
         // --- Just For Today Listener ---
         document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
+            App.ReflectionLogic.getJustForToday(e.target.value);
         });
     }
 
@@ -921,7 +916,8 @@
         bindReflectionHandlers();
     };
 
-    App.initializeApp();
+    // Attach the bootstrap function to the window to be called by a non-module script later
+    window.AppBootstrap = App.bootstrap;
 
     // Register Service Worker
     if('serviceWorker' in navigator) {
@@ -934,6 +930,20 @@
         });
     }
     // --- END: MODULAR JAVASCRIPT REFACTOR ---
+  </script>
+  
+  <!-- FIX: Final Non-Module Script to Guarantee Execution After DOM Load -->
+  <script>
+    // This non-module script runs *after* all HTML is parsed and module loading is initiated.
+    // It calls the App.bootstrap() function exposed by the module system.
+    if (window.AppBootstrap) {
+        window.AppBootstrap();
+    } else {
+        // Fallback for extreme cases where module loading is delayed/broken
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.AppBootstrap) window.AppBootstrap();
+        });
+    }
   </script>
 </body>
 </html>
