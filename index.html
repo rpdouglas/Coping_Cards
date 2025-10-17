@@ -8,7 +8,1659 @@
   <link rel="manifest" href="manifest.json">
   <style>
     :root {
+      --bg: #f7f7f9<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- UPDATED: Title for the application -->
+  <title>The Addicts Agenda</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
       --bg: #f7f7f9;
+      --card-radius: 16px;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --color-blue: #2b77f0;
+      --color-shadow: rgba(43, 119, 240, 0.3);
+      /* Define a neutral gray for secondary text/borders, now darker for contrast */
+      --color-gray: #444; 
+      --color-light-gray: #f0f0f0;
+    }
+    /* FIX: Remove height:100% from html,body and allow the body to scroll */
+    html,body{margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center; min-height: 100vh;}
+    .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
+    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; position: relative; /* Added for cog positioning */ }
+    h1{margin:0;font-size:28px}
+    p.sub{color:#556;opacity:0.8;margin-top:8px}
+
+    /* NEW: Version Number Positioning */
+    #appVersion {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 14px;
+        color: #888;
+        font-weight: 500;
+    }
+
+    /* NEW: Settings Cog Positioning */
+    .settings-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
+    button.settings-cog {
+        font-size: 24px;
+        color: var(--color-gray); /* Dark gray color */
+        padding: 5px;
+        transition: transform 0.3s;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+    button.settings-cog:hover {
+        transform: rotate(30deg);
+    }
+    .settings-group h3 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+        font-size: 1.2em;
+        color: #333;
+        text-align: left;
+    }
+
+    /* Primary Blue Button Style (Used for Cards, Journal, and To Do List) */
+    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s; text-align: center;} /* Default centered text */
+    button.primary:hover{background:#2361c4}
+    
+    /* WORKBOOKS PAGE BUTTON FIX: Align text left only for workbook buttons */
+    #workbooksView button.primary {
+        text-align: left;
+        padding-left: 20px;
+    }
+
+    /* Secondary/Action Buttons (Default) */
+    button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
+    
+    /* UPDATED: Secondary style for next/home buttons with high contrast */
+    button.secondary {
+        /* Set background to white */
+        background: #ffffff; 
+        /* Set text color to a dark gray for high contrast */
+        color: var(--color-gray); 
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s;
+        /* Give it a subtle shadow to lift it off the card background */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        border: 1px solid #d0d0d0;
+    }
+    button.secondary:hover {
+        background: #f5f5f5;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ADDED FOR ACCESSIBILITY */
+    button:focus-visible {
+      outline: 2px solid var(--color-blue);
+      outline-offset: 2px;
+    }
+    input[type="date"], input[type="text"], select {
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-family: var(--font-family);
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    select {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    /* Fact Box Styling */
+    .fact-box {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f0f7ff;
+        border: 1px solid #d0e4ff;
+        border-radius: 12px;
+        text-align: center;
+    }
+    .fact-box h2 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--color-blue);
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    .fact-box p {
+        font-size: 16px;
+        color: #444;
+        margin: 0;
+        font-style: italic;
+    }
+    
+    /* Sobriety Duration on Home Screen */
+    #homeSobrietyDuration {
+        margin: 15px 0 0 0;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #555;
+    }
+
+    /* Card View Styles */
+    .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; transition: background 0.5s ease;}
+    #cardIcon{font-size:80px;line-height:1;margin-bottom:12px; color: #fff;}
+    #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#fff}
+    #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#fff}
+    .actions button{margin:0 10px}
+    .status-text{font-size:14px;color:#777;margin-top:10px}
+
+    /* Shared Content Styles */
+    .content-card {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(32,40,60,0.08);
+        /* FIX: Allow content cards to grow vertically without height constraints */
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .content-card h2 {
+        font-size: 24px;
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+    }
+    textarea {
+        width: 100%;
+        height: 300px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-family: var(--font-family);
+        font-size: 16px;
+        resize: vertical;
+        box-sizing: border-box;
+        margin-top: 15px;
+    }
+    .actions-row {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .list-view-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .list-view-actions button {
+        margin: 0;
+    }
+    .prompt-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    /* To Do List Specific Styles */
+    .todo-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px; /* Reduced margin */
+        flex-wrap: wrap;
+    }
+    .todo-input-group input[type="text"] {
+        flex-grow: 1;
+        min-width: 150px;
+    }
+    /* NEW: Styling for recurrence and date inputs in the task form */
+    .todo-input-group input[type="date"], .todo-input-group select {
+        width: auto;
+        flex-grow: 0;
+        min-width: 100px;
+    }
+    .todo-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 0;
+    }
+    .todo-list li {
+        display: flex;
+        flex-direction: column; /* Stack details vertically */
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+    }
+    .todo-list li:last-child {
+        border-bottom: none;
+    }
+    .todo-main-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .todo-text {
+        flex-grow: 1;
+        cursor: pointer;
+        padding: 0 5px;
+        font-weight: 500;
+    }
+    .todo-details {
+        font-size: 0.9em;
+        color: #777;
+        margin-top: 5px;
+    }
+    .todo-completed {
+        text-decoration: line-through;
+        color: #888;
+    }
+    /* Prompt Manager Styles */
+    .prompt-list-manager li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+    }
+    /* Workbook Styles */
+    .workbook-question {
+        margin-bottom: 30px;
+        border-left: 3px solid var(--color-blue);
+        padding-left: 15px;
+    }
+    .workbook-question h4 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #333;
+    }
+    .workbook-question textarea {
+        height: 150px;
+        margin-top: 0;
+    }
+    
+    /* NEW: Collapsible styles for Workbook */
+    .workbook-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        margin: 20px -24px 0 -24px; /* Extend full width of content-card */
+        background-color: var(--color-light-gray);
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .workbook-section-header:hover {
+        background-color: #e5e5e5;
+    }
+    .workbook-section-header h3 {
+        margin: 0;
+        font-size: 1em; /* Use 1em since parent is 1.2em */
+    }
+    .collapse-icon {
+        font-size: 1.5em;
+        transition: transform 0.3s;
+    }
+    .collapsed .collapse-icon {
+        transform: rotate(-90deg);
+    }
+    .section-content {
+        max-height: 2000px; /* large enough for content */
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    .section-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* Literature Styles */
+    .literature-chapter {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+    .literature-chapter h3 {
+        color: var(--color-blue);
+        border-bottom: 2px solid var(--color-blue);
+        padding-bottom: 5px;
+        margin-top: 0;
+        font-size: 1.4em;
+    }
+    .literature-chapter p {
+        text-align: justify;
+        line-height: 1.6;
+        color: #555;
+        margin-top: 15px;
+    }
+    .literature-link {
+        display: block;
+        margin-top: 30px;
+        text-align: center;
+        font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- 1. HOME SCREEN -->
+    <div id="homeScreen" style="display:block;">
+        <div class="hero">
+            <!-- NEW: App Version Number -->
+            <div id="appVersion">V0.1</div>
+
+            <!-- NEW: Settings Cog -->
+            <div class="settings-container">
+                <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
+            </div>
+            
+            <h1>The Addicts Agenda</h1>
+            <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
+            
+            <!-- NEW: Sobriety Duration Display -->
+            <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
+            
+            <div class="fact-box">
+                <h2>Recovery Fact of the Day</h2>
+                <p id="dailyFactText">Loading daily inspiration...</p>
+            </div>
+
+            <!-- Button 1: Draw Coping Cards (Text Changed) -->
+            <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
+
+            <!-- Button 2: Start Journaling (Style Changed to Primary) -->
+            <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
+            
+            <!-- Button 3: To Do List (NEW) -->
+            <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
+            
+            <!-- NEW Button 4: Recovery Literature -->
+            <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
+
+            <!-- NEW Button 5: Recovery Workbooks -->
+            <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
+        </div>
+    </div>
+    
+    <!-- 2. CARD INTRO SCREEN (Unused) -->
+    <div id="cardIntro" style="display:none;">
+      <div class="hero">
+        <h1>52 Coping Cards</h1>
+        <p class="sub">Need a quick strategy to manage a craving? Draw a card.</p>
+        <button id="drawBtn" class="primary">Draw a Card</button>
+      </div>
+    </div>
+    
+    <!-- 3. CARD VIEW SCREEN -->
+    <div id="cardView" style="display:none;">
+      <div id="cardArea" class="card-area">
+        <div>
+          <span id="cardIcon"></span>
+          <div id="cardSuit"></div>
+        </div>
+        <p id="cardText"></p>
+        <div class="actions">
+          <button id="nextBtn" class="secondary">Next Card</button>
+          <button id="resetBtn" class="secondary">Home</button>
+        </div>
+        <div id="statusText" class="status-text"></div>
+      </div>
+    </div>
+
+    <!-- 4. JOURNAL VIEW SCREEN -->
+    <div id="journalView" style="display:none;">
+        <div class="content-card">
+            
+            <!-- Journal List View (initially hidden) -->
+            <div id="journalList" style="display:none;">
+                <h2>Journal Entries</h2>
+                <div class="list-view-actions">
+                    <button id="openListHomeBtn" class="secondary">Home</button>
+                    <button id="newEntryBtn" class="secondary">Write Today's Entry</button>
+                </div>
+                <ul id="entryList" class="journal-entry-list">
+                    <li>No entries saved yet.</li>
+                </ul>
+            </div>
+
+            <!-- Journal Prompt Manager (NEW, initially hidden) -->
+            <div id="promptManagerView" style="display:none;">
+                <h2>Manage Custom Prompts</h2>
+                <div class="prompt-row">
+                    <input type="text" id="customPromptInput" placeholder="Enter new prompt text (e.g., What did I learn today?)" style="flex-grow: 1;">
+                    <button id="addCustomPromptBtn" class="secondary">Add</button>
+                </div>
+                <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
+                <ul id="customPromptList" class="journal-entry-list prompt-list-manager">
+                    <!-- Custom Prompts will be rendered here -->
+                </ul>
+                <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
+                    <button id="backToEntryBtn" class="secondary">Back to Journal</button>
+                </div>
+            </div>
+
+            <!-- Journal Entry View (today's entry) -->
+            <div id="journalEntryView">
+                <h2>Today's Reflection</h2>
+                <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <label for="entryDate">Date:</label>
+                    <input type="date" id="entryDate">
+                </div>
+                
+                <div class="prompt-row" style="margin-top: 15px;">
+                    <select id="promptSelect">
+                        <!-- Prompts loaded here -->
+                    </select>
+                    <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
+                </div>
+
+                <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
+                
+                <div class="actions-row">
+                    <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
+                    <div class="list-view-actions">
+                        <button id="saveJournalBtn" class="secondary">Save Entry</button>
+                        <button id="entryHomeBtn" class="secondary">Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. SETTINGS VIEW SCREEN -->
+    <div id="settingsView" style="display:none;">
+        <div class="content-card">
+            <h2>App Settings</h2>
+            <div class="settings-group">
+                <p class="sub" style="text-align: center; margin-bottom: 20px;">Track your journey.</p>
+                <h3>Sober Date Tracking</h3>
+                <label for="soberDateInput" style="display: block; margin-bottom: 8px; font-weight: 600;">Your Sober Date:</label>
+                <input type="date" id="soberDateInput" style="width: 100%; margin-bottom: 20px;">
+                <p id="sobrietyDuration" style="font-size: 1.1em; font-weight: bold; text-align: center; color: var(--color-blue); min-height: 20px;"></p>
+            </div>
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
+                <button id="saveSettingsBtn" class="secondary">Save Date</button>
+                <button id="settingsHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 6. NEW TO DO LIST VIEW SCREEN -->
+    <div id="todoView" style="display:none;">
+        <div class="content-card">
+            <h2>My To Do List</h2>
+            <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
+            
+            <!-- NEW: Task Input Form with Date and Recurrence -->
+            <div class="todo-input-group">
+                <input type="text" id="todoInput" placeholder="Task description">
+                <input type="date" id="todoDateInput">
+                <select id="todoRecurrenceSelect">
+                    <option value="none">No Repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Every 2 Weeks</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+                <button id="addTodoBtn" class="secondary">Add Task</button>
+            </div>
+            
+            <ul id="todoList" class="todo-list">
+                <!-- To Do Items will be rendered here -->
+            </ul>
+            
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
+                <button id="todoHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. NEW RECOVERY LITERATURE VIEW SCREEN -->
+    <div id="literatureView" style="display:none;">
+        <div class="content-card">
+            <h2>Recovery Literature: Big Book Excerpts</h2>
+            <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
+            
+            <div id="literatureContent">
+                <!-- Chapter 1: Bill's Story -->
+                <div class="literature-chapter">
+                    <h3>Chapter 1: Bill's Story</h3>
+                    <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
+                </div>
+
+                <!-- Chapter 2: There is a Solution -->
+                <div class="literature-chapter">
+                    <h3>Chapter 2: There is a Solution</h3>
+                    <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
+                </div>
+            </div>
+
+            <p class="literature-link">
+                For the complete text, download the 
+                <a href="https://aa-netherlands.org/for-members/big-book-online/" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online (PDF)</a>.
+            </p>
+
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
+                <button id="literatureHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. NEW RECOVERY WORKBOOKS VIEW SCREEN -->
+    <div id="workbooksView" style="display:none;">
+        <div class="content-card">
+            <h2>Recovery Workbooks</h2>
+            <p class="sub" style="text-align: center;">Tools and step work resources.</p>
+            <!-- NEW: Button to Step 1 Workbook -->
+            <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
+            <!-- NEW: Button to Step 2 Workbook -->
+            <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
+            <!-- NEW: Button to Step 3 Workbook -->
+            <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
+            <!-- NEW: Button to Step 4 Workbook -->
+            <button id="goToStep4Btn" class="primary" style="margin-top: 15px;">Step 4: Moral Inventory</button>
+            <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
+                <button id="workbooksHomeBtn" class="secondary">Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 9. NEW STEP ONE WORKBOOK VIEW SCREEN -->
+    <div id="stepOneView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 1: Admitted Powerlessness</h2>
+            <p class="sub" style="text-align: center;">"We admitted we were powerless over cocaine and all other mind-altering substances—that our lives had become unmanageable."</p>
+            
+            <div id="stepOneQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepOneSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepOneBtn" class="secondary">Save Progress</button>
+                    <button id="stepOneWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. NEW STEP TWO WORKBOOK VIEW SCREEN -->
+    <div id="stepTwoView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 2: Coming to Believe</h2>
+            <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
+            
+            <div id="stepTwoQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepTwoSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepTwoBtn" class="secondary">Save Progress</button>
+                    <button id="stepTwoWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 11. NEW STEP THREE WORKBOOK VIEW SCREEN -->
+    <div id="stepThreeView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 3: Turning It Over</h2>
+            <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
+            
+            <div id="stepThreeQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepThreeSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepThreeBtn" class="secondary">Save Progress</button>
+                    <button id="stepThreeWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 12. NEW STEP FOUR WORKBOOK VIEW SCREEN -->
+    <div id="stepFourView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 4: Moral Inventory</h2>
+            <p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p>
+            
+            <div id="stepFourQuestions">
+                <!-- Questions and answers will be dynamically loaded here -->
+            </div>
+            
+            <div class="actions-row">
+                <p id="stepFourSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepFourBtn" class="secondary">Save Progress</button>
+                    <button id="stepFourWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  </div>
+  
+  <script>
+    // --- START: MODULAR JAVASCRIPT REFACTOR ---
+
+    // ----------------------------------------------------------------------
+    // 1. DATA MODULE (internal replacement for data.js)
+    // ----------------------------------------------------------------------
+    
+    // Static data moved to constants
+    const cards = [
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Stretch your entire body for 60 seconds.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Go for a walk, even if it is just a lap around the house.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Take 5 deep breaths, focusing only on the air moving in and out.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Clean an area of your home for 5 minutes (e.g., wash a few dishes).'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a quick chore like taking out the trash or folding one piece of laundry.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Drink a full glass of water or a soothing hot beverage.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Splash cold water on your face.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Change your location. Move to another room or step outside.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do a 2-minute wall sit or plank.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Hold ice in your hand for a minute until the feeling subsides.'},
+      {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Eat a small, healthy snack, like a piece of fruit.'},
+      
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Use a grounding technique. Name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Write down three things you are grateful for right now.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Picture a favorite memory, like a vacation or a celebration. Focus on the details.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Say a positive affirmation out loud 10 times.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Watch a funny video or read a lighthearted article.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Try to recall the lyrics to your favorite song, word for word.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Look at a complex image or pattern and try to find a repeating element.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a quick Sudoku or word search puzzle.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Listen to a guided meditation for 5 minutes.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Imagine the feeling of the craving passing and how good it will feel.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Read a book or news article for 5 minutes.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Do a body scan. Focus on each part of your body from head to toe.'},
+      {suit: 'Mind & Focus', suit_key: 'green', icon: '🧠', text: 'Mentally list all the cities or states you can remember.'},
+
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Call or text a supportive friend or family member.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Check in with your sponsor or accountability partner.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Send a quick encouraging text to someone else in recovery.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write down a commitment you can share with a friend later.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read a few passages from an inspirational book or literature.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Go online to find a quick, virtual support meeting.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Write a quick email or note to thank someone in your life.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Say your name and what you are feeling right now out loud to an empty room.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Think about who in your life you could help with something small today.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Reach out to a professional (therapist, doctor) for advice if the craving persists.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Talk to a pet or plant for 5 minutes.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Offer a genuine compliment to a stranger or person nearby.'},
+      {suit: 'Connection & Support', suit_key: 'orange', icon: '💬', text: 'Read through old notes or cards from loved ones.'},
+
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write a short story or poem about your current feeling.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Listen to a piece of classical music you’ve never heard before.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Draw or doodle for 5 minutes without judging the result.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Watch a short documentary or educational video on a random topic.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one like a harmonica) and try it.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up a recipe and plan to make it later this week.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Browse an online museum or art gallery.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Start a journal entry about your goals for the next month.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Learn a few words in a new language using an app or website.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Write down the ABCs backwards.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up the definition of a word you don’t know and use it in a sentence.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Do something tactile, like playing with modeling clay or sand.'},
+      {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
+    ];
+
+    // Array of Pop Culture Recovery Facts
+    const POP_FACTS = [
+        "In his recovery, actor Robert Downey Jr. pursued martial arts and therapy, stating: 'Job one is get out of that cave.'",
+        "Actress Jamie Lee Curtis became addicted to prescription painkillers after a cosmetic surgery but has been sober since 1999, crediting her sobriety with giving her everything of value in her life.",
+        "Bradley Cooper, who has been sober since 2004, credits his sobriety with saving his career and allowing him to become an A-list actor.",
+        "Musician Elton John, who entered recovery in 1990, established the Elton John AIDS Foundation two years later, using his energy to help others.",
+        "Actor Daniel Radcliffe sought sobriety in 2010 to cope with anxiety and stress after the Harry Potter series wrapped up, finding greater peace without alcohol.",
+        "After battling substance abuse in her youth, Drew Barrymore went to rehab at age 13 and is now a successful actress and talk show host, openly sharing her journey.",
+        "Actor Danny Trejo has been sober for over 50 years, having gotten clean well before his career took off.",
+        "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
+    ];
+    
+    // Default Journal Prompts
+    const DEFAULT_PROMPTS = [
+        {name: "None (Free Write)", template: ""},
+        {name: "HALT Check-in", template: "Hungry: Am I hungry? What can I eat?\nAngry: What am I angry about? How can I safely express it?\nLonely: Who can I reach out to right now?\nTired: What rest do I need? How can I relax?"},
+        {name: "Coping Card Reflection", template: "The card I drew today was: [Insert Card Text Here]\nHow did I use this coping skill?\nWhat was the result?\nWhat craving did I overcome today?"},
+        {name: "Today's Gratitude", template: "I am grateful for 3 big things today:\n1.\n2.\n3.\nI am grateful for 3 small things today:\n1.\n2.\n3."},
+        {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
+    ];
+    
+    // Step 1 Workbook Questions
+    const WORKBOOK_STEP1_QUESTIONS = [
+        { title: "Part 1: Powerlessness", isSection: true },
+        "In your own words, what does powerless mean to you regarding cocaine and all other mind-altering substances?",
+        "Describe your attempts to control your use. Did you ever set rules like only using on weekends, never using alone, or only buying a certain amount? What was the result?",
+        "Once you start using, can you reliably control the amount you'll take or how long the run will last? Share examples of times you used much more than you planned.",
+        "Have you ever made sincere promises to yourself or others that you would stop, only to use again? How did breaking those promises make you feel?",
+        "How much of your daily thinking was obsessed with cocaine? (e.g., planning how to get it, finding the money, hiding your use, and recovering from the crash).",
+        "Did you ever continue to use even when you knew it would lead to negative consequences with your job, family, or health?",
+        "Have you done things while high or seeking drugs that went against your core values and filled you with shame or regret afterward?",
+        "Describe the physical craving you've experienced for cocaine. What did it feel like when the obsession to use hit you?",
+        "How did your personality change when you were using? Did you become paranoid, irritable, arrogant, or withdrawn?",
+        "Why haven't willpower and self-knowledge been enough to keep you from using?",
+        { title: "Part 2: Unmanageability", isSection: true },
+        "What does unmanageable mean in the context of your life? List five specific examples of how your life became unmanageable.",
+        "How has your drug use damaged your relationships with the people who care about you? Have dishonesty and unreliability become normal?",
+        "In what ways did your use affect your job or school performance? Have you lost a job, been disciplined, or dropped out because of it?",
+        "Be brutally honest about the financial cost of your addiction. How much money has it consumed? Have you gone into debt, sold possessions, or stolen to support your habit?",
+        "How has your use impacted your physical health? (Consider the crash, nosebleeds, weight loss, heart palpitations, lack of sleep, or other serious health issues).",
+        "What has been the effect of your use on your mental and emotional health? (Describe feelings of paranoia, anxiety, severe depression, hopelessness, or fear).",
+        "Have you neglected important responsibilities? (e.g., personal hygiene, paying bills, caring for your home or children).",
+        "Has your addiction ever put you or others in dangerous situations? (e.g., driving high, associating with dangerous people, unsafe sex).",
+        "Did you start isolating yourself or avoiding people and situations where you couldn't be high?",
+        "How has your addiction impacted your spiritual life? Do you feel a sense of emptiness or disconnection from your own moral compass?",
+        { title: "Part 3: Acceptance and Surrender", isSection: true },
+        "What doubts or reservations do you still have about admitting you are an addict? What are you afraid of losing?",
+        "What have been the consequences of denying the severity of your problem?",
+        "Looking back, can you identify when your use crossed the line from a \"party\" to a destructive obsession?",
+        "If nothing changes, what will your life look like in one year? In five years?",
+        "Do you truly believe, deep down, that you are powerless over cocaine and that your life has become unmanageable? Why is this total surrender the essential first step toward freedom?"
+    ];
+
+    // Step 2 Workbook Questions
+    const WORKBOOK_STEP2_QUESTIONS = [
+        { title: "Part 1: Understanding Insanity", isSection: true },
+        "In your own words, what does “insanity” mean when it comes to addiction? (Think of the cycle of repeating the same destructive behavior while expecting different results.)",
+        "What specific behaviors or thought patterns in your addiction could be considered “insane”? (Examples: lying to yourself, believing you could control it next time, thinking one hit wouldn’t hurt.)",
+        "How did your thinking become distorted while using? (Did you justify, minimize, or deny consequences?)",
+        "Can you describe times when you made irrational or risky decisions because of your addiction?",
+        "How did you try to manage or control your use after things clearly became unmanageable? What were the results?",
+        "In what ways did your addiction separate you from reality, your loved ones, or your true self?",
+        "When you think about your life during active addiction, what evidence shows that your best thinking wasn’t enough to keep you safe or sober?",
+        { title: "Part 2: Coming to Believe", isSection: true },
+        "What does the phrase “came to believe” mean to you personally? Does it suggest a process or a sudden realization?",
+        "What are your current beliefs about a Power greater than yourself? (This can be God, nature, the universe, the fellowship, or even the collective strength of others in recovery.)",
+        "Have you ever experienced something greater than yourself helping you through a difficult time — even before recovery?",
+        "What are some moments in early recovery where you’ve seen evidence of something working in your life that isn’t just your own willpower?",
+        "How does the idea of surrendering control make you feel — fearful, hopeful, relieved, or resistant?",
+        "What people, places, or experiences have helped you begin to trust that change is possible?",
+        "How does seeing others in recovery influence your belief that you can also recover?",
+        { title: "Part 3: Restoration to Sanity", isSection: true },
+        "What does “sanity” look like to you? How would a sane and balanced life differ from your old patterns?",
+        "In what areas of your life do you feel restoration is already beginning?",
+        "How do you imagine a Power greater than yourself could help you heal your thinking and behavior?",
+        "What does spiritual growth or awakening mean to you at this stage of recovery?",
+        "What signs of hope have you experienced since beginning this journey?",
+        "What would it mean to truly trust the recovery process instead of trying to control it?",
+        "How would your life look if you allowed yourself to fully believe that recovery — and peace of mind — are possible for you?",
+        { title: "Part 4: Acceptance and Openness", isSection: true },
+        "What fears or doubts do you still have about turning your life over to a Power greater than yourself?",
+        "What is holding you back from fully believing that you can be restored to sanity?",
+        "What would you need to let go of to move forward in faith?",
+        "How can you stay open-minded as you continue to explore your own understanding of a Higher Power?",
+        "How do you plan to strengthen your spiritual connection moving into Step Three?",
+    ];
+    
+    // Step 3 Workbook Questions
+    const WORKBOOK_STEP3_QUESTIONS = [
+        { title: "Part 1: Understanding the Decision", isSection: true },
+        "In your own words, what does “making a decision” mean in the context of recovery? (Is it a feeling, an action, a surrender, or all three?)",
+        "How do you understand the difference between believing in a Higher Power (Step Two) and deciding to turn your will and life over (Step Three)?",
+        "What fears or reservations do you have about giving up control of your will and life?",
+        "What does “your will” mean to you? How have self-will, pride, or ego influenced your past decisions?",
+        "What has been the result when you tried to control everything yourself?",
+        "In what areas of your life do you still struggle to let go and trust a Power greater than yourself?",
+        "What might your life look like if you truly surrendered those areas to spiritual care and guidance?",
+        { title: "Part 2: Turning It Over", isSection: true },
+        "What does “turning your will and your life over” look like in practical terms for you?",
+        "How can you begin to rely on a Higher Power instead of your own impulses and fears?",
+        "Have you experienced moments when you felt genuine guidance, peace, or strength beyond yourself? Describe them.",
+        "What actions or daily practices can help you maintain this connection (e.g., prayer, meditation, service, honesty)?",
+        "What would it take for you to fully trust that this Power wants what’s best for you?",
+        "How does humility play a role in Step Three?",
+        "What does it mean to you to live “in God’s care” rather than under your own direction?",
+        { title: "Part 3: Willingness and Action", isSection: true },
+        "How do you know when you are being guided by self-will instead of spiritual will?",
+        "What are some signs that you are resisting guidance or trying to take back control?",
+        "How do you feel when you finally let go of something you’ve been clinging to?",
+        "What actions can you take today to show your willingness to live according to spiritual principles rather than your old habits?",
+        "How do prayer and meditation (or quiet reflection) help you align your will with your Higher Power’s will?",
+        "How can you remind yourself each day that surrender is not weakness, but strength?",
+        "How might turning your will and life over improve your relationships with others?",
+        { title: "Part 4: Faith and Trust", isSection: true },
+        "What does faith mean to you — and how has it changed since entering recovery?",
+        "What does “trusting the process” look like in your daily life?",
+        "How can you show gratitude for the guidance and care you’re beginning to experience?",
+        "What would it feel like to live with complete trust in your Higher Power?",
+        "How do you handle doubt or fear when you feel disconnected from that Power?",
+        "Who or what helps you stay accountable to your decision to live spiritually?",
+        "What is one situation right now that you can practice turning over — fully — to your Higher Power?",
+        { title: "Part 5: Commitment and Renewal", isSection: true },
+        "Have you said or written your own version of the Step Three prayer? What does it mean to you personally?",
+        "How can you demonstrate your decision to turn your will and life over in your everyday choices?",
+        "What kind of person do you believe your Higher Power is helping you become?",
+        "How do you want your recovery to reflect your growing faith and surrender?",
+        "How will you keep renewing this decision — one day at a time?",
+    ];
+    
+    // NEW: Step 4 Workbook Questions (parsed from "Step_Four_Workbook.docx")
+    const WORKBOOK_STEP4_QUESTIONS = [
+        { title: "Part 1: Understanding Moral Inventory", isSection: true },
+        "What does the phrase 'searching and fearless moral inventory' mean to you?",
+        "Why do you think it’s important to examine your resentments, fears, and harms to others?",
+        "What do you hope to gain from doing this inventory honestly?",
+        "What fears or hesitations do you have about doing Step Four?",
+        "How does honesty with yourself play a role in your recovery process?",
+        { title: "Part 2: Resentments", isSection: true },
+        "List the people, institutions, or principles you resent. What did they do to cause the resentment?",
+        "How did each resentment affect your pride, self-esteem, security, ambitions, relationships, or sex life?",
+        "What part did you play in each situation? Were you selfish, dishonest, fearful, or inconsiderate?",
+        "Have you been holding onto any old grudges that continue to poison your peace of mind?",
+        "What patterns can you identify in your resentments? What do they reveal about you?",
+        { title: "Part 3: Fears", isSection: true },
+        "What are your greatest fears—past, present, and future?",
+        "How have your fears influenced your decisions and behavior?",
+        "Have you ever allowed fear to control your actions or relationships? Give examples.",
+        "What do your fears reveal about your lack of faith or trust in a Higher Power?",
+        "How might facing your fears honestly bring you closer to spiritual freedom?",
+        { title: "Part 4: Harms to Others", isSection: true },
+        "List people you have harmed through your addiction or behavior.",
+        "What specific actions did you take that hurt them (lying, manipulation, neglect, theft, etc.)?",
+        "How did these actions affect those people emotionally, financially, or spiritually?",
+        "What part of your character was at play in each harm (selfishness, pride, fear, anger)?",
+        "How does recognizing these harms help prepare you for making amends later in Step Eight?",
+        { title: "Part 5: Character Defects", isSection: true },
+        "What recurring traits or attitudes keep causing problems in your life (dishonesty, jealousy, self-pity, etc.)?",
+        "How have these defects shown up in your relationships and decisions?",
+        "In what ways have these traits protected you or helped you survive in the past?",
+        "Are you willing to let go of these defects, even the ones you think you 'need'? Why or why not?",
+        "What would your life look like without these destructive patterns dominating your thoughts and actions?",
+    ];
+    
+    // Exporting all data constants
+    const AppData = {
+        cards,
+        POP_FACTS,
+        DEFAULT_PROMPTS,
+        WORKBOOK_STEP1_QUESTIONS,
+        WORKBOOK_STEP2_QUESTIONS,
+        WORKBOOK_STEP3_QUESTIONS,
+        WORKBOOK_STEP4_QUESTIONS // NEW
+    };
+
+
+    // ----------------------------------------------------------------------
+    // 2. STORAGE MODULE (internal replacement for storage.js)
+    // ----------------------------------------------------------------------
+    
+    // Storage Keys
+    const JOURNAL_KEY = 'addictsAgendaJournalEntries';
+    const SOBER_DATE_KEY = 'soberDate';
+    const TODO_KEY = 'addictsAgendaTodoList'; 
+    const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
+    const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; 
+    const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; 
+    const WORKBOOK_STEP3_KEY = 'addictsAgendaWorkbookStep3'; 
+    const WORKBOOK_STEP4_KEY = 'addictsAgendaWorkbookStep4'; // NEW
+
+    // General Storage Functions
+    const Storage = {
+        get: (key, defaultValue = {}) => {
+            const json = localStorage.getItem(key);
+            return json ? JSON.parse(json) : defaultValue;
+        },
+        set: (key, value) => {
+            localStorage.setItem(key, JSON.stringify(value));
+        },
+        
+        // Journal
+        getSavedEntries: () => Storage.get(JOURNAL_KEY, {}),
+        saveEntry: (dateKey, content) => {
+            const entries = Storage.getSavedEntries();
+            entries[dateKey] = content;
+            Storage.set(JOURNAL_KEY, entries);
+        },
+        loadEntry: (dateKey) => Storage.getSavedEntries()[dateKey] || '',
+        
+        // Prompts
+        getCustomPrompts: () => Storage.get(PROMPT_KEY, []),
+        saveCustomPrompts: (prompts) => Storage.set(PROMPT_KEY, prompts),
+
+        // To Do List
+        getTodoList: () => Storage.get(TODO_KEY, []),
+        saveTodoList: (list) => Storage.set(TODO_KEY, list),
+        
+        // Sober Date
+        loadSoberDate: () => localStorage.getItem(SOBER_DATE_KEY) || '',
+        saveSoberDate: (dateStr) => localStorage.setItem(SOBER_DATE_KEY, dateStr),
+
+        // Workbooks
+        _getWorkbookAnswers: (key, questions) => {
+            const answersJson = localStorage.getItem(key);
+            const defaultAnswers = questions.filter(q => !q.isSection).map(q => "");
+            if (answersJson) {
+                const savedAnswers = JSON.parse(answersJson);
+                if (savedAnswers.length === defaultAnswers.length) {
+                    return savedAnswers;
+                }
+                return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
+            }
+            return defaultAnswers;
+        },
+        getStepOneAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP1_KEY, AppData.WORKBOOK_STEP1_QUESTIONS),
+        saveStepOneAnswers: (answers) => Storage.set(WORKBOOK_STEP1_KEY, answers),
+        getStepTwoAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP2_KEY, AppData.WORKBOOK_STEP2_QUESTIONS),
+        saveStepTwoAnswers: (answers) => Storage.set(WORKBOOK_STEP2_KEY, answers),
+        getStepThreeAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP3_KEY, AppData.WORKBOOK_STEP3_QUESTIONS),
+        saveStepThreeAnswers: (answers) => Storage.set(WORKBOOK_STEP3_KEY, answers),
+        getStepFourAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP4_KEY, AppData.WORKBOOK_STEP4_QUESTIONS), // NEW
+        saveStepFourAnswers: (answers) => Storage.set(WORKBOOK_STEP4_KEY, answers), // NEW
+    };
+
+
+    // ----------------------------------------------------------------------
+    // 3. APP LOGIC MODULE (internal replacement for app.js)
+    // ----------------------------------------------------------------------
+    
+    // App State
+    let deck = [...AppData.cards];
+    let currentJournalKey = '';
+
+    // --- Date/Time Helpers ---
+    const DateUtils = {
+        getFormattedDate: (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        },
+        formatDateForDisplayShort: (dateKey) => {
+            if (!dateKey) return '';
+            const date = new Date(dateKey);
+            return date.toLocaleDateString('en-US'); 
+        },
+        formatDateForDisplay: (dateKey) => {
+            const parts = dateKey.split('-');
+            if (parts.length === 3) {
+                const date = new Date(parts[0], parts[1] - 1, parts[2]);
+                return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            return dateKey;
+        },
+        calculateDuration: (soberDateStr) => {
+            if (!soberDateStr) return "Enter your date to start tracking!";
+            
+            const start = new Date(soberDateStr);
+            const now = new Date();
+            
+            if (start > now) return "Date must be in the past.";
+
+            const diffTime = Math.abs(now - start);
+            const MS_PER_DAY = 1000 * 60 * 60 * 24;
+            const days = Math.floor(diffTime / MS_PER_DAY);
+            
+            const years = Math.floor(days / 365.25);
+            const remainingDays = days % 365.25;
+            const months = Math.floor(remainingDays / 30.44);
+            // const actualDays = Math.floor(remainingDays % 30.44); // Not needed for final string
+            
+            let output = "Sober for: ";
+            if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
+            if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
+            output += `${days} day${days !== 1 ? 's' : ''} total.`;
+            
+            return output;
+        }
+    };
+    
+    // --- View Management ---
+    const ViewManager = {
+        displayAppView: (viewId) => {
+            const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView'];
+            views.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = id === viewId ? 'block' : 'none';
+                }
+            });
+        },
+        updateHomeSobrietyDuration: () => {
+            const savedDate = Storage.loadSoberDate();
+            document.getElementById('homeSobrietyDuration').textContent = DateUtils.calculateDuration(savedDate);
+        },
+        getDailyFact: () => {
+            const factIndex = Math.floor(Math.random() * AppData.POP_FACTS.length);
+            document.getElementById('dailyFactText').textContent = AppData.POP_FACTS[factIndex];
+        }
+    };
+
+    // --- Card Logic ---
+    const CardLogic = {
+        suitColor: (suit_key) => {
+            switch(suit_key){
+                case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
+                case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)';
+                case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)';
+                case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)';
+                default: return '#fff';
+            }
+        },
+        updateStatus: () => {
+            document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
+        },
+        renderCard: (card) => {
+            document.getElementById('cardIcon').textContent = card.icon;
+            document.getElementById('cardSuit').textContent = card.suit;
+            document.getElementById('cardText').textContent = card.text;
+            document.getElementById('cardArea').style.background = CardLogic.suitColor(card.suit_key);
+            CardLogic.updateStatus();
+        },
+        drawRandom: () => {
+            if(deck.length === 0) return null;
+            const idx = Math.floor(Math.random()*deck.length);
+            const card = deck.splice(idx,1)[0];
+            return card;
+        },
+        drawAndDisplayCard: () => {
+            const card = CardLogic.drawRandom();
+            if (!card) {
+                console.log('Deck empty — shuffle or reset.');
+                alert('Deck empty — please shuffle or return home.');
+                return;
+            }
+            CardLogic.renderCard(card);
+            ViewManager.displayAppView('cardView');
+        },
+        resetDeck: () => {
+            deck = [...AppData.cards];
+            CardLogic.updateStatus();
+            ViewManager.displayAppView('homeScreen');
+        }
+    };
+
+    // --- To Do List Logic ---
+    const TodoLogic = {
+        getRecurrenceLabel: (key) => {
+            switch(key) {
+                case 'daily': return 'Daily';
+                case 'weekly': return 'Weekly';
+                case 'biweekly': return 'Bi-Weekly';
+                case 'monthly': return 'Monthly';
+                case 'yearly': return 'Yearly';
+                default: return 'No Repeat';
+            }
+        },
+        renderTodoList: () => {
+            TodoLogic.updateRecurringTasks();
+            const list = Storage.getTodoList().sort((a, b) => {
+                if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
+                if (a.dueDate) return -1;
+                if (b.dueDate) return 1;
+                return 0;
+            });
+
+            const todoListElement = document.getElementById('todoList');
+            todoListElement.innerHTML = '';
+
+            if (list.length === 0) {
+                todoListElement.innerHTML = '<li style="justify-content: center; color: #888;">Your list is clear!</li>';
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const li = document.createElement('li');
+                const mainRow = document.createElement('div');
+                mainRow.classList.add('todo-main-row');
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = item.task;
+                textSpan.classList.add('todo-text');
+                if (item.completed) {
+                    textSpan.classList.add('todo-completed');
+                }
+                textSpan.onclick = () => TodoLogic.toggleTodoComplete(index);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Remove';
+                deleteBtn.classList.add('secondary');
+                deleteBtn.style.padding = '5px 10px';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    TodoLogic.deleteTodo(index);
+                };
+                
+                mainRow.appendChild(textSpan);
+                mainRow.appendChild(deleteBtn);
+                li.appendChild(mainRow);
+                
+                if (item.dueDate || item.recurrence !== 'none') {
+                    const details = document.createElement('div');
+                    details.classList.add('todo-details');
+                    
+                    let detailText = '';
+                    if (item.dueDate) {
+                        detailText += `Due: ${DateUtils.formatDateForDisplayShort(item.dueDate)}`;
+                    }
+                    if (item.recurrence && item.recurrence !== 'none') {
+                        if (item.dueDate) detailText += ' | ';
+                        detailText += `Repeats: ${TodoLogic.getRecurrenceLabel(item.recurrence)}`;
+                    }
+                    details.textContent = detailText;
+                    li.appendChild(details);
+                }
+                todoListElement.appendChild(li);
+            });
+        },
+        addTodo: (task, dueDate, recurrence) => {
+            const list = Storage.getTodoList();
+            list.push({ 
+                task: task, 
+                completed: false,
+                dueDate: dueDate || '', 
+                recurrence: recurrence || 'none'
+            });
+            Storage.saveTodoList(list);
+            TodoLogic.renderTodoList();
+        },
+        toggleTodoComplete: (index) => {
+            const list = Storage.getTodoList();
+            if (list[index]) {
+                list[index].completed = !list[index].completed;
+                Storage.saveTodoList(list);
+                TodoLogic.renderTodoList();
+            }
+        },
+        deleteTodo: (index) => {
+            const list = Storage.getTodoList();
+            list.splice(index, 1);
+            Storage.saveTodoList(list);
+            TodoLogic.renderTodoList();
+        },
+        updateRecurringTasks: () => {
+            let list = Storage.getTodoList();
+            const now = DateUtils.getFormattedDate(new Date());
+            let updated = false;
+
+            list.forEach((item) => {
+                if (item.completed && item.recurrence !== 'none' && item.dueDate) {
+                    const taskDueDate = item.dueDate;
+                    if (taskDueDate < now) {
+                        let nextDate = new Date(taskDueDate);
+                        
+                        while (DateUtils.getFormattedDate(nextDate) < now) {
+                            const originalDate = new Date(nextDate);
+                            
+                            switch (item.recurrence) {
+                                case 'daily':
+                                    nextDate.setDate(originalDate.getDate() + 1);
+                                    break;
+                                case 'weekly':
+                                    nextDate.setDate(originalDate.getDate() + 7);
+                                    break;
+                                case 'biweekly':
+                                    nextDate.setDate(originalDate.getDate() + 14);
+                                    break;
+                                case 'monthly':
+                                    nextDate.setMonth(originalDate.getMonth() + 1);
+                                    if (nextDate.getDate() !== originalDate.getDate()) {
+                                        nextDate.setDate(0); 
+                                    }
+                                    break;
+                                case 'yearly':
+                                    nextDate.setFullYear(originalDate.getFullYear() + 1);
+                                    break;
+                            }
+                            if (DateUtils.getFormattedDate(nextDate) < now) {
+                                item.dueDate = DateUtils.getFormattedDate(nextDate);
+                            }
+                        }
+                        
+                        if (item.dueDate !== taskDueDate) {
+                            item.completed = false;
+                            item.dueDate = DateUtils.getFormattedDate(nextDate);
+                            updated = true;
+                        }
+                    }
+                }
+            });
+
+            if (updated) {
+                Storage.saveTodoList(list);
+            }
+        }
+    };
+
+    // --- Journal Logic ---
+    const JournalLogic = {
+        showJournalEntryView: (dateKey = null) => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'block';
+            document.getElementById('journalList').style.display = 'none';
+            document.getElementById('promptManagerView').style.display = 'none';
+
+            const today = new Date();
+            dateKey = dateKey === null ? DateUtils.getFormattedDate(today) : dateKey;
+
+            currentJournalKey = dateKey;
+            document.getElementById('entryDate').value = dateKey;
+            
+            const entryContent = Storage.loadEntry(dateKey);
+            document.getElementById('journalEntry').value = entryContent;
+            
+            document.querySelector('#journalEntryView h2').textContent = DateUtils.formatDateForDisplay(new Date(dateKey));
+            
+            JournalLogic.renderPromptSelect(); 
+            document.getElementById('promptSelect').value = '';
+        },
+        showJournalListView: () => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'none';
+            document.getElementById('journalList').style.display = 'block';
+            document.getElementById('promptManagerView').style.display = 'none';
+            JournalLogic.renderEntryList();
+        },
+        renderEntryList: () => {
+            const entries = Storage.getSavedEntries();
+            const entryListElement = document.getElementById('entryList');
+            entryListElement.innerHTML = '';
+            const sortedKeys = Object.keys(entries).sort().reverse();
+
+            if (sortedKeys.length === 0) {
+                entryListElement.innerHTML = '<li>No entries saved yet.</li>';
+                return;
+            }
+
+            sortedKeys.forEach(key => {
+                const li = document.createElement('li');
+                li.textContent = DateUtils.formatDateForDisplay(key);
+                
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.classList.add('secondary');
+                viewButton.style.marginLeft = '10px';
+                
+                viewButton.onclick = () => JournalLogic.showJournalEntryView(key);
+
+                li.appendChild(viewButton);
+                entryListElement.appendChild(li);
+            });
+        },
+        renderPromptSelect: () => {
+            const select = document.getElementById('promptSelect');
+            select.innerHTML = '';
+            const allPrompts = [...AppData.DEFAULT_PROMPTS, ...Storage.getCustomPrompts()];
+
+            allPrompts.forEach((prompt, index) => {
+                const option = document.createElement('option');
+                option.value = prompt.template;
+                option.textContent = prompt.name;
+                option.setAttribute('data-is-custom', index >= AppData.DEFAULT_PROMPTS.length);
+                select.appendChild(option);
+            });
+        },
+        showPromptManagerView: () => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'none';
+            document.getElementById('journalList').style.display = 'none';
+            document.getElementById('promptManagerView').style.display = 'block';
+            JournalLogic.renderCustomPromptList();
+        },
+        renderCustomPromptList: () => {
+            const list = Storage.getCustomPrompts();
+            const listElement = document.getElementById('customPromptList');
+            listElement.innerHTML = '';
+
+            if (list.length === 0) {
+                listElement.innerHTML = '<li style="justify-content: center; color: #888;">No custom prompts saved.</li>';
+                return;
+            }
+
+            list.forEach((prompt, index) => {
+                const li = document.createElement('li');
+                li.textContent = prompt.name;
+                li.style.cursor = 'pointer';
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.classList.add('secondary');
+                deleteBtn.style.padding = '5px 10px';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Are you sure you want to delete the prompt: "${prompt.name}"?`)) {
+                        let prompts = Storage.getCustomPrompts();
+                        prompts.splice(index, 1);
+                        Storage.saveCustomPrompts(prompts);
+                        JournalLogic.renderCustomPromptList();
+                        JournalLogic.renderPromptSelect();
+                    }
+                };
+
+                li.appendChild(deleteBtn);
+                listElement.appendChild(li);
+            });
+        }
+    };
+    
+    // --- Workbook Logic ---
+    const WorkbookLogic = {
+        showStepOneView: () => {
+            ViewManager.displayAppView('stepOneView');
+            WorkbookLogic.renderWorkbook('stepOneQuestions', AppData.WORKBOOK_STEP1_QUESTIONS, Storage.getStepOneAnswers, 'saveStepOneBtn', 'stepOneSaveStatus');
+        },
+        showStepTwoView: () => {
+            ViewManager.displayAppView('stepTwoView');
+            WorkbookLogic.renderWorkbook('stepTwoQuestions', AppData.WORKBOOK_STEP2_QUESTIONS, Storage.getStepTwoAnswers, 'saveStepTwoBtn', 'stepTwoSaveStatus');
+        },
+        showStepThreeView: () => {
+            ViewManager.displayAppView('stepThreeView');
+            WorkbookLogic.renderWorkbook('stepThreeQuestions', AppData.WORKBOOK_STEP3_QUESTIONS, Storage.getStepThreeAnswers, 'saveStepThreeBtn', 'stepThreeSaveStatus');
+        },
+        showStepFourView: () => { // NEW
+            ViewManager.displayAppView('stepFourView');
+            WorkbookLogic.renderWorkbook('stepFourQuestions', AppData.WORKBOOK_STEP4_QUESTIONS, Storage.getStepFourAnswers, 'saveStepFourBtn', 'stepFourSaveStatus');
+        },
+        toggleSection: (headerElement) => {
+            const content = headerElement.nextElementSibling;
+            const icon = headerElement.querySelector('.collapse-icon');
+            content.classList.toggle('collapsed');
+            headerElement.classList.toggle('collapsed');
+        },
+        renderWorkbook: (containerId, questions, getAnswersFn, saveButtonId, saveStatusId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            const answers = getAnswersFn();
+            let answerIndex = 0; 
+            
+            let currentSectionContent = null;
+            let isFirstSection = true;
+            
+            questions.forEach((q, index) => {
+                if (q.isSection) {
+                    if (currentSectionContent) {
+                        container.appendChild(currentSectionContent);
+                    }
+                    
+                    const header = document.createElement('div');
+                    header.classList.add('workbook-section-header');
+                    
+                    if (!isFirstSection) {
+                        header.classList.add('collapsed');
+                    }
+                    
+                    const h3 = document.createElement('h3');
+                    h3.textContent = q.title;
+                    
+                    const icon = document.createElement('span');
+                    icon.classList.add('collapse-icon');
+                    icon.textContent = '▼';
+                    
+                    header.appendChild(h3);
+                    header.appendChild(icon);
+                    
+                    currentSectionContent = document.createElement('div');
+                    currentSectionContent.classList.add('section-content');
+                    if (!isFirstSection) {
+                        currentSectionContent.classList.add('collapsed');
+                    }
+                    
+                    header.onclick = () => WorkbookLogic.toggleSection(header);
+                    
+                    container.appendChild(header);
+                    isFirstSection = false;
+                    
+                    return;
+                }
+                
+                if (currentSectionContent) {
+                    const div = document.createElement('div');
+                    div.classList.add('workbook-question');
+
+                    const h4 = document.createElement('h4');
+                    h4.textContent = `${answerIndex + 1}. ${q}`;
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.setAttribute('data-question-index', answerIndex);
+                    textarea.value = answers[answerIndex] || ''; 
+                    textarea.placeholder = 'Write your honest answer here...';
+
+                    div.appendChild(h4);
+                    div.appendChild(textarea);
+                    currentSectionContent.appendChild(div);
+                    
+                    answerIndex++; 
+                }
+            });
+            
+            if (currentSectionContent) {
+                 container.appendChild(currentSectionContent);
+            }
+            
+            document.getElementById(saveStatusId).textContent = '';
+            
+            // Re-bind save listener since content is dynamically generated
+            const saveBtn = document.getElementById(saveButtonId);
+            if (saveBtn) {
+                saveBtn.onclick = () => WorkbookLogic.collectAndSaveWorkbookAnswers(containerId, saveButtonId, saveStatusId);
+            }
+        },
+        collectAndSaveWorkbookAnswers: (containerId, saveButtonId, saveStatusId) => {
+            const textareas = document.querySelectorAll(`#${containerId} textarea`);
+            
+            let getAnswersFn, saveAnswersFn;
+            if (containerId === 'stepOneQuestions') {
+                getAnswersFn = Storage.getStepOneAnswers;
+                saveAnswersFn = Storage.saveStepOneAnswers;
+            } else if (containerId === 'stepTwoQuestions') {
+                getAnswersFn = Storage.getStepTwoAnswers;
+                saveAnswersFn = Storage.saveStepTwoAnswers;
+            } else if (containerId === 'stepThreeQuestions') {
+                getAnswersFn = Storage.getStepThreeAnswers;
+                saveAnswersFn = Storage.saveStepThreeAnswers;
+            } else if (containerId === 'stepFourQuestions') {
+                getAnswersFn = Storage.getStepFourAnswers;
+                saveAnswersFn = Storage.saveStepFourAnswers;
+            } else {
+                return;
+            }
+            
+            let answers = getAnswersFn();
+            
+            textareas.forEach(textarea => {
+                const index = parseInt(textarea.getAttribute('data-question-index'));
+                if (index >= 0 && index < answers.length) {
+                    answers[index] = textarea.value;
+                }
+            });
+
+            saveAnswersFn(answers);
+            document.getElementById(saveStatusId).textContent = 'Progress Saved!';
+            
+            setTimeout(() => {
+                document.getElementById(saveStatusId).textContent = '';
+            }, 3000);
+        }
+    };
+
+
+    // --- Initialization and Event Binding ---
+    const App = {
+        initializeApp: () => {
+            // Set Max Dates
+            const todayKey = DateUtils.getFormattedDate(new Date());
+            const entryDate = document.getElementById('entryDate');
+            if (entryDate) entryDate.max = todayKey;
+            const soberDateInput = document.getElementById('soberDateInput');
+            if (soberDateInput) soberDateInput.max = todayKey;
+
+            // Initial view setup
+            ViewManager.getDailyFact();
+            CardLogic.updateStatus();
+            ViewManager.updateHomeSobrietyDuration();
+            TodoLogic.updateRecurringTasks();
+            ViewManager.displayAppView('homeScreen');
+
+            App.bindEventListeners();
+        },
+
+        bindEventListeners: () => {
+            // --- General Nav ---
+            document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
+            document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary').forEach(btn => {
+                if (btn.id.includes('Home')) {
+                    btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+                }
+            });
+            document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+            document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+            document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
+            document.getElementById('goToJournalBtn').addEventListener('click', () => JournalLogic.showJournalEntryView());
+            document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
+            document.getElementById('goToLiteratureBtn').addEventListener('click', () => ViewManager.displayAppView('literatureView'));
+            document.getElementById('goToWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+
+            // --- Workbooks Nav ---
+            document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+            document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+            document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+            document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); // NEW
+            document.getElementById('stepOneWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('stepFourWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView')); // NEW
+            
+            // Workbook Save Buttons are bound dynamically in renderWorkbook
+            
+            // --- Journal Listeners ---
+            document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+            document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+            document.getElementById('managePromptsBtn').addEventListener('click', JournalLogic.showPromptManagerView);
+            document.getElementById('backToEntryBtn').addEventListener('click', () => JournalLogic.showJournalEntryView(currentJournalKey));
+            
+            document.getElementById('addCustomPromptBtn').addEventListener('click', () => {
+                const input = document.getElementById('customPromptInput');
+                const template = input.value.trim();
+                if (template) {
+                    let prompts = Storage.getCustomPrompts();
+                    prompts.push({ name: template, template: template });
+                    Storage.saveCustomPrompts(prompts);
+                    input.value = '';
+                    JournalLogic.renderCustomPromptList();
+                    JournalLogic.renderPromptSelect();
+                    alert('Custom Prompt Added!');
+                } else {
+                    alert('Please enter prompt text.');
+                }
+            });
+
+            document.getElementById('promptSelect').addEventListener('change', (event) => {
+                const template = event.target.value;
+                const textarea = document.getElementById('journalEntry');
+                if (template) {
+                    if (textarea.value.trim() === "" || confirm("Applying a template will overwrite your current entry. Continue?")) {
+                        textarea.value = template;
+                    } else {
+                        event.target.value = ''; 
+                    }
+                }
+            });
+
+            document.getElementById('saveJournalBtn').addEventListener('click', () => {
+                const content = document.getElementById('journalEntry').value;
+                const dateKey = document.getElementById('entryDate').value;
+                if (content.trim() === '') {
+                    alert('Journal entry cannot be empty.');
+                    return;
+                }
+                if (dateKey) {
+                    Storage.saveEntry(dateKey, content);
+                    alert(`Entry for ${dateKey} Saved!`);
+                } else {
+                    alert('Please select a date.');
+                }
+            });
+            
+            document.getElementById('entryDate').addEventListener('change', (event) => {
+                const dateKey = event.target.value;
+                if (dateKey) JournalLogic.showJournalEntryView(dateKey);
+            });
+            document.getElementById('viewAllEntriesBtn').addEventListener('click', JournalLogic.showJournalListView);
+            document.getElementById('newEntryBtn').addEventListener('click', JournalLogic.showJournalEntryView);
+
+            // --- Settings Listeners ---
+            document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+                const dateStr = document.getElementById('soberDateInput').value;
+                if (dateStr && new Date(dateStr) <= new Date()) {
+                    Storage.saveSoberDate(dateStr);
+                    ViewManager.updateHomeSobrietyDuration();
+                    alert('Sober Date Saved!');
+                } else {
+                    alert('Please enter a valid Sober Date in the past.');
+                }
+            });
+
+            // --- To Do List Listeners ---
+            document.getElementById('addTodoBtn').addEventListener('click', () => {
+                const input = document.getElementById('todoInput');
+                const dateInput = document.getElementById('todoDateInput');
+                const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
+                
+                const task = input.value.trim();
+                const dueDate = dateInput.value;
+                const recurrence = recurrenceSelect.value;
+                
+                if (task) {
+                    TodoLogic.addTodo(task, dueDate, recurrence);
+                    input.value = '';
+                    dateInput.value = '';
+                    recurrenceSelect.value = 'none';
+                } else {
+                    alert('Please enter a task description.');
+                }
+            });
+            document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        }
+    };
+
+    App.initializeApp();
+
+    // Register Service Worker
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(reg) {
+          console.log('Service Worker Registered');
+        })
+        .catch(function(err) {
+          console.log('Service Worker Registration Failed:', err);
+        });
+    }
+    // --- END: MODULAR JAVASCRIPT REFACTOR ---
+  </script>
+</body>
+</html>
+
       --card-radius: 16px;
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --color-blue: #2b77f0;
