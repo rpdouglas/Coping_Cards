@@ -439,130 +439,133 @@ export const ReflectionLogic = {
 
 
 // --- Initialization and Event Binding ---
-export const App = {
-    initializeApp: () => {
-        // Set Max Dates
-        const todayKey = DateUtils.getFormattedDate(new Date());
-        const entryDate = document.getElementById('entryDate');
-        if (entryDate) entryDate.max = todayKey;
-        const soberDateInput = document.getElementById('soberDateInput');
-        if (soberDateInput) soberDateInput.max = todayKey;
-        const reflectionDateInput = document.getElementById('reflectionDateInput');
-        if (reflectionDateInput) reflectionDateInput.max = todayKey;
-        const jftDateInput = document.getElementById('jftDateInput');
-        if (jftDateInput) jftDateInput.max = todayKey;
+const bindEventListeners = () => {
+    // --- General Nav (Home Screen Buttons) ---
+    document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
+    document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
+    document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
+    document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
+    document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); 
+    document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
+    document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
 
-        // --- Safe Initialization for UI Components ---
-        // Use setTimeout to ensure the entire DOM and all modules have fully loaded 
-        // before attempting to render complex UI features or bind events.
-        setTimeout(() => {
-            // Initial UI Renders (homepage facts/durations)
-            ViewManager.getDailyFact();
+    // --- Home Nav from Child Views ---
+    document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary, #jftView button.secondary').forEach(btn => {
+        if (btn.id.includes('Home')) {
+            btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        }
+    });
+    
+    // --- Card Logic (High-level buttons moved here for robustness) ---
+    document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+    document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+    document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck); 
+
+    // --- Journal Listeners ---
+    document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
+    document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
+    
+    document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
+    document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
+    document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
+    document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
+    document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
+    document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
+    document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+    document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+
+    // --- Settings Listeners ---
+    document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+        const dateStr = document.getElementById('soberDateInput').value;
+        if (dateStr && new Date(dateStr) <= new Date()) {
+            Storage.saveSoberDate(dateStr);
             ViewManager.updateHomeSobrietyDuration();
-            TodoLogic.updateRecurringTasks();
-            
-            // Set initial card status (must be after deck definition in global_events)
-            CardLogic.updateStatus();
+            alert('Sober Date Saved!');
+        } else {
+            alert('Please enter a valid Sober Date in the past.');
+        }
+    });
 
-            // Display initial view
-            ViewManager.displayAppView('homeScreen');
-            
-            // Bind all events after UI is rendered
-            App.bindEventListeners();
-        }, 50); // Small delay to avoid race conditions
-
-    },
-
-    bindEventListeners: () => {
-        // --- General Nav (Home Screen Buttons) ---
-        document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
-        document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
-        document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
-        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); 
-        document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
-        document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
-
-        // --- Home Nav from Child Views ---
-        document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary, #jftView button.secondary').forEach(btn => {
-            if (btn.id.includes('Home')) {
-                btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-            }
-        });
+    // --- To Do List Listeners ---
+    document.getElementById('addTodoBtn').addEventListener('click', () => {
+        const input = document.getElementById('todoInput');
+        const dateInput = document.getElementById('todoDateInput');
+        const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
         
-        // --- Card Logic (High-level buttons moved here for robustness) ---
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck); 
-
-        // --- Journal Listeners ---
-        document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
-        document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
+        const task = input.value.trim();
+        const dueDate = dateInput.value;
+        const recurrence = recurrenceSelect.value;
         
-        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
-        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
-        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
-        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
-        document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
-        document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        if (task) {
+            TodoLogic.addTodo(task, dueDate, recurrence);
+            input.value = '';
+            dateInput.value = '';
+            recurrenceSelect.value = 'none';
+        } else {
+            alert('Please enter a task description.');
+        }
+    });
+    document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
 
-        // --- Settings Listeners ---
-        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-            const dateStr = document.getElementById('soberDateInput').value;
-            if (dateStr && new Date(dateStr) <= new Date()) {
-                Storage.saveSoberDate(dateStr);
-                ViewManager.updateHomeSobrietyDuration();
-                alert('Sober Date Saved!');
-            } else {
-                alert('Please enter a valid Sober Date in the past.');
-            }
-        });
+    // --- Workbooks Nav ---
+    document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+    document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+    document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+    document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+    document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+    document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+    document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+    document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+    
+    // Workbook Save Bindings: Must be explicitly bound
+    document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
+    document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
+    document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
+    document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
+    
+    // --- Reflection Listeners ---
+    document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
+        ReflectionLogic.getDailyReflection(e.target.value);
+    });
+    document.getElementById('jftDateInput').addEventListener('change', (e) => {
+        ReflectionLogic.getJustForToday(e.target.value);
+    });
+};
 
-        // --- To Do List Listeners ---
-        document.getElementById('addTodoBtn').addEventListener('click', () => {
-            const input = document.getElementById('todoInput');
-            const dateInput = document.getElementById('todoDateInput');
-            const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
-            
-            const task = input.value.trim();
-            const dueDate = dateInput.value;
-            const recurrence = recurrenceSelect.value;
-            
-            if (task) {
-                TodoLogic.addTodo(task, dueDate, recurrence);
-                input.value = '';
-                dateInput.value = '';
-                recurrenceSelect.value = 'none';
-            } else {
-                alert('Please enter a task description.');
-            }
-        });
-        document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+const initializeApp = () => {
+    // Set Max Dates
+    const todayKey = DateUtils.getFormattedDate(new Date());
+    const entryDate = document.getElementById('entryDate');
+    if (entryDate) entryDate.max = todayKey;
+    const soberDateInput = document.getElementById('soberDateInput');
+    if (soberDateInput) soberDateInput.max = todayKey;
+    const reflectionDateInput = document.getElementById('reflectionDateInput');
+    if (reflectionDateInput) reflectionDateInput.max = todayKey;
+    const jftDateInput = document.getElementById('jftDateInput');
+    if (jftDateInput) jftDateInput.max = todayKey;
 
-        // --- Workbooks Nav ---
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-        
-        // --- Reflection Listeners ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
-        });
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
-    }
+    // Initial UI Renders (homepage facts/durations)
+    ViewManager.getDailyFact();
+    ViewManager.updateHomeSobrietyDuration();
+    TodoLogic.updateRecurringTasks();
+    
+    // Set initial card status 
+    CardLogic.updateStatus();
+
+    // Display initial view
+    ViewManager.displayAppView('homeScreen');
+    
+    // Bind all events 
+    bindEventListeners();
+};
+
+export const App = {
+    // Expose utility functions for other modules to use
+    DateUtils,
+    ViewManager,
+    TodoLogic,
+    ReflectionLogic,
+    
+    // This is the function called by the DOM to start the app
+    bootstrap: initializeApp
 };
