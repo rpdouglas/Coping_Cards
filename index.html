@@ -483,7 +483,7 @@
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.14</div>
+            <div id="appVersion">V0.15</div>
 
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
@@ -902,13 +902,11 @@
         });
     }
 
-
-    // Override the base App.bindEventListeners to include all module bindings
-    const originalBindEventListeners = App.bindEventListeners;
-
-    App.bindEventListeners = () => {
-        // Call the original bindings from global_events.js (general buttons, settings, todo, card nav)
-        originalBindEventListeners(); 
+    // --- Main App Initialization ---
+    // This function will be called by App.bootstrap (imported from global_events.js)
+    const initAppBindings = () => {
+        // Bind the general high-level events here (defined in global_events.js App.bindEventListeners)
+        App.bindEventListeners(); 
         
         // Add bindings for module-specific views
         bindJournalHandlers();
@@ -916,8 +914,8 @@
         bindReflectionHandlers();
     };
 
-    // Attach the bootstrap function to the window to be called by a non-module script later
-    window.AppBootstrap = App.bootstrap;
+    // Attach the main binding function to the window, allowing the non-module script to access it
+    window.AppInitBindings = initAppBindings;
 
     // Register Service Worker
     if('serviceWorker' in navigator) {
@@ -934,16 +932,21 @@
   
   <!-- FIX: Final Non-Module Script to Guarantee Execution After DOM Load -->
   <script>
-    // This non-module script runs *after* all HTML is parsed and module loading is initiated.
-    // It calls the App.bootstrap() function exposed by the module system.
-    if (window.AppBootstrap) {
-        window.AppBootstrap();
-    } else {
-        // Fallback for extreme cases where module loading is delayed/broken
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.AppBootstrap) window.AppBootstrap();
-        });
-    }
+    // This script runs *after* all HTML is parsed and module loading is initiated.
+    // It calls the App.bootstrap() function exported by global_events.js.
+    document.addEventListener('DOMContentLoaded', () => {
+        // We ensure the module has loaded and exposed its bootstrap function before calling it.
+        // The App module automatically initializes UI components and calls bindEventListeners.
+        if (window.AppBootstrap) {
+            window.AppBootstrap();
+        } else {
+             // Fallback to directly call the internal binding function if AppBootstrap isn't exposed (for safety)
+             // This uses the explicit export from the script type="module" block above.
+             document.querySelector('script[type="module"]').onload = () => {
+                 if(window.AppBootstrap) window.AppBootstrap();
+             };
+        }
+    });
   </script>
 </body>
 </html>
