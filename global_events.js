@@ -8,6 +8,7 @@ import { WorkbookLogic } from './workbooks.js';
 // ----------------------------------------------------------------------
 // Global Constants and State
 // ----------------------------------------------------------------------
+// NOTE: deck reference is used across CardLogic and global_events to manage the deck state.
 export let deck = [...AppData.cards];
 export const GEMINI_API_KEY = typeof __api_key !== 'undefined' ? __api_key : ""; 
 export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
@@ -330,7 +331,7 @@ export const ReflectionLogic = {
         } else {
             quoteEl.textContent = "Error: Content not found or bad response.";
             readingEl.textContent = "The reflection could not be loaded for this date. Try today's date.";
-            quoteEl.style.display = 'block';
+            readingEl.style.display = 'block';
             readingEl.style.display = 'block';
         }
     },
@@ -460,6 +461,7 @@ export const App = {
         ViewManager.displayAppView('homeScreen');
 
         App.bindEventListeners();
+        CardLogic.bindEventListeners(); // Ensure card logic listeners are bound
     },
 
     bindEventListeners: () => {
@@ -474,7 +476,7 @@ export const App = {
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
         document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); // Using WorkbookLogic module
+        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); 
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
 
@@ -550,8 +552,5 @@ export const App = {
             }
         });
         document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-
-        // Initialize Card Listeners, now imported from coping_cards.js
-        CardLogic.bindEventListeners();
     }
 };
