@@ -640,6 +640,13 @@
   </div>
   
   <script>
+    // --- START: MODULAR JAVASCRIPT REFACTOR ---
+
+    // ----------------------------------------------------------------------
+    // 1. DATA MODULE (internal replacement for data.js)
+    // ----------------------------------------------------------------------
+    
+    // Static data moved to constants
     const cards = [
       {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
       {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Do 10 jumping jacks or jog in place for 30 seconds.'},
@@ -710,7 +717,7 @@
         "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
     ];
     
-    // NEW: Default Journal Prompts
+    // Default Journal Prompts
     const DEFAULT_PROMPTS = [
         {name: "None (Free Write)", template: ""},
         {name: "HALT Check-in", template: "Hungry: Am I hungry? What can I eat?\nAngry: What am I angry about? How can I safely express it?\nLonely: Who can I reach out to right now?\nTired: What rest do I need? How can I relax?"},
@@ -751,7 +758,7 @@
         "Do you truly believe, deep down, that you are powerless over cocaine and that your life has become unmanageable? Why is this total surrender the essential first step toward freedom?"
     ];
 
-    // NEW: Step 2 Workbook Questions (parsed from "Step_Two_Workbook.docx")
+    // Step 2 Workbook Questions
     const WORKBOOK_STEP2_QUESTIONS = [
         { title: "Part 1: Understanding Insanity", isSection: true },
         "In your own words, what does “insanity” mean when it comes to addiction? (Think of the cycle of repeating the same destructive behavior while expecting different results.)",
@@ -785,7 +792,7 @@
         "How do you plan to strengthen your spiritual connection moving into Step Three?",
     ];
     
-    // NEW: Step 3 Workbook Questions (parsed from "Step_Three_Workbook.docx")
+    // Step 3 Workbook Questions
     const WORKBOOK_STEP3_QUESTIONS = [
         { title: "Part 1: Understanding the Decision", isSection: true },
         "In your own words, what does “making a decision” mean in the context of recovery? (Is it a feeling, an action, a surrender, or all three?)",
@@ -826,954 +833,739 @@
         "How do you want your recovery to reflect your growing faith and surrender?",
         "How will you keep renewing this decision — one day at a time?",
     ];
+    
+    // Exporting all data constants
+    const AppData = {
+        cards,
+        POP_FACTS,
+        DEFAULT_PROMPTS,
+        WORKBOOK_STEP1_QUESTIONS,
+        WORKBOOK_STEP2_QUESTIONS,
+        WORKBOOK_STEP3_QUESTIONS
+    };
 
 
-    let deck = [...cards]; // Full set of cards, initially available
-    let currentJournalKey = '';
-
-    // --- Journal Storage Functions ---
+    // ----------------------------------------------------------------------
+    // 2. STORAGE MODULE (internal replacement for storage.js)
+    // ----------------------------------------------------------------------
+    
+    // Storage Keys
     const JOURNAL_KEY = 'addictsAgendaJournalEntries';
     const SOBER_DATE_KEY = 'soberDate';
     const TODO_KEY = 'addictsAgendaTodoList'; 
     const PROMPT_KEY = 'addictsAgendaCustomPrompts'; 
     const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1'; 
-    const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; // NEW key for Step 2 workbook
-    const WORKBOOK_STEP3_KEY = 'addictsAgendaWorkbookStep3'; // NEW key for Step 3 workbook
+    const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; 
+    const WORKBOOK_STEP3_KEY = 'addictsAgendaWorkbookStep3'; 
 
-    function getSavedEntries() {
-        const entriesJson = localStorage.getItem(JOURNAL_KEY);
-        return entriesJson ? JSON.parse(entriesJson) : {};
-    }
+    // General Storage Functions
+    const Storage = {
+        get: (key, defaultValue = {}) => {
+            const json = localStorage.getItem(key);
+            return json ? JSON.parse(json) : defaultValue;
+        },
+        set: (key, value) => {
+            localStorage.setItem(key, JSON.stringify(value));
+        },
+        
+        // Journal
+        getSavedEntries: () => Storage.get(JOURNAL_KEY, {}),
+        saveEntry: (dateKey, content) => {
+            const entries = Storage.getSavedEntries();
+            entries[dateKey] = content;
+            Storage.set(JOURNAL_KEY, entries);
+        },
+        loadEntry: (dateKey) => Storage.getSavedEntries()[dateKey] || '',
+        
+        // Prompts
+        getCustomPrompts: () => Storage.get(PROMPT_KEY, []),
+        saveCustomPrompts: (prompts) => Storage.set(PROMPT_KEY, prompts),
 
-    function saveEntry(dateKey, content) {
-        const entries = getSavedEntries();
-        entries[dateKey] = content;
-        localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
-    }
+        // To Do List
+        getTodoList: () => Storage.get(TODO_KEY, []),
+        saveTodoList: (list) => Storage.set(TODO_KEY, list),
+        
+        // Sober Date
+        loadSoberDate: () => localStorage.getItem(SOBER_DATE_KEY) || '',
+        saveSoberDate: (dateStr) => localStorage.setItem(SOBER_DATE_KEY, dateStr),
 
-    function loadEntry(dateKey) {
-        const entries = getSavedEntries();
-        return entries[dateKey] || '';
-    }
-    
-    // NEW: Workbook Storage Functions
-    function getStepOneAnswers() {
-        const answersJson = localStorage.getItem(WORKBOOK_STEP1_KEY);
-        // Default to an array matching the number of questions, filled with empty strings
-        const defaultAnswers = WORKBOOK_STEP1_QUESTIONS.filter(q => !q.isSection).map(q => "");
-        // Check if the saved array matches the expected length. If not, pad or slice it.
-        if (answersJson) {
-            const savedAnswers = JSON.parse(answersJson);
-            if (savedAnswers.length === defaultAnswers.length) {
-                return savedAnswers;
-            }
-            // If length doesn't match (e.g., questions changed), return a hybrid
-            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
-        }
-        return defaultAnswers;
-    }
-
-    function saveStepOneAnswers(answers) {
-        localStorage.setItem(WORKBOOK_STEP1_KEY, JSON.stringify(answers));
-    }
-    
-    // NEW: Step Two Workbook Storage Functions
-    function getStepTwoAnswers() {
-        const answersJson = localStorage.getItem(WORKBOOK_STEP2_KEY);
-        const defaultAnswers = WORKBOOK_STEP2_QUESTIONS.filter(q => !q.isSection).map(q => "");
-        if (answersJson) {
-            const savedAnswers = JSON.parse(answersJson);
-            if (savedAnswers.length === defaultAnswers.length) {
-                return savedAnswers;
-            }
-            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
-        }
-        return defaultAnswers;
-    }
-
-    function saveStepTwoAnswers(answers) {
-        localStorage.setItem(WORKBOOK_STEP2_KEY, JSON.stringify(answers));
-    }
-
-    // NEW: Step Three Workbook Storage Functions
-    function getStepThreeAnswers() {
-        const answersJson = localStorage.getItem(WORKBOOK_STEP3_KEY);
-        const defaultAnswers = WORKBOOK_STEP3_QUESTIONS.filter(q => !q.isSection).map(q => "");
-        if (answersJson) {
-            const savedAnswers = JSON.parse(answersJson);
-            if (savedAnswers.length === defaultAnswers.length) {
-                return savedAnswers;
-            }
-            return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
-        }
-        return defaultAnswers;
-    }
-
-    function saveStepThreeAnswers(answers) {
-        localStorage.setItem(WORKBOOK_STEP3_KEY, JSON.stringify(answers));
-    }
-
-
-    // --- Prompt Management Functions ---
-    function getCustomPrompts() {
-        const promptsJson = localStorage.getItem(PROMPT_KEY);
-        return promptsJson ? JSON.parse(promptsJson) : [];
-    }
-
-    function getAllPrompts() {
-        return [...DEFAULT_PROMPTS, ...getCustomPrompts()];
-    }
-
-    function saveCustomPrompts(prompts) {
-        localStorage.setItem(PROMPT_KEY, JSON.stringify(prompts));
-    }
-
-    function addCustomPrompt(name, template) {
-        const prompts = getCustomPrompts();
-        prompts.push({ name, template });
-        saveCustomPrompts(prompts);
-    }
-    
-    function deleteCustomPrompt(index) {
-        let prompts = getCustomPrompts();
-        // Adjust index because default prompts are not stored here
-        if (index >= 0 && index < prompts.length) {
-            prompts.splice(index, 1);
-            saveCustomPrompts(prompts);
-        }
-    }
-
-    function renderPromptSelect() {
-        const select = document.getElementById('promptSelect');
-        select.innerHTML = '';
-        const allPrompts = getAllPrompts();
-
-        allPrompts.forEach((prompt, index) => {
-            const option = document.createElement('option');
-            option.value = prompt.template;
-            option.textContent = prompt.name;
-            option.setAttribute('data-is-custom', index >= DEFAULT_PROMPTS.length);
-            select.appendChild(option);
-        });
-    }
-
-    function showPromptManagerView() {
-        document.getElementById('journalEntryView').style.display = 'none';
-        document.getElementById('journalList').style.display = 'none';
-        document.getElementById('promptManagerView').style.display = 'block';
-        renderCustomPromptList();
-    }
-
-    function renderCustomPromptList() {
-        const list = getCustomPrompts();
-        const listElement = document.getElementById('customPromptList');
-        listElement.innerHTML = '';
-
-        if (list.length === 0) {
-            listElement.innerHTML = '<li style="justify-content: center; color: #888;">No custom prompts saved.</li>';
-            return;
-        }
-
-        list.forEach((prompt, index) => {
-            const li = document.createElement('li');
-            li.textContent = prompt.name;
-            li.style.cursor = 'pointer'; // Indicate clickability
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.classList.add('secondary');
-            deleteBtn.style.padding = '5px 10px';
-            deleteBtn.onclick = (e) => {
-                e.stopPropagation();
-                if (confirm(`Are you sure you want to delete the prompt: "${prompt.name}"?`)) {
-                    deleteCustomPrompt(index);
-                    renderCustomPromptList();
-                    renderPromptSelect(); // Update the dropdown too
+        // Workbooks
+        _getWorkbookAnswers: (key, questions) => {
+            const answersJson = localStorage.getItem(key);
+            const defaultAnswers = questions.filter(q => !q.isSection).map(q => "");
+            if (answersJson) {
+                const savedAnswers = JSON.parse(answersJson);
+                if (savedAnswers.length === defaultAnswers.length) {
+                    return savedAnswers;
                 }
-            };
+                return defaultAnswers.map((defaultVal, i) => savedAnswers[i] !== undefined ? savedAnswers[i] : defaultVal);
+            }
+            return defaultAnswers;
+        },
+        getStepOneAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP1_KEY, AppData.WORKBOOK_STEP1_QUESTIONS),
+        saveStepOneAnswers: (answers) => Storage.set(WORKBOOK_STEP1_KEY, answers),
+        getStepTwoAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP2_KEY, AppData.WORKBOOK_STEP2_QUESTIONS),
+        saveStepTwoAnswers: (answers) => Storage.set(WORKBOOK_STEP2_KEY, answers),
+        getStepThreeAnswers: () => Storage._getWorkbookAnswers(WORKBOOK_STEP3_KEY, AppData.WORKBOOK_STEP3_QUESTIONS),
+        saveStepThreeAnswers: (answers) => Storage.set(WORKBOOK_STEP3_KEY, answers),
+    };
 
-            li.appendChild(deleteBtn);
-            listElement.appendChild(li);
-        });
-    }
 
-    // --- To Do List Storage/Render Functions ---
-    function getTodoList() {
-        const todoJson = localStorage.getItem(TODO_KEY);
-        return todoJson ? JSON.parse(todoJson) : [];
-    }
-
-    function saveTodoList(list) {
-        localStorage.setItem(TODO_KEY, JSON.stringify(list));
-    }
+    // ----------------------------------------------------------------------
+    // 3. APP LOGIC MODULE (internal replacement for app.js)
+    // ----------------------------------------------------------------------
     
-    function getRecurrenceLabel(key) {
-        switch(key) {
-            case 'daily': return 'Daily';
-            case 'weekly': return 'Weekly';
-            case 'biweekly': return 'Bi-Weekly';
-            case 'monthly': return 'Monthly';
-            case 'yearly': return 'Yearly';
-            default: return 'No Repeat';
-        }
-    }
-
-    function renderTodoList() {
-        updateRecurringTasks(); // Check and update tasks before rendering
-        const list = getTodoList().sort((a, b) => {
-            // Sort by due date (tasks with no date last)
-            if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
-            if (a.dueDate) return -1;
-            if (b.dueDate) return 1;
-            return 0;
-        });
-
-        const todoListElement = document.getElementById('todoList');
-        todoListElement.innerHTML = '';
-
-        if (list.length === 0) {
-            todoListElement.innerHTML = '<li style="justify-content: center; color: #888;">Your list is clear!</li>';
-            return;
-        }
-
-        list.forEach((item, index) => {
-            const li = document.createElement('li');
-            li.setAttribute('data-index', index);
-            
-            const mainRow = document.createElement('div');
-            mainRow.classList.add('todo-main-row');
-
-            const textSpan = document.createElement('span');
-            textSpan.textContent = item.task;
-            textSpan.classList.add('todo-text');
-            if (item.completed) {
-                textSpan.classList.add('todo-completed');
-            }
-            textSpan.onclick = () => toggleTodoComplete(index);
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Remove';
-            deleteBtn.classList.add('secondary');
-            deleteBtn.style.padding = '5px 10px';
-            deleteBtn.onclick = (e) => {
-                e.stopPropagation();
-                deleteTodo(index);
-            };
-            
-            mainRow.appendChild(textSpan);
-            mainRow.appendChild(deleteBtn);
-            li.appendChild(mainRow);
-            
-            // NEW: Task details row
-            if (item.dueDate || item.recurrence !== 'none') {
-                const details = document.createElement('div');
-                details.classList.add('todo-details');
-                
-                let detailText = '';
-                if (item.dueDate) {
-                    detailText += `Due: ${formatDateForDisplayShort(item.dueDate)}`;
-                }
-                if (item.recurrence && item.recurrence !== 'none') {
-                    if (item.dueDate) detailText += ' | ';
-                    detailText += `Repeats: ${getRecurrenceLabel(item.recurrence)}`;
-                }
-                details.textContent = detailText;
-                li.appendChild(details);
-            }
-
-            todoListElement.appendChild(li);
-        });
-    }
-
-    function addTodo(task, dueDate, recurrence) {
-        const list = getTodoList();
-        // New task structure includes date and recurrence
-        list.push({ 
-            task: task, 
-            completed: false,
-            dueDate: dueDate || '', 
-            recurrence: recurrence || 'none'
-        });
-        saveTodoList(list);
-        renderTodoList();
-    }
-
-    function toggleTodoComplete(index) {
-        const list = getTodoList();
-        if (list[index]) {
-            list[index].completed = !list[index].completed;
-            saveTodoList(list);
-            renderTodoList();
-        }
-    }
-
-    function deleteTodo(index) {
-        const list = getTodoList();
-        list.splice(index, 1);
-        saveTodoList(list);
-        renderTodoList();
-    }
-    
-    // NEW: Function to check and update recurring tasks
-    function updateRecurringTasks() {
-        let list = getTodoList();
-        const now = getFormattedDate(new Date()); // Today's date string (YYYY-MM-DD)
-        let updated = false;
-
-        list.forEach((item) => {
-            // Only process completed tasks that have a recurrence and a due date
-            if (item.completed && item.recurrence !== 'none' && item.dueDate) {
-                
-                const taskDueDate = item.dueDate;
-
-                if (taskDueDate < now) {
-                    let nextDate = new Date(taskDueDate);
-                    
-                    // Keep calculating the next due date until it is today or later
-                    while (getFormattedDate(nextDate) < now) {
-                        const originalDate = new Date(nextDate);
-                        
-                        switch (item.recurrence) {
-                            case 'daily':
-                                nextDate.setDate(originalDate.getDate() + 1);
-                                break;
-                            case 'weekly':
-                                nextDate.setDate(originalDate.getDate() + 7);
-                                break;
-                            case 'biweekly':
-                                nextDate.setDate(originalDate.getDate() + 14);
-                                break;
-                            case 'monthly':
-                                // Preserve day of the month if possible
-                                nextDate.setMonth(originalDate.getMonth() + 1);
-                                if (nextDate.getDate() !== originalDate.getDate()) {
-                                    // Handle overflow (e.g., trying Feb 30)
-                                    nextDate.setDate(0); 
-                                }
-                                break;
-                            case 'yearly':
-                                nextDate.setFullYear(originalDate.getFullYear() + 1);
-                                break;
-                        }
-
-                        // If the next date is still in the past, continue loop
-                        if (getFormattedDate(nextDate) < now) {
-                            item.dueDate = getFormattedDate(nextDate);
-                        }
-                    }
-                    
-                    // Reset the task only if a future date was calculated
-                    if (item.dueDate !== taskDueDate) {
-                        item.completed = false; // Reset completion status
-                        item.dueDate = getFormattedDate(nextDate);
-                        updated = true;
-                    }
-                }
-            }
-        });
-
-        if (updated) {
-            saveTodoList(list);
-        }
-    }
-    // --- End To Do List Functions ---
+    // App State
+    let deck = [...AppData.cards];
+    let currentJournalKey = '';
 
     // --- Date/Time Helpers ---
-    function getFormattedDate(date) {
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months start at 0
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    }
-    
-    function formatDateForDisplayShort(dateKey) {
-        if (!dateKey) return '';
-        const date = new Date(dateKey);
-        // Returns Month/Day/Year (e.g., 10/16/2025)
-        return date.toLocaleDateString('en-US'); 
-    }
+    const DateUtils = {
+        getFormattedDate: (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        },
+        formatDateForDisplayShort: (dateKey) => {
+            if (!dateKey) return '';
+            const date = new Date(dateKey);
+            return date.toLocaleDateString('en-US'); 
+        },
+        formatDateForDisplay: (dateKey) => {
+            const parts = dateKey.split('-');
+            if (parts.length === 3) {
+                const date = new Date(parts[0], parts[1] - 1, parts[2]);
+                return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            return dateKey;
+        },
+        calculateDuration: (soberDateStr) => {
+            if (!soberDateStr) return "Enter your date to start tracking!";
+            
+            const start = new Date(soberDateStr);
+            const now = new Date();
+            
+            if (start > now) return "Date must be in the past.";
 
-    function formatDateForDisplay(dateKey) {
-        const parts = dateKey.split('-');
-        if (parts.length === 3) {
-            const date = new Date(parts[0], parts[1] - 1, parts[2]);
-            return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const diffTime = Math.abs(now - start);
+            const MS_PER_DAY = 1000 * 60 * 60 * 24;
+            const days = Math.floor(diffTime / MS_PER_DAY);
+            
+            const years = Math.floor(days / 365.25);
+            const remainingDays = days % 365.25;
+            const months = Math.floor(remainingDays / 30.44);
+            // const actualDays = Math.floor(remainingDays % 30.44); // Not needed for final string
+            
+            let output = "Sober for: ";
+            if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
+            if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
+            output += `${days} day${days !== 1 ? 's' : ''} total.`;
+            
+            return output;
         }
-        return dateKey; // Fallback
-    }
-
-    function calculateDuration(soberDateStr) {
-        if (!soberDateStr) return "Enter your date to start tracking!";
-        
-        const start = new Date(soberDateStr);
-        const now = new Date();
-        
-        if (start > now) return "Date must be in the past.";
-
-        const diffTime = Math.abs(now - start);
-        
-        const MS_PER_DAY = 1000 * 60 * 60 * 24;
-        const days = Math.floor(diffTime / MS_PER_DAY);
-        
-        const years = Math.floor(days / 365.25);
-        const remainingDays = days % 365.25;
-        const months = Math.floor(remainingDays / 30.44); // Average days per month
-        const actualDays = Math.floor(remainingDays % 30.44);
-
-        let output = "Sober for: ";
-        if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
-        if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
-        output += `${days} day${days !== 1 ? 's' : ''} total.`;
-        
-        return output;
-    }
+    };
     
-    // NEW: Helper function to display sober duration on the home screen
-    function updateHomeSobrietyDuration() {
-        const savedDate = loadSoberDate();
-        document.getElementById('homeSobrietyDuration').textContent = calculateDuration(savedDate);
-    }
+    // --- View Management ---
+    const ViewManager = {
+        displayAppView: (viewId) => {
+            const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView'];
+            views.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = id === viewId ? 'block' : 'none';
+                }
+            });
+        },
+        updateHomeSobrietyDuration: () => {
+            const savedDate = Storage.loadSoberDate();
+            document.getElementById('homeSobrietyDuration').textContent = DateUtils.calculateDuration(savedDate);
+        },
+        getDailyFact: () => {
+            const factIndex = Math.floor(Math.random() * AppData.POP_FACTS.length);
+            document.getElementById('dailyFactText').textContent = AppData.POP_FACTS[factIndex];
+        }
+    };
 
-    // --- Settings Logic ---
-    function loadSoberDate() {
-        return localStorage.getItem(SOBER_DATE_KEY) || '';
-    }
+    // --- Card Logic ---
+    const CardLogic = {
+        suitColor: (suit_key) => {
+            switch(suit_key){
+                case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
+                case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)';
+                case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)';
+                case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)';
+                default: return '#fff';
+            }
+        },
+        updateStatus: () => {
+            document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
+        },
+        renderCard: (card) => {
+            document.getElementById('cardIcon').textContent = card.icon;
+            document.getElementById('cardSuit').textContent = card.suit;
+            document.getElementById('cardText').textContent = card.text;
+            document.getElementById('cardArea').style.background = CardLogic.suitColor(card.suit_key);
+            CardLogic.updateStatus();
+        },
+        drawRandom: () => {
+            if(deck.length === 0) return null;
+            const idx = Math.floor(Math.random()*deck.length);
+            const card = deck.splice(idx,1)[0];
+            return card;
+        },
+        drawAndDisplayCard: () => {
+            const card = CardLogic.drawRandom();
+            if (!card) {
+                console.log('Deck empty — shuffle or reset.');
+                alert('Deck empty — please shuffle or return home.');
+                return;
+            }
+            CardLogic.renderCard(card);
+            ViewManager.displayAppView('cardView');
+        },
+        resetDeck: () => {
+            deck = [...AppData.cards];
+            CardLogic.updateStatus();
+            ViewManager.displayAppView('homeScreen');
+        }
+    };
 
-    function saveSoberDate(dateStr) {
-        localStorage.setItem(SOBER_DATE_KEY, dateStr);
-        document.getElementById('sobrietyDuration').textContent = calculateDuration(dateStr);
-        updateHomeSobrietyDuration(); // Update home screen when date is saved
-    }
+    // --- To Do List Logic ---
+    const TodoLogic = {
+        getRecurrenceLabel: (key) => {
+            switch(key) {
+                case 'daily': return 'Daily';
+                case 'weekly': return 'Weekly';
+                case 'biweekly': return 'Bi-Weekly';
+                case 'monthly': return 'Monthly';
+                case 'yearly': return 'Yearly';
+                default: return 'No Repeat';
+            }
+        },
+        renderTodoList: () => {
+            TodoLogic.updateRecurringTasks();
+            const list = Storage.getTodoList().sort((a, b) => {
+                if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
+                if (a.dueDate) return -1;
+                if (b.dueDate) return 1;
+                return 0;
+            });
 
-    function showSettingsView() {
-        displayAppView('settingsView');
-        const soberDateInput = document.getElementById('soberDateInput');
-        
-        // Load and display current date/duration
-        const savedDate = loadSoberDate();
-        soberDateInput.value = savedDate;
-        soberDateInput.max = getFormattedDate(new Date());
-        document.getElementById('sobrietyDuration').textContent = calculateDuration(savedDate);
-    }
+            const todoListElement = document.getElementById('todoList');
+            todoListElement.innerHTML = '';
+
+            if (list.length === 0) {
+                todoListElement.innerHTML = '<li style="justify-content: center; color: #888;">Your list is clear!</li>';
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const li = document.createElement('li');
+                const mainRow = document.createElement('div');
+                mainRow.classList.add('todo-main-row');
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = item.task;
+                textSpan.classList.add('todo-text');
+                if (item.completed) {
+                    textSpan.classList.add('todo-completed');
+                }
+                textSpan.onclick = () => TodoLogic.toggleTodoComplete(index);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Remove';
+                deleteBtn.classList.add('secondary');
+                deleteBtn.style.padding = '5px 10px';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    TodoLogic.deleteTodo(index);
+                };
+                
+                mainRow.appendChild(textSpan);
+                mainRow.appendChild(deleteBtn);
+                li.appendChild(mainRow);
+                
+                if (item.dueDate || item.recurrence !== 'none') {
+                    const details = document.createElement('div');
+                    details.classList.add('todo-details');
+                    
+                    let detailText = '';
+                    if (item.dueDate) {
+                        detailText += `Due: ${DateUtils.formatDateForDisplayShort(item.dueDate)}`;
+                    }
+                    if (item.recurrence && item.recurrence !== 'none') {
+                        if (item.dueDate) detailText += ' | ';
+                        detailText += `Repeats: ${TodoLogic.getRecurrenceLabel(item.recurrence)}`;
+                    }
+                    details.textContent = detailText;
+                    li.appendChild(details);
+                }
+                todoListElement.appendChild(li);
+            });
+        },
+        addTodo: (task, dueDate, recurrence) => {
+            const list = Storage.getTodoList();
+            list.push({ 
+                task: task, 
+                completed: false,
+                dueDate: dueDate || '', 
+                recurrence: recurrence || 'none'
+            });
+            Storage.saveTodoList(list);
+            TodoLogic.renderTodoList();
+        },
+        toggleTodoComplete: (index) => {
+            const list = Storage.getTodoList();
+            if (list[index]) {
+                list[index].completed = !list[index].completed;
+                Storage.saveTodoList(list);
+                TodoLogic.renderTodoList();
+            }
+        },
+        deleteTodo: (index) => {
+            const list = Storage.getTodoList();
+            list.splice(index, 1);
+            Storage.saveTodoList(list);
+            TodoLogic.renderTodoList();
+        },
+        updateRecurringTasks: () => {
+            let list = Storage.getTodoList();
+            const now = DateUtils.getFormattedDate(new Date());
+            let updated = false;
+
+            list.forEach((item) => {
+                if (item.completed && item.recurrence !== 'none' && item.dueDate) {
+                    const taskDueDate = item.dueDate;
+                    if (taskDueDate < now) {
+                        let nextDate = new Date(taskDueDate);
+                        
+                        while (DateUtils.getFormattedDate(nextDate) < now) {
+                            const originalDate = new Date(nextDate);
+                            
+                            switch (item.recurrence) {
+                                case 'daily':
+                                    nextDate.setDate(originalDate.getDate() + 1);
+                                    break;
+                                case 'weekly':
+                                    nextDate.setDate(originalDate.getDate() + 7);
+                                    break;
+                                case 'biweekly':
+                                    nextDate.setDate(originalDate.getDate() + 14);
+                                    break;
+                                case 'monthly':
+                                    nextDate.setMonth(originalDate.getMonth() + 1);
+                                    if (nextDate.getDate() !== originalDate.getDate()) {
+                                        nextDate.setDate(0); 
+                                    }
+                                    break;
+                                case 'yearly':
+                                    nextDate.setFullYear(originalDate.getFullYear() + 1);
+                                    break;
+                            }
+                            if (DateUtils.getFormattedDate(nextDate) < now) {
+                                item.dueDate = DateUtils.getFormattedDate(nextDate);
+                            }
+                        }
+                        
+                        if (item.dueDate !== taskDueDate) {
+                            item.completed = false;
+                            item.dueDate = DateUtils.getFormattedDate(nextDate);
+                            updated = true;
+                        }
+                    }
+                }
+            });
+
+            if (updated) {
+                Storage.saveTodoList(list);
+            }
+        }
+    };
+
+    // --- Journal Logic ---
+    const JournalLogic = {
+        showJournalEntryView: (dateKey = null) => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'block';
+            document.getElementById('journalList').style.display = 'none';
+            document.getElementById('promptManagerView').style.display = 'none';
+
+            const today = new Date();
+            dateKey = dateKey === null ? DateUtils.getFormattedDate(today) : dateKey;
+
+            currentJournalKey = dateKey;
+            document.getElementById('entryDate').value = dateKey;
+            
+            const entryContent = Storage.loadEntry(dateKey);
+            document.getElementById('journalEntry').value = entryContent;
+            
+            document.querySelector('#journalEntryView h2').textContent = DateUtils.formatDateForDisplay(new Date(dateKey));
+            
+            JournalLogic.renderPromptSelect(); 
+            document.getElementById('promptSelect').value = '';
+        },
+        showJournalListView: () => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'none';
+            document.getElementById('journalList').style.display = 'block';
+            document.getElementById('promptManagerView').style.display = 'none';
+            JournalLogic.renderEntryList();
+        },
+        renderEntryList: () => {
+            const entries = Storage.getSavedEntries();
+            const entryListElement = document.getElementById('entryList');
+            entryListElement.innerHTML = '';
+            const sortedKeys = Object.keys(entries).sort().reverse();
+
+            if (sortedKeys.length === 0) {
+                entryListElement.innerHTML = '<li>No entries saved yet.</li>';
+                return;
+            }
+
+            sortedKeys.forEach(key => {
+                const li = document.createElement('li');
+                li.textContent = DateUtils.formatDateForDisplay(key);
+                
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.classList.add('secondary');
+                viewButton.style.marginLeft = '10px';
+                
+                viewButton.onclick = () => JournalLogic.showJournalEntryView(key);
+
+                li.appendChild(viewButton);
+                entryListElement.appendChild(li);
+            });
+        },
+        renderPromptSelect: () => {
+            const select = document.getElementById('promptSelect');
+            select.innerHTML = '';
+            const allPrompts = [...AppData.DEFAULT_PROMPTS, ...Storage.getCustomPrompts()];
+
+            allPrompts.forEach((prompt, index) => {
+                const option = document.createElement('option');
+                option.value = prompt.template;
+                option.textContent = prompt.name;
+                option.setAttribute('data-is-custom', index >= AppData.DEFAULT_PROMPTS.length);
+                select.appendChild(option);
+            });
+        },
+        showPromptManagerView: () => {
+            ViewManager.displayAppView('journalView');
+            document.getElementById('journalEntryView').style.display = 'none';
+            document.getElementById('journalList').style.display = 'none';
+            document.getElementById('promptManagerView').style.display = 'block';
+            JournalLogic.renderCustomPromptList();
+        },
+        renderCustomPromptList: () => {
+            const list = Storage.getCustomPrompts();
+            const listElement = document.getElementById('customPromptList');
+            listElement.innerHTML = '';
+
+            if (list.length === 0) {
+                listElement.innerHTML = '<li style="justify-content: center; color: #888;">No custom prompts saved.</li>';
+                return;
+            }
+
+            list.forEach((prompt, index) => {
+                const li = document.createElement('li');
+                li.textContent = prompt.name;
+                li.style.cursor = 'pointer';
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.classList.add('secondary');
+                deleteBtn.style.padding = '5px 10px';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Are you sure you want to delete the prompt: "${prompt.name}"?`)) {
+                        let prompts = Storage.getCustomPrompts();
+                        prompts.splice(index, 1);
+                        Storage.saveCustomPrompts(prompts);
+                        JournalLogic.renderCustomPromptList();
+                        JournalLogic.renderPromptSelect();
+                    }
+                };
+
+                li.appendChild(deleteBtn);
+                listElement.appendChild(li);
+            });
+        }
+    };
     
     // --- Workbook Logic ---
-    function showStepOneView() {
-        displayAppView('stepOneView');
-        renderStepOneWorkbook();
-    }
-    
-    function showStepTwoView() {
-        displayAppView('stepTwoView');
-        renderStepTwoWorkbook();
-    }
-    
-    function showStepThreeView() {
-        displayAppView('stepThreeView');
-        renderStepThreeWorkbook();
-    }
-
-    function toggleSection(headerElement) {
-        const content = headerElement.nextElementSibling;
-        const icon = headerElement.querySelector('.collapse-icon');
-        
-        // Toggle the 'collapsed' class on the content element and header
-        content.classList.toggle('collapsed');
-        headerElement.classList.toggle('collapsed');
-    }
-    
-    function renderWorkbook(containerId, questions, getAnswersFn, saveStatusId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        const answers = getAnswersFn();
-        let answerIndex = 0; 
-        
-        let currentSectionContent = null;
-        let isFirstSection = true;
-        
-        questions.forEach((q, index) => {
-            if (q.isSection) {
+    const WorkbookLogic = {
+        showStepOneView: () => {
+            ViewManager.displayAppView('stepOneView');
+            WorkbookLogic.renderWorkbook('stepOneQuestions', AppData.WORKBOOK_STEP1_QUESTIONS, Storage.getStepOneAnswers, 'saveStepOneBtn', 'stepOneSaveStatus');
+        },
+        showStepTwoView: () => {
+            ViewManager.displayAppView('stepTwoView');
+            WorkbookLogic.renderWorkbook('stepTwoQuestions', AppData.WORKBOOK_STEP2_QUESTIONS, Storage.getStepTwoAnswers, 'saveStepTwoBtn', 'stepTwoSaveStatus');
+        },
+        showStepThreeView: () => {
+            ViewManager.displayAppView('stepThreeView');
+            WorkbookLogic.renderWorkbook('stepThreeQuestions', AppData.WORKBOOK_STEP3_QUESTIONS, Storage.getStepThreeAnswers, 'saveStepThreeBtn', 'stepThreeSaveStatus');
+        },
+        toggleSection: (headerElement) => {
+            const content = headerElement.nextElementSibling;
+            const icon = headerElement.querySelector('.collapse-icon');
+            content.classList.toggle('collapsed');
+            headerElement.classList.toggle('collapsed');
+        },
+        renderWorkbook: (containerId, questions, getAnswersFn, saveButtonId, saveStatusId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            const answers = getAnswersFn();
+            let answerIndex = 0; 
+            
+            let currentSectionContent = null;
+            let isFirstSection = true;
+            
+            questions.forEach((q, index) => {
+                if (q.isSection) {
+                    if (currentSectionContent) {
+                        container.appendChild(currentSectionContent);
+                    }
+                    
+                    const header = document.createElement('div');
+                    header.classList.add('workbook-section-header');
+                    
+                    if (!isFirstSection) {
+                        header.classList.add('collapsed');
+                    }
+                    
+                    const h3 = document.createElement('h3');
+                    h3.textContent = q.title;
+                    
+                    const icon = document.createElement('span');
+                    icon.classList.add('collapse-icon');
+                    icon.textContent = '▼';
+                    
+                    header.appendChild(h3);
+                    header.appendChild(icon);
+                    
+                    currentSectionContent = document.createElement('div');
+                    currentSectionContent.classList.add('section-content');
+                    if (!isFirstSection) {
+                        currentSectionContent.classList.add('collapsed');
+                    }
+                    
+                    header.onclick = () => WorkbookLogic.toggleSection(header);
+                    
+                    container.appendChild(header);
+                    isFirstSection = false;
+                    
+                    return;
+                }
+                
                 if (currentSectionContent) {
-                    container.appendChild(currentSectionContent);
+                    const div = document.createElement('div');
+                    div.classList.add('workbook-question');
+
+                    const h4 = document.createElement('h4');
+                    h4.textContent = `${answerIndex + 1}. ${q}`;
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.setAttribute('data-question-index', answerIndex);
+                    textarea.value = answers[answerIndex] || ''; 
+                    textarea.placeholder = 'Write your honest answer here...';
+
+                    div.appendChild(h4);
+                    div.appendChild(textarea);
+                    currentSectionContent.appendChild(div);
+                    
+                    answerIndex++; 
                 }
-                
-                // 1. Create the Header Element (clickable)
-                const header = document.createElement('div');
-                header.classList.add('workbook-section-header');
-                
-                if (!isFirstSection) {
-                    header.classList.add('collapsed');
-                }
-                
-                const h3 = document.createElement('h3');
-                h3.textContent = q.title;
-                
-                const icon = document.createElement('span');
-                icon.classList.add('collapse-icon');
-                icon.textContent = '▼'; // Downwards arrow
-                
-                header.appendChild(h3);
-                header.appendChild(icon);
-                
-                // 2. Create the Content Container (to be toggled)
-                currentSectionContent = document.createElement('div');
-                currentSectionContent.classList.add('section-content');
-                if (!isFirstSection) {
-                    currentSectionContent.classList.add('collapsed');
-                }
-                
-                // 3. Set up the toggle listener
-                header.onclick = () => toggleSection(header);
-                
-                // Append the header to the main container
-                container.appendChild(header);
-                isFirstSection = false;
-                
+            });
+            
+            if (currentSectionContent) {
+                 container.appendChild(currentSectionContent);
+            }
+            
+            document.getElementById(saveStatusId).textContent = '';
+            
+            // Re-bind save listener since content is dynamically generated
+            const saveBtn = document.getElementById(saveButtonId);
+            if (saveBtn) {
+                saveBtn.onclick = () => WorkbookLogic.collectAndSaveWorkbookAnswers(containerId, saveButtonId, saveStatusId);
+            }
+        },
+        collectAndSaveWorkbookAnswers: (containerId, saveButtonId, saveStatusId) => {
+            const textareas = document.querySelectorAll(`#${containerId} textarea`);
+            
+            let getAnswersFn, saveAnswersFn;
+            if (containerId === 'stepOneQuestions') {
+                getAnswersFn = Storage.getStepOneAnswers;
+                saveAnswersFn = Storage.saveStepOneAnswers;
+            } else if (containerId === 'stepTwoQuestions') {
+                getAnswersFn = Storage.getStepTwoAnswers;
+                saveAnswersFn = Storage.saveStepTwoAnswers;
+            } else if (containerId === 'stepThreeQuestions') {
+                getAnswersFn = Storage.getStepThreeAnswers;
+                saveAnswersFn = Storage.saveStepThreeAnswers;
+            } else {
                 return;
             }
             
-            // If we are processing a question, append it to the current section content container
-            if (currentSectionContent) {
-                const div = document.createElement('div');
-                div.classList.add('workbook-question');
-
-                const h4 = document.createElement('h4');
-                h4.textContent = `${answerIndex + 1}. ${q}`;
-                
-                const textarea = document.createElement('textarea');
-                textarea.setAttribute('data-question-index', answerIndex);
-                textarea.value = answers[answerIndex] || ''; 
-                textarea.placeholder = 'Write your honest answer here...';
-
-                div.appendChild(h4);
-                div.appendChild(textarea);
-                currentSectionContent.appendChild(div);
-                
-                answerIndex++; 
-            }
-        });
-        
-        // IMPORTANT: Append the last section content after the loop finishes
-        if (currentSectionContent) {
-             container.appendChild(currentSectionContent);
-        }
-        
-        document.getElementById(saveStatusId).textContent = '';
-    }
-
-    function renderStepOneWorkbook() {
-        renderWorkbook('stepOneQuestions', WORKBOOK_STEP1_QUESTIONS, getStepOneAnswers, 'stepOneSaveStatus');
-    }
-    
-    function renderStepTwoWorkbook() {
-        renderWorkbook('stepTwoQuestions', WORKBOOK_STEP2_QUESTIONS, getStepTwoAnswers, 'stepTwoSaveStatus');
-    }
-    
-    function renderStepThreeWorkbook() {
-        renderWorkbook('stepThreeQuestions', WORKBOOK_STEP3_QUESTIONS, getStepThreeAnswers, 'stepThreeSaveStatus');
-    }
-
-    function collectAndSaveWorkbookAnswers(containerId, saveAnswersFn, saveStatusId) {
-        const textareas = document.querySelectorAll(`#${containerId} textarea`);
-        const answers = saveAnswersFn.name === 'saveStepOneAnswers' ? getStepOneAnswers() : 
-                        saveAnswersFn.name === 'saveStepTwoAnswers' ? getStepTwoAnswers() : 
-                        getStepThreeAnswers();
-        
-        textareas.forEach(textarea => {
-            const index = parseInt(textarea.getAttribute('data-question-index'));
-            if (index >= 0 && index < answers.length) {
-                answers[index] = textarea.value;
-            }
-        });
-
-        saveAnswersFn(answers);
-        document.getElementById(saveStatusId).textContent = 'Progress Saved!';
-        
-        setTimeout(() => {
-            document.getElementById(saveStatusId).textContent = '';
-        }, 3000);
-    }
-    
-    function collectAndSaveStepOneAnswers() {
-        collectAndSaveWorkbookAnswers('stepOneQuestions', saveStepOneAnswers, 'stepOneSaveStatus');
-    }
-    
-    function collectAndSaveStepTwoAnswers() {
-        collectAndSaveWorkbookAnswers('stepTwoQuestions', saveStepTwoAnswers, 'stepTwoSaveStatus');
-    }
-    
-    function collectAndSaveStepThreeAnswers() {
-        collectAndSaveWorkbookAnswers('stepThreeQuestions', saveStepThreeAnswers, 'stepThreeSaveStatus');
-    }
-
-    // --- Journal View Logic ---
-    function showJournalEntryView(dateKey = null) {
-        document.getElementById('journalEntryView').style.display = 'block';
-        document.getElementById('journalList').style.display = 'none';
-        document.getElementById('promptManagerView').style.display = 'none'; // NEW: Hide prompt manager
-
-        const today = new Date();
-        if (dateKey === null) {
-            dateKey = getFormattedDate(today);
-        }
-
-        currentJournalKey = dateKey;
-        document.getElementById('entryDate').value = dateKey;
-        
-        // Load content for the specific date
-        const entryContent = loadEntry(dateKey);
-        document.getElementById('journalEntry').value = entryContent;
-        
-        document.querySelector('#journalEntryView h2').textContent = formatDateForDisplay(new Date(dateKey));
-        
-        // Render prompts on entry view
-        renderPromptSelect(); 
-        document.getElementById('promptSelect').value = ''; // Reset selection
-    }
-
-    function showJournalListView() {
-        document.getElementById('journalEntryView').style.display = 'none';
-        document.getElementById('journalList').style.display = 'block';
-        document.getElementById('promptManagerView').style.display = 'none';
-        renderEntryList();
-    }
-
-    function renderEntryList() {
-        const entries = getSavedEntries();
-        const entryListElement = document.getElementById('entryList');
-        entryListElement.innerHTML = '';
-        const sortedKeys = Object.keys(entries).sort().reverse(); // Sort descending by date
-
-        if (sortedKeys.length === 0) {
-            entryListElement.innerHTML = '<li>No entries saved yet.</li>';
-            return;
-        }
-
-        sortedKeys.forEach(key => {
-            const li = document.createElement('li');
-            li.textContent = formatDateForDisplay(key);
-            li.setAttribute('data-date-key', key);
+            let answers = getAnswersFn();
             
-            const viewButton = document.createElement('button');
-            viewButton.textContent = 'View';
-            viewButton.classList.add('secondary');
-            viewButton.style.marginLeft = '10px';
+            textareas.forEach(textarea => {
+                const index = parseInt(textarea.getAttribute('data-question-index'));
+                if (index >= 0 && index < answers.length) {
+                    answers[index] = textarea.value;
+                }
+            });
+
+            saveAnswersFn(answers);
+            document.getElementById(saveStatusId).textContent = 'Progress Saved!';
             
-            viewButton.onclick = () => {
-                showJournalEntryView(key);
-            };
-
-            li.appendChild(viewButton);
-            entryListElement.appendChild(li);
-        });
-    }
-
-    // --- Core App Functions ---
-    function suitColor(suit_key){
-      switch(suit_key){
-        case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)'; // Action & Movement
-        case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)'; // Mind & Focus
-        case 'orange': return 'linear-gradient(135deg, #C0392B 0%, #E74C3C 100%)'; // Connection & Support (Darker Red)
-        case 'purple': return 'linear-gradient(135deg, #A569BD 0%, #D2B4DE 100%)'; // Creative & Learning
-        default: return '#fff';
-      }
-    }
-
-    function updateStatus(){
-      document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
-    }
-
-    function renderCard(c){
-      document.getElementById('cardIcon').textContent = c.icon;
-      document.getElementById('cardSuit').textContent = c.suit;
-      document.getElementById('cardText').textContent = c.text;
-      // Set background using the new gradient
-      document.getElementById('cardArea').style.background = suitColor(c.suit_key);
-      updateStatus();
-    }
-
-    function drawRandom(){
-      if(deck.length === 0) return null;
-      const idx = Math.floor(Math.random()*deck.length);
-      const card = deck.splice(idx,1)[0];
-      return card;
-    }
-    
-    function displayAppView(viewId) {
-        document.getElementById('homeScreen').style.display = 'none';
-        document.getElementById('cardIntro').style.display = 'none';
-        document.getElementById('cardView').style.display = 'none';
-        document.getElementById('journalView').style.display = 'none'; 
-        document.getElementById('settingsView').style.display = 'none'; 
-        document.getElementById('todoView').style.display = 'none'; 
-        document.getElementById('literatureView').style.display = 'none'; 
-        document.getElementById('workbooksView').style.display = 'none'; 
-        document.getElementById('stepOneView').style.display = 'none'; 
-        document.getElementById('stepTwoView').style.display = 'none';
-        document.getElementById('stepThreeView').style.display = 'none'; // NEW
-        document.getElementById(viewId).style.display = 'block';
-    }
-    
-    // Function to draw a card and display the card view
-    function drawAndDisplayCard() {
-        const card = drawRandom();
-        if (!card) {
-            console.log('Deck empty — shuffle or reset.');
-            alert('Deck empty — please shuffle or return home.');
-            return;
+            setTimeout(() => {
+                document.getElementById(saveStatusId).textContent = '';
+            }, 3000);
         }
-        renderCard(card);
-        displayAppView('cardView');
-    }
-
-    function getDailyFact() {
-        // UPDATED: Use a random index instead of day of the year for fresh fact on every load
-        const factIndex = Math.floor(Math.random() * POP_FACTS.length);
-        document.getElementById('dailyFactText').textContent = POP_FACTS[factIndex];
-    }
+    };
 
 
-    // --- Event Listeners ---
-    
-    // 1. Home Screen: Draw Coping Cards Button
-    document.getElementById('goToCardsBtn').addEventListener('click', ()=>{
-      drawAndDisplayCard();
-    });
+    // --- Initialization and Event Binding ---
+    const App = {
+        initializeApp: () => {
+            // Set Max Dates
+            const todayKey = DateUtils.getFormattedDate(new Date());
+            const entryDate = document.getElementById('entryDate');
+            if (entryDate) entryDate.max = todayKey;
+            const soberDateInput = document.getElementById('soberDateInput');
+            if (soberDateInput) soberDateInput.max = todayKey;
 
-    // 2. Home Screen: Go to Settings Button
-    document.getElementById('goToSettingsBtn').addEventListener('click', ()=>{
-      showSettingsView();
-    });
-    
-    // 3. Home Screen: Go to Journal Page Button
-    document.getElementById('goToJournalBtn').addEventListener('click', ()=>{
-      displayAppView('journalView');
-      showJournalEntryView(); // Default to today's entry view
-    });
-    
-    // 4. Home Screen: Go to To Do List Button
-    document.getElementById('goToTodoBtn').addEventListener('click', ()=>{
-      displayAppView('todoView');
-      renderTodoList();
-    });
-    
-    // 5. NEW: Go to Literature Page Button
-    document.getElementById('goToLiteratureBtn').addEventListener('click', ()=>{
-      displayAppView('literatureView');
-    });
+            // Initial view setup
+            ViewManager.getDailyFact();
+            CardLogic.updateStatus();
+            ViewManager.updateHomeSobrietyDuration();
+            TodoLogic.updateRecurringTasks();
+            ViewManager.displayAppView('homeScreen');
 
-    // 6. NEW: Go to Workbooks Page Button
-    document.getElementById('goToWorkbooksBtn').addEventListener('click', ()=>{
-      displayAppView('workbooksView');
-    });
-    
-    // 7. NEW: Go to Step 1 Workbook Button (from Workbooks Home)
-    document.getElementById('goToStep1Btn').addEventListener('click', ()=>{
-      showStepOneView();
-    });
-    
-    // 8. NEW: Go to Step 2 Workbook Button (from Workbooks Home)
-    document.getElementById('goToStep2Btn').addEventListener('click', ()=>{
-      showStepTwoView();
-    });
-    
-    // 9. NEW: Go to Step 3 Workbook Button (from Workbooks Home)
-    document.getElementById('goToStep3Btn').addEventListener('click', ()=>{
-      showStepThreeView();
-    });
+            App.bindEventListeners();
+        },
 
-    // 10. Card View: Next Card Button
-    document.getElementById('nextBtn').addEventListener('click', ()=>{
-      drawAndDisplayCard();
-    });
-    
-    // 11. Card View: Home Button
-    document.getElementById('resetBtn').addEventListener('click', ()=>{
-      deck = [...cards];
-      displayAppView('homeScreen');
-      updateStatus();
-    });
-    
-    // 12. NEW: Literature View Home Button
-    document.getElementById('literatureHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-    });
+        bindEventListeners: () => {
+            // --- General Nav ---
+            document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
+            document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary').forEach(btn => {
+                if (btn.id.includes('Home')) {
+                    btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+                }
+            });
+            document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+            document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+            document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
+            document.getElementById('goToJournalBtn').addEventListener('click', () => JournalLogic.showJournalEntryView());
+            document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
+            document.getElementById('goToLiteratureBtn').addEventListener('click', () => ViewManager.displayAppView('literatureView'));
+            document.getElementById('goToWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
 
-    // 13. NEW: Workbooks View Home Button
-    document.getElementById('workbooksHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-    });
-    
-    // 14. NEW: Step 1 Workbook Home Button
-    document.getElementById('stepOneWorkbooksBtn').addEventListener('click', ()=>{
-        displayAppView('workbooksView');
-    });
-    
-    // 15. NEW: Step 2 Workbook Home Button
-    document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', ()=>{
-        displayAppView('workbooksView');
-    });
-    
-    // 16. NEW: Step 3 Workbook Home Button
-    document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', ()=>{
-        displayAppView('workbooksView');
-    });
-    
-    // 17. NEW: Step 1 Workbook Save Button
-    document.getElementById('saveStepOneBtn').addEventListener('click', ()=>{
-        collectAndSaveStepOneAnswers();
-    });
-    
-    // 18. NEW: Step 2 Workbook Save Button
-    document.getElementById('saveStepTwoBtn').addEventListener('click', ()=>{
-        collectAndSaveStepTwoAnswers();
-    });
-    
-    // 19. NEW: Step 3 Workbook Save Button
-    document.getElementById('saveStepThreeBtn').addEventListener('click', ()=>{
-        collectAndSaveStepThreeAnswers();
-    });
-    
-    // --- Journal Listeners ---
-    document.getElementById('entryHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-    });
-    document.getElementById('openListHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-    });
-    
-    // NEW: Manage Prompts Button
-    document.getElementById('managePromptsBtn').addEventListener('click', ()=>{
-        showPromptManagerView();
-    });
+            // --- Workbooks Nav ---
+            document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+            document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+            document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+            document.getElementById('stepOneWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', () => ViewManager.displayAppView('workbooksView'));
+            
+            // Workbook Save Buttons are bound dynamically in renderWorkbook
+            
+            // --- Journal Listeners ---
+            document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+            document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+            document.getElementById('managePromptsBtn').addEventListener('click', JournalLogic.showPromptManagerView);
+            document.getElementById('backToEntryBtn').addEventListener('click', () => JournalLogic.showJournalEntryView(currentJournalKey));
+            
+            document.getElementById('addCustomPromptBtn').addEventListener('click', () => {
+                const input = document.getElementById('customPromptInput');
+                const template = input.value.trim();
+                if (template) {
+                    let prompts = Storage.getCustomPrompts();
+                    prompts.push({ name: template, template: template });
+                    Storage.saveCustomPrompts(prompts);
+                    input.value = '';
+                    JournalLogic.renderCustomPromptList();
+                    JournalLogic.renderPromptSelect();
+                    alert('Custom Prompt Added!');
+                } else {
+                    alert('Please enter prompt text.');
+                }
+            });
 
-    // NEW: Back to Entry Button from Prompt Manager
-    document.getElementById('backToEntryBtn').addEventListener('click', ()=>{
-        displayAppView('journalView');
-        showJournalEntryView(currentJournalKey);
-    });
+            document.getElementById('promptSelect').addEventListener('change', (event) => {
+                const template = event.target.value;
+                const textarea = document.getElementById('journalEntry');
+                if (template) {
+                    if (textarea.value.trim() === "" || confirm("Applying a template will overwrite your current entry. Continue?")) {
+                        textarea.value = template;
+                    } else {
+                        event.target.value = ''; 
+                    }
+                }
+            });
 
-    // NEW: Add Custom Prompt Button
-    document.getElementById('addCustomPromptBtn').addEventListener('click', ()=>{
-        const input = document.getElementById('customPromptInput');
-        const template = input.value.trim();
-        if (template) {
-            addCustomPrompt(template, template); // Use the text as both name and template
-            input.value = '';
-            renderCustomPromptList();
-            alert('Custom Prompt Added!');
-        } else {
-            alert('Please enter prompt text.');
+            document.getElementById('saveJournalBtn').addEventListener('click', () => {
+                const content = document.getElementById('journalEntry').value;
+                const dateKey = document.getElementById('entryDate').value;
+                if (content.trim() === '') {
+                    alert('Journal entry cannot be empty.');
+                    return;
+                }
+                if (dateKey) {
+                    Storage.saveEntry(dateKey, content);
+                    alert(`Entry for ${dateKey} Saved!`);
+                } else {
+                    alert('Please select a date.');
+                }
+            });
+            
+            document.getElementById('entryDate').addEventListener('change', (event) => {
+                const dateKey = event.target.value;
+                if (dateKey) JournalLogic.showJournalEntryView(dateKey);
+            });
+            document.getElementById('viewAllEntriesBtn').addEventListener('click', JournalLogic.showJournalListView);
+            document.getElementById('newEntryBtn').addEventListener('click', JournalLogic.showJournalEntryView);
+
+            // --- Settings Listeners ---
+            document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+                const dateStr = document.getElementById('soberDateInput').value;
+                if (dateStr && new Date(dateStr) <= new Date()) {
+                    Storage.saveSoberDate(dateStr);
+                    ViewManager.updateHomeSobrietyDuration();
+                    alert('Sober Date Saved!');
+                } else {
+                    alert('Please enter a valid Sober Date in the past.');
+                }
+            });
+
+            // --- To Do List Listeners ---
+            document.getElementById('addTodoBtn').addEventListener('click', () => {
+                const input = document.getElementById('todoInput');
+                const dateInput = document.getElementById('todoDateInput');
+                const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
+                
+                const task = input.value.trim();
+                const dueDate = dateInput.value;
+                const recurrence = recurrenceSelect.value;
+                
+                if (task) {
+                    TodoLogic.addTodo(task, dueDate, recurrence);
+                    input.value = '';
+                    dateInput.value = '';
+                    recurrenceSelect.value = 'none';
+                } else {
+                    alert('Please enter a task description.');
+                }
+            });
+            document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
         }
-    });
+    };
 
-    // NEW: Prompt Select Change Listener - applies prompt text to textarea
-    document.getElementById('promptSelect').addEventListener('change', (event) => {
-        const template = event.target.value;
-        const textarea = document.getElementById('journalEntry');
-        
-        if (template) {
-            // Check if textarea is empty before applying template
-            if (textarea.value.trim() === "" || confirm("Applying a template will overwrite your current entry. Continue?")) {
-                textarea.value = template;
-            } else {
-                // If user cancels overwrite, reset dropdown selection
-                event.target.value = ''; 
-            }
-        }
-    });
-
-
-    document.getElementById('saveJournalBtn').addEventListener('click', ()=>{
-      const content = document.getElementById('journalEntry').value;
-      const dateKey = document.getElementById('entryDate').value;
-      
-      if (content.trim() === '') {
-        alert('Journal entry cannot be empty.');
-        return;
-      }
-      
-      if (dateKey) {
-        saveEntry(dateKey, content);
-        console.log('Journal Entry Saved:', dateKey, content);
-        alert(`Entry for ${dateKey} Saved!`);
-      } else {
-        alert('Please select a date.');
-      }
-    });
-    document.getElementById('entryDate').addEventListener('change', (event) => {
-        const dateKey = event.target.value;
-        if (dateKey) {
-            showJournalEntryView(dateKey);
-        }
-    });
-    document.getElementById('viewAllEntriesBtn').addEventListener('click', ()=>{
-        showJournalListView();
-    });
-    document.getElementById('newEntryBtn').addEventListener('click', ()=>{
-        showJournalEntryView();
-    });
-
-    // --- Settings Listeners ---
-    document.getElementById('saveSettingsBtn').addEventListener('click', ()=>{
-        const dateStr = document.getElementById('soberDateInput').value;
-        if (dateStr && new Date(dateStr) <= new Date()) {
-            saveSoberDate(dateStr);
-            alert('Sober Date Saved!');
-        } else {
-            alert('Please enter a valid Sober Date in the past.');
-        }
-    });
-    document.getElementById('settingsHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-        updateHomeSobrietyDuration(); // Refresh home duration when returning
-    });
-
-    // --- To Do List Listeners ---
-    document.getElementById('addTodoBtn').addEventListener('click', ()=>{
-        const input = document.getElementById('todoInput');
-        const dateInput = document.getElementById('todoDateInput');
-        const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
-        
-        const task = input.value.trim();
-        const dueDate = dateInput.value;
-        const recurrence = recurrenceSelect.value;
-        
-        if (task) {
-            addTodo(task, dueDate, recurrence);
-            input.value = ''; // Clear input
-            dateInput.value = ''; // Clear date
-            recurrenceSelect.value = 'none'; // Reset recurrence
-        } else {
-            alert('Please enter a task description.');
-        }
-    });
-    document.getElementById('todoHomeBtn').addEventListener('click', ()=>{
-        displayAppView('homeScreen');
-    });
-
-
-    // --- Initialization ---
-    function initializeApp() {
-        getDailyFact();
-        updateStatus();
-        
-        // Set max date for input to today
-        const todayKey = getFormattedDate(new Date());
-        document.getElementById('entryDate').max = todayKey;
-        document.getElementById('soberDateInput').max = todayKey;
-
-        // NEW: Update sobriety duration on homepage when app loads
-        updateHomeSobrietyDuration();
-        
-        // Ensure the home screen is the default view on load
-        displayAppView('homeScreen');
-        
-        // Update recurring tasks on load
-        updateRecurringTasks();
-    }
-
-    initializeApp();
-
+    App.initializeApp();
 
     // Register Service Worker
     if('serviceWorker' in navigator) {
@@ -1785,6 +1577,7 @@
           console.log('Service Worker Registration Failed:', err);
         });
     }
+    // --- END: MODULAR JAVASCRIPT REFACTOR ---
   </script>
 </body>
 </html>
