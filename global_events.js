@@ -8,7 +8,6 @@ import { WorkbookLogic } from './workbooks.js';
 // ----------------------------------------------------------------------
 // Global Constants and State
 // ----------------------------------------------------------------------
-// NOTE: deck reference is used across CardLogic and global_events to manage the deck state.
 export let deck = [...AppData.cards];
 export const GEMINI_API_KEY = typeof __api_key !== 'undefined' ? __api_key : ""; 
 export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
@@ -30,7 +29,7 @@ export const DateUtils = {
     formatDateForDisplay: (dateKey) => {
         const parts = dateKey.split('-');
         if (parts.length === 3) {
-            const date = new Date(parts[0], parts.length === 3 ? parts[1] - 1 : 0, parts[2]); // Added conditional parts check
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
             return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
         return dateKey;
@@ -453,28 +452,30 @@ export const App = {
         const jftDateInput = document.getElementById('jftDateInput');
         if (jftDateInput) jftDateInput.max = todayKey;
 
-        // Initial view setup
-        ViewManager.getDailyFact();
-        CardLogic.updateStatus();
-        ViewManager.updateHomeSobrietyDuration();
-        TodoLogic.updateRecurringTasks();
-        ViewManager.displayAppView('homeScreen');
+        // --- Safe Initialization for UI Components ---
+        // Use setTimeout to ensure the entire DOM and all modules have fully loaded 
+        // before attempting to render complex UI features or bind events.
+        setTimeout(() => {
+            // Initial UI Renders (homepage facts/durations)
+            ViewManager.getDailyFact();
+            ViewManager.updateHomeSobrietyDuration();
+            TodoLogic.updateRecurringTasks();
+            
+            // Set initial card status (must be after deck definition in global_events)
+            CardLogic.updateStatus();
 
-        App.bindEventListeners();
-        // REMOVED: CardLogic.bindEventListeners(); // Removed here, now handled inside App.bindEventListeners directly
+            // Display initial view
+            ViewManager.displayAppView('homeScreen');
+            
+            // Bind all events after UI is rendered
+            App.bindEventListeners();
+        }, 50); // Small delay to avoid race conditions
+
     },
 
     bindEventListeners: () => {
-        // --- General Nav ---
+        // --- General Nav (Home Screen Buttons) ---
         document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
-        document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary, #jftView button.secondary').forEach(btn => {
-            if (btn.id.includes('Home')) {
-                btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-            }
-        });
-        
-        // --- HOMEPAGE BUTTONS (Directly bound for robustness) ---
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard); // FIX for Draw Card button
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
         document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
@@ -482,41 +483,19 @@ export const App = {
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
 
-        // --- CARD VIEW BUTTONS (Moved from coping_cards.js to here for robustness) ---
-        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard); // FIX for Next Card
-        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck); // FIX for Home button from card view
-
-
-        // --- Daily Reflection Listener ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
+        // --- Home Nav from Child Views ---
+        document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary, #jftView button.secondary').forEach(btn => {
+            if (btn.id.includes('Home')) {
+                btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+            }
         });
         
-        // --- Just For Today Listener ---
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
+        // --- Card Logic (High-level buttons moved here for robustness) ---
+        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck); 
 
-        // --- Workbooks Nav ---
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-        
-        
         // --- Journal Listeners ---
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
         document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
         document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
         
@@ -526,6 +505,8 @@ export const App = {
         document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
         document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
         document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
+        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
 
         // --- Settings Listeners ---
         document.getElementById('saveSettingsBtn').addEventListener('click', () => {
@@ -559,5 +540,29 @@ export const App = {
             }
         });
         document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+
+        // --- Workbooks Nav ---
+        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        
+        // Workbook Save Bindings: Must be explicitly bound
+        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
+        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
+        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
+        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
+        
+        // --- Reflection Listeners ---
+        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
+            ReflectionLogic.getDailyReflection(e.target.value);
+        });
+        document.getElementById('jftDateInput').addEventListener('change', (e) => {
+            ReflectionLogic.getJustForToday(e.target.value);
+        });
     }
 };
