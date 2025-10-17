@@ -415,7 +415,7 @@
     <div id="homeScreen" style="display:block;">
         <div class="hero">
             <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.4</div>
+            <div id="appVersion">V0.5</div>
 
             <!-- NEW: Settings Cog -->
             <div class="settings-container">
@@ -429,7 +429,7 @@
             <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
             
             <div class="fact-box">
-                <h2>Recovery Fact of the Day</h2>
+                <h2 id="dailyFactHeader">Recovery Fact of the Day</h2>
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
 
@@ -774,9 +774,75 @@
     // --- START: MODULAR JAVASCRIPT ---
     
     // Import all necessary data and module helpers
-    // NOTE: This file only contains the necessary imports and the final initialization call.
-    // All actual logic is now in the separate JS files.
-    import { App } from './global_events.js'; 
+    import { AppData } from './data.js';
+    import { Storage } from './storage.js';
+    import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
+    import { LiteratureLogic } from './literature.js'; 
+    import { CardLogic } from './coping_cards.js'; 
+    import { WorkbookLogic } from './workbooks.js'; 
+    import { App, DateUtils, ViewManager, TodoLogic, ReflectionLogic } from './global_events.js'; 
+    
+
+    // --- Initialization and Event Binding ---
+    
+    // Bind the journal handlers that were separated into the journal module
+    const bindJournalHandlers = () => {
+        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
+        document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
+        
+        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
+        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
+        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
+        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
+        document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
+        document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
+    }
+
+    const bindWorkbookHandlers = () => {
+        // --- Workbooks Nav ---
+        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        
+        // Workbook Save Bindings: Must be explicitly bound
+        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
+        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
+        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
+        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
+    }
+    
+    const bindReflectionHandlers = () => {
+        // --- Daily Reflection Listener ---
+        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
+            ReflectionLogic.getDailyReflection(e.target.value);
+        });
+        
+        // --- Just For Today Listener ---
+        document.getElementById('jftDateInput').addEventListener('change', (e) => {
+            ReflectionLogic.getJustForToday(e.target.value);
+        });
+    }
+
+
+    // Override the base App.bindEventListeners to include all module bindings
+    const originalBindEventListeners = App.bindEventListeners;
+
+    App.bindEventListeners = () => {
+        // Call the original bindings from global_events.js (general buttons, settings, todo, card nav)
+        originalBindEventListeners(); 
+        
+        // Add bindings for module-specific views
+        bindJournalHandlers();
+        bindWorkbookHandlers();
+        bindReflectionHandlers();
+    };
 
     App.initializeApp();
 
