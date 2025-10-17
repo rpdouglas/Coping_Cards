@@ -82,15 +82,6 @@ const CardLogic = {
         deck.push(...AppData.cards); // Push all new cards back in
         CardLogic.updateStatus();
         ViewManager.displayAppView('homeScreen');
-    },
-
-    /**
-     * Binds event listeners for buttons specific to the card view.
-     * NOTE: This is no longer called by global_events.js, as main card buttons are bound there directly.
-     */
-    bindEventListeners: () => {
-        // These listeners are now bound in global_events.js directly for robustness, 
-        // but kept here for completeness in the module scope.
     }
 };
 
