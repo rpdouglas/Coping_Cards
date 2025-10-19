@@ -387,7 +387,7 @@ export const ReflectionLogic = {
 
         const maxRetries = 3;
         let attempt = 0;
-        while (attempt < maxRetries) {
+        while (attempt < max_retries) {
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -410,7 +410,7 @@ export const ReflectionLogic = {
             } catch (error) {
                 attempt++;
                 console.error(`Attempt ${attempt} failed:`, error.message);
-                if (attempt >= maxRetries) {
+                if (attempt >= max_retries) {
                     resultText = "Error fetching reflection after multiple retries. Check connectivity.";
                     break;
                 }
@@ -474,52 +474,9 @@ export const App = {
         document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
         document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); // Using WorkbookLogic module
+        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
         document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
-
-        // --- Daily Reflection Listener ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
-        });
-        
-        // --- Just For Today Listener ---
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
-
-        // --- Workbooks Nav ---
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
-        document.getElementById('goToStep5Btn').addEventListener('click', WorkbookLogic.showStepFiveView);
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-        document.getElementById('saveStepFiveBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFiveQuestions', 'saveStepFiveBtn', 'stepFiveSaveStatus'));
-        
-        
-        // --- Journal Listeners ---
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
-        document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
-        
-        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
-        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
-        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
-        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
-        document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
-        document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
 
         // --- Settings Listeners ---
         document.getElementById('saveSettingsBtn').addEventListener('click', () => {
