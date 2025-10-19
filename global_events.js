@@ -8,11 +8,10 @@ import { DateUtils, ViewManager } from './utils.js';
 import { SettingsLogic } from './settings.js';
 import { TodoLogic } from './todo.js';
 import { ReflectionLogic } from './reflection.js';
-// FIX: No longer exporting 'deck' from here to prevent circular dependencies.
 
 // --- Core App Logic ---
 export const App = {
-    initializeApp: () => {
+    initializeApp: function() {
         // Set max dates on inputs
         const todayKey = DateUtils.getFormattedDate(new Date());
         ['entryDate', 'soberDateInput', 'reflectionDateInput', 'jftDateInput', 'todoDateInput'].forEach(id => {
@@ -33,21 +32,24 @@ export const App = {
         ViewManager.displayAppView('homeScreen');
         
         // Bind all event listeners
-        App.bindEventListeners();
+        this.bindEventListeners();
     },
 
-    bindEventListeners: () => {
-        // --- Navigation from Home Screen ---
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('goToJournalBtn').addEventListener('click', () => JournalLogic.showJournalEntryView());
-        document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
-        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView);
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView);
-        document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
-        document.getElementById('goToSettingsBtn').addEventListener('click', SettingsLogic.showSettingsView);
+    bindEventListeners: function() {
+        // --- Home Screen Navigation ---
+        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard.bind(CardLogic));
+        document.getElementById('goToJournalBtn').addEventListener('click', JournalLogic.showJournalEntryView.bind(JournalLogic));
+        document.getElementById('goToTodoBtn').addEventListener('click', () => { 
+            ViewManager.displayAppView('todoView'); 
+            TodoLogic.renderTodoList.call(TodoLogic);
+        });
+        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView.bind(LiteratureLogic));
+        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome.bind(WorkbookLogic));
+        document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView.bind(ReflectionLogic));
+        document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView.bind(ReflectionLogic));
+        document.getElementById('goToSettingsBtn').addEventListener('click', SettingsLogic.showSettingsView.bind(SettingsLogic));
 
-        // --- Delegate bindings to feature modules ---
+        // --- Delegate bindings for buttons INSIDE other views ---
         CardLogic.bindEventListeners();
         JournalLogic.bindEventListeners();
         WorkbookLogic.bindEventListeners();
