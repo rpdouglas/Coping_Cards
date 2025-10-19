@@ -2,7 +2,7 @@ import { ViewManager, DateUtils } from './utils.js';
 import { Storage } from './storage.js';
 
 export const TodoLogic = {
-    getRecurrenceLabel: (key) => {
+    getRecurrenceLabel: function(key) {
         switch(key) {
             case 'daily': return 'Daily';
             case 'weekly': return 'Weekly';
@@ -13,8 +13,8 @@ export const TodoLogic = {
         }
     },
 
-    renderTodoList: () => {
-        TodoLogic.updateRecurringTasks();
+    renderTodoList: function() {
+        this.updateRecurringTasks();
         const list = Storage.getTodoList().sort((a, b) => {
             if (a.dueDate && b.dueDate) return new Date(a.dueDate) - new Date(b.dueDate);
             if (a.dueDate) return -1;
@@ -41,7 +41,7 @@ export const TodoLogic = {
             if (item.completed) {
                 textSpan.classList.add('todo-completed');
             }
-            textSpan.onclick = () => TodoLogic.toggleTodoComplete(index);
+            textSpan.onclick = () => this.toggleTodoComplete(index);
 
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Remove';
@@ -49,7 +49,7 @@ export const TodoLogic = {
             deleteBtn.style.padding = '5px 10px';
             deleteBtn.onclick = (e) => {
                 e.stopPropagation();
-                TodoLogic.deleteTodo(index);
+                this.deleteTodo(index);
             };
             
             mainRow.appendChild(textSpan);
@@ -65,7 +65,7 @@ export const TodoLogic = {
                 }
                 if (item.recurrence && item.recurrence !== 'none') {
                     if (item.dueDate) detailText += ' | ';
-                    detailText += `Repeats: ${TodoLogic.getRecurrenceLabel(item.recurrence)}`;
+                    detailText += `Repeats: ${this.getRecurrenceLabel(item.recurrence)}`;
                 }
                 details.textContent = detailText;
                 li.appendChild(details);
@@ -74,30 +74,30 @@ export const TodoLogic = {
         });
     },
 
-    addTodo: (task, dueDate, recurrence) => {
+    addTodo: function(task, dueDate, recurrence) {
         const list = Storage.getTodoList();
         list.push({ task, completed: false, dueDate: dueDate || '', recurrence: recurrence || 'none' });
         Storage.saveTodoList(list);
-        TodoLogic.renderTodoList();
+        this.renderTodoList();
     },
 
-    toggleTodoComplete: (index) => {
+    toggleTodoComplete: function(index) {
         const list = Storage.getTodoList();
         if (list[index]) {
             list[index].completed = !list[index].completed;
             Storage.saveTodoList(list);
-            TodoLogic.renderTodoList();
+            this.renderTodoList();
         }
     },
 
-    deleteTodo: (index) => {
+    deleteTodo: function(index) {
         const list = Storage.getTodoList();
         list.splice(index, 1);
         Storage.saveTodoList(list);
-        TodoLogic.renderTodoList();
+        this.renderTodoList();
     },
 
-    updateRecurringTasks: () => {
+    updateRecurringTasks: function() {
         let list = Storage.getTodoList();
         const todayStr = DateUtils.getFormattedDate(new Date());
         let updated = false;
@@ -123,14 +123,14 @@ export const TodoLogic = {
         if (updated) Storage.saveTodoList(list);
     },
 
-    bindEventListeners: () => {
+    bindEventListeners: function() {
         document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
         document.getElementById('addTodoBtn').addEventListener('click', () => {
             const input = document.getElementById('todoInput');
             const dateInput = document.getElementById('todoDateInput');
             const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
             if (input.value.trim()) {
-                TodoLogic.addTodo(input.value.trim(), dateInput.value, recurrenceSelect.value);
+                this.addTodo(input.value.trim(), dateInput.value, recurrenceSelect.value);
                 input.value = '';
                 dateInput.value = '';
                 recurrenceSelect.value = 'none';
@@ -140,4 +140,5 @@ export const TodoLogic = {
         });
     }
 };
+
 
