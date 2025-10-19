@@ -27,7 +27,9 @@ export const App = {
         document.getElementById('homeSobrietyDuration').textContent = DateUtils.calculateDuration(savedDate);
 
         // Run initial setup for modules
-        CardLogic.updateStatus();
+        // FIX: This line was causing a crash on startup because the 'statusText' element is not on the home screen.
+        // The status is correctly updated by other functions when the card view is active.
+        // CardLogic.updateStatus(); 
         TodoLogic.updateRecurringTasks();
         ViewManager.displayAppView('homeScreen');
         
@@ -59,3 +61,5 @@ export const App = {
         ReflectionLogic.bindEventListeners();
     }
 };
+
+
