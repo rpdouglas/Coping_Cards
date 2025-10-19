@@ -59,5 +59,3 @@ export const App = {
         ReflectionLogic.bindEventListeners();
     }
 };
-
-
