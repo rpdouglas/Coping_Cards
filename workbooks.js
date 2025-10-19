@@ -44,6 +44,62 @@ const WorkbookDataMap = {
         containerId: 'stepFiveQuestions',
         saveStatusId: 'stepFiveSaveStatus',
         viewId: 'stepFiveView'
+    },
+    stepSix: {
+        questions: AppData.WORKBOOK_STEP6_QUESTIONS,
+        getAnswers: Storage.getStepSixAnswers,
+        saveAnswers: Storage.saveStepSixAnswers,
+        containerId: 'stepSixQuestions',
+        saveStatusId: 'stepSixSaveStatus',
+        viewId: 'stepSixView'
+    },
+    stepSeven: {
+        questions: AppData.WORKBOOK_STEP7_QUESTIONS,
+        getAnswers: Storage.getStepSevenAnswers,
+        saveAnswers: Storage.saveStepSevenAnswers,
+        containerId: 'stepSevenQuestions',
+        saveStatusId: 'stepSevenSaveStatus',
+        viewId: 'stepSevenView'
+    },
+    stepEight: {
+        questions: AppData.WORKBOOK_STEP8_QUESTIONS,
+        getAnswers: Storage.getStepEightAnswers,
+        saveAnswers: Storage.saveStepEightAnswers,
+        containerId: 'stepEightQuestions',
+        saveStatusId: 'stepEightSaveStatus',
+        viewId: 'stepEightView'
+    },
+    stepNine: {
+        questions: AppData.WORKBOOK_STEP9_QUESTIONS,
+        getAnswers: Storage.getStepNineAnswers,
+        saveAnswers: Storage.saveStepNineAnswers,
+        containerId: 'stepNineQuestions',
+        saveStatusId: 'stepNineSaveStatus',
+        viewId: 'stepNineView'
+    },
+    stepTen: {
+        questions: AppData.WORKBOOK_STEP10_QUESTIONS,
+        getAnswers: Storage.getStepTenAnswers,
+        saveAnswers: Storage.saveStepTenAnswers,
+        containerId: 'stepTenQuestions',
+        saveStatusId: 'stepTenSaveStatus',
+        viewId: 'stepTenView'
+    },
+    stepEleven: {
+        questions: AppData.WORKBOOK_STEP11_QUESTIONS,
+        getAnswers: Storage.getStepElevenAnswers,
+        saveAnswers: Storage.saveStepElevenAnswers,
+        containerId: 'stepElevenQuestions',
+        saveStatusId: 'stepElevenSaveStatus',
+        viewId: 'stepElevenView'
+    },
+    stepTwelve: {
+        questions: AppData.WORKBOOK_STEP12_QUESTIONS,
+        getAnswers: Storage.getStepTwelveAnswers,
+        saveAnswers: Storage.saveStepTwelveAnswers,
+        containerId: 'stepTwelveQuestions',
+        saveStatusId: 'stepTwelveSaveStatus',
+        viewId: 'stepTwelveView'
     }
 };
 
@@ -118,6 +174,13 @@ export const WorkbookLogic = {
     showStepThreeView: function() { ViewManager.displayAppView(WorkbookDataMap.stepThree.viewId); renderWorkbook(WorkbookDataMap.stepThree); },
     showStepFourView: function() { ViewManager.displayAppView(WorkbookDataMap.stepFour.viewId); renderWorkbook(WorkbookDataMap.stepFour); },
     showStepFiveView: function() { ViewManager.displayAppView(WorkbookDataMap.stepFive.viewId); renderWorkbook(WorkbookDataMap.stepFive); },
+    showStepSixView: function() { ViewManager.displayAppView(WorkbookDataMap.stepSix.viewId); renderWorkbook(WorkbookDataMap.stepSix); },
+    showStepSevenView: function() { ViewManager.displayAppView(WorkbookDataMap.stepSeven.viewId); renderWorkbook(WorkbookDataMap.stepSeven); },
+    showStepEightView: function() { ViewManager.displayAppView(WorkbookDataMap.stepEight.viewId); renderWorkbook(WorkbookDataMap.stepEight); },
+    showStepNineView: function() { ViewManager.displayAppView(WorkbookDataMap.stepNine.viewId); renderWorkbook(WorkbookDataMap.stepNine); },
+    showStepTenView: function() { ViewManager.displayAppView(WorkbookDataMap.stepTen.viewId); renderWorkbook(WorkbookDataMap.stepTen); },
+    showStepElevenView: function() { ViewManager.displayAppView(WorkbookDataMap.stepEleven.viewId); renderWorkbook(WorkbookDataMap.stepEleven); },
+    showStepTwelveView: function() { ViewManager.displayAppView(WorkbookDataMap.stepTwelve.viewId); renderWorkbook(WorkbookDataMap.stepTwelve); },
 
     bindEventListeners: function() {
         document.getElementById('goToStep1Btn').addEventListener('click', this.showStepOneView.bind(this));
@@ -125,6 +188,13 @@ export const WorkbookLogic = {
         document.getElementById('goToStep3Btn').addEventListener('click', this.showStepThreeView.bind(this));
         document.getElementById('goToStep4Btn').addEventListener('click', this.showStepFourView.bind(this));
         document.getElementById('goToStep5Btn').addEventListener('click', this.showStepFiveView.bind(this));
+        document.getElementById('goToStep6Btn').addEventListener('click', this.showStepSixView.bind(this));
+        document.getElementById('goToStep7Btn').addEventListener('click', this.showStepSevenView.bind(this));
+        document.getElementById('goToStep8Btn').addEventListener('click', this.showStepEightView.bind(this));
+        document.getElementById('goToStep9Btn').addEventListener('click', this.showStepNineView.bind(this));
+        document.getElementById('goToStep10Btn').addEventListener('click', this.showStepTenView.bind(this));
+        document.getElementById('goToStep11Btn').addEventListener('click', this.showStepElevenView.bind(this));
+        document.getElementById('goToStep12Btn').addEventListener('click', this.showStepTwelveView.bind(this));
         
         document.getElementById('workbooksHomeBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
         document.getElementById('stepOneWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
@@ -132,12 +202,27 @@ export const WorkbookLogic = {
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
         document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepSixWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepSevenWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepEightWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepNineWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepTenWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepElevenWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepTwelveWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
 
         document.getElementById('saveStepOneBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepOne));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepTwo));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepThree));
         document.getElementById('saveStepFourBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepFour));
         document.getElementById('saveStepFiveBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepFive));
+        document.getElementById('saveStepSixBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepSix));
+        document.getElementById('saveStepSevenBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepSeven));
+        document.getElementById('saveStepEightBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepEight));
+        document.getElementById('saveStepNineBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepNine));
+        document.getElementById('saveStepTenBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepTen));
+        document.getElementById('saveStepElevenBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepEleven));
+        document.getElementById('saveStepTwelveBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepTwelve));
     }
 };
+
 
