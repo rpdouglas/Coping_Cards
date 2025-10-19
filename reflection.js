@@ -1,9 +1,10 @@
 import { ViewManager, DateUtils } from './utils.js';
 
-// --- Global Constants ---
+// --- Constants ---
 const GEMINI_API_KEY = ""; 
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
 
+// --- Private Helper Functions ---
 async function fetchReflection(userQuery, systemPrompt) {
     const payload = {
         contents: [{ parts: [{ text: userQuery }] }],
@@ -51,17 +52,18 @@ function displayReflection(resultText, quoteEl, readingEl, spinnerEl) {
     }
 }
 
+// --- Exported Logic Module ---
 export const ReflectionLogic = {
-    showReflectionView: () => {
+    showReflectionView: function() {
         ViewManager.displayAppView('reflectionView');
         const dateInput = document.getElementById('reflectionDateInput');
         if (!dateInput.value) {
             dateInput.value = DateUtils.getFormattedDate(new Date());
         }
-        ReflectionLogic.getDailyReflection(dateInput.value);
+        this.getDailyReflection(dateInput.value);
     },
     
-    getDailyReflection: async (dateStr) => {
+    getDailyReflection: async function(dateStr) {
         const spinner = document.getElementById('reflectionSpinner');
         const quoteEl = document.getElementById('reflectionQuote');
         const readingEl = document.getElementById('reflectionReading');
@@ -76,16 +78,16 @@ export const ReflectionLogic = {
         displayReflection(resultText, quoteEl, readingEl, spinner);
     },
 
-    showJFTView: () => {
+    showJFTView: function() {
         ViewManager.displayAppView('jftView');
         const dateInput = document.getElementById('jftDateInput');
         if (!dateInput.value) {
             dateInput.value = DateUtils.getFormattedDate(new Date());
         }
-        ReflectionLogic.getJustForToday(dateInput.value);
+        this.getJustForToday(dateInput.value);
     },
 
-    getJustForToday: async (dateStr) => {
+    getJustForToday: async function(dateStr) {
         const spinner = document.getElementById('jftSpinner');
         const quoteEl = document.getElementById('jftQuote');
         const readingEl = document.getElementById('jftReading');
@@ -100,11 +102,12 @@ export const ReflectionLogic = {
         displayReflection(resultText, quoteEl, readingEl, spinner);
     },
 
-    bindEventListeners: () => {
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => ReflectionLogic.getDailyReflection(e.target.value));
-        document.getElementById('jftDateInput').addEventListener('change', (e) => ReflectionLogic.getJustForToday(e.target.value));
+    bindEventListeners: function() {
+        document.getElementById('reflectionDateInput').addEventListener('change', (e) => this.getDailyReflection(e.target.value));
+        document.getElementById('jftDateInput').addEventListener('change', (e) => this.getJustForToday(e.target.value));
         document.getElementById('reflectionHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
         document.getElementById('jftHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
     }
 };
+
 
