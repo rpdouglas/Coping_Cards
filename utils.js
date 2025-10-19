@@ -19,11 +19,34 @@ export const DateUtils = {
     formatDateForDisplay: (dateKey) => {
         const parts = dateKey.split('-');
         if (parts.length === 3) {
-            // Adjust for timezone offset by using UTC
             const date = new Date(parts[0], parts[1] - 1, parts[2]);
             return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
         }
         return dateKey;
+    },
+    // FIX: Restored the missing calculateDuration function
+    calculateDuration: (soberDateStr) => {
+        if (!soberDateStr) return "Enter your date to start tracking!";
+        
+        const start = new Date(soberDateStr);
+        const now = new Date();
+        
+        if (start > now) return "Date must be in the past.";
+
+        const diffTime = Math.abs(now - start);
+        const MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const totalDays = Math.floor(diffTime / MS_PER_DAY);
+        
+        const years = Math.floor(totalDays / 365.25);
+        const remainingDaysAfterYears = totalDays % 365.25;
+        const months = Math.floor(remainingDaysAfterYears / 30.44);
+        
+        let output = "Sober for: ";
+        if (years > 0) output += `${years} year${years !== 1 ? 's' : ''}, `;
+        if (months > 0) output += `${months} month${months !== 1 ? 's' : ''}, and `;
+        output += `${totalDays} day${totalDays !== 1 ? 's' : ''} total.`;
+        
+        return output;
     }
 };
 
@@ -39,4 +62,5 @@ export const ViewManager = {
         });
     }
 };
+
 
