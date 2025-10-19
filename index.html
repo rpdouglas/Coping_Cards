@@ -13,7 +13,7 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
-            <div id="appVersion">V0.20</div>
+            <div id="appVersion">V0.21</div>
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
             </div>
@@ -36,13 +36,12 @@
         </div>
     </div>
     
-    <!-- 2. CARD VIEW SCREEN -->
+    <!-- (All other view divs are unchanged but included for completeness) -->
+    
+    <!-- 3. CARD VIEW SCREEN -->
     <div id="cardView" style="display:none;">
       <div id="cardArea" class="card-area">
-        <div>
-          <span id="cardIcon"></span>
-          <div id="cardSuit"></div>
-        </div>
+        <div><span id="cardIcon"></span><div id="cardSuit"></div></div>
         <p id="cardText"></p>
         <div class="actions">
           <button id="nextBtn" class="secondary">Next Card</button>
@@ -52,7 +51,7 @@
       </div>
     </div>
 
-    <!-- 3. JOURNAL VIEW SCREEN -->
+    <!-- 4. JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
         <div class="content-card">
             <div id="journalList" style="display:none;">
@@ -77,10 +76,9 @@
             </div>
             <div id="journalEntryView">
                 <h2>Today's Reflection</h2>
-                <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
+                <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect.</p>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <label for="entryDate">Date:</label>
-                    <input type="date" id="entryDate">
+                    <label for="entryDate">Date:</label><input type="date" id="entryDate">
                 </div>
                 <div class="prompt-row" style="margin-top: 15px;">
                     <select id="promptSelect"></select>
@@ -88,9 +86,9 @@
                 </div>
                 <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
                 <div class="actions-row">
-                    <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
+                    <button id="viewAllEntriesBtn" class="secondary">View All</button>
                     <div class="list-view-actions">
-                        <button id="saveJournalBtn" class="secondary">Save Entry</button>
+                        <button id="saveJournalBtn" class="secondary">Save</button>
                         <button id="entryHomeBtn" class="secondary">Home</button>
                     </div>
                 </div>
@@ -98,7 +96,7 @@
         </div>
     </div>
 
-    <!-- 4. SETTINGS VIEW SCREEN -->
+    <!-- 5. SETTINGS VIEW SCREEN -->
     <div id="settingsView" style="display:none;">
         <div class="content-card">
             <h2>App Settings</h2>
@@ -116,7 +114,7 @@
         </div>
     </div>
     
-    <!-- 5. TO DO LIST VIEW SCREEN -->
+    <!-- 6. TO DO LIST VIEW SCREEN -->
     <div id="todoView" style="display:none;">
         <div class="content-card">
             <h2>My To Do List</h2>
@@ -125,12 +123,8 @@
                 <input type="text" id="todoInput" placeholder="Task description">
                 <input type="date" id="todoDateInput">
                 <select id="todoRecurrenceSelect">
-                    <option value="none">No Repeat</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="biweekly">Every 2 Weeks</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
+                    <option value="none">No Repeat</option><option value="daily">Daily</option><option value="weekly">Weekly</option>
+                    <option value="biweekly">Every 2 Weeks</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option>
                 </select>
                 <button id="addTodoBtn" class="secondary">Add Task</button>
             </div>
@@ -141,7 +135,7 @@
         </div>
     </div>
 
-    <!-- 6. RECOVERY LITERATURE VIEW SCREEN -->
+    <!-- 7. LITERATURE VIEW SCREEN -->
     <div id="literatureView" style="display:none;">
         <div class="content-card">
             <h2>Recovery Literature: Big Book Excerpts</h2>
@@ -149,24 +143,21 @@
             <div id="literatureContent">
                 <div class="literature-chapter">
                     <h3>Chapter 1: Bill's Story</h3>
-                    <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
+                    <p>Bill W.'s story is the compelling account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience, found a way out. It details his descent into alcoholism and the visit from his friend, Ebby T., whose own recovery planted the seed for the program.</p>
                 </div>
                 <div class="literature-chapter">
                     <h3>Chapter 2: There is a Solution</h3>
-                    <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
+                    <p>This chapter provides hope by asserting that recovery is possible. It emphasizes the importance of the fellowship and introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—requiring a spiritual remedy.</p>
                 </div>
             </div>
-            <p class="literature-link">
-                For the complete text, download the 
-                <a href="https://aa-netherlands.org/for-members/big-book-online/" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online (PDF)</a>.
-            </p>
+            <p class="literature-link">For the complete text, download the <a href="https://aa.org/the-big-book" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online</a>.</p>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="literatureHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
 
-    <!-- 7. RECOVERY WORKBOOKS HOME VIEW SCREEN -->
+    <!-- 8. WORKBOOKS HOME VIEW SCREEN -->
     <div id="workbooksView" style="display:none;">
         <div class="content-card">
             <h2>Recovery Workbooks</h2>
@@ -178,7 +169,7 @@
             <button id="goToStep5Btn" class="primary" style="margin-top: 15px;">Step 5: Admitting Wrongs</button>
             <button id="goToStep6Btn" class="primary" style="margin-top: 15px;">Step 6: Becoming Ready</button>
             <button id="goToStep7Btn" class="primary" style="margin-top: 15px;">Step 7: Humbly Asking</button>
-            <button id="goToStep8Btn" class="primary" style="margin-top: 15px;">Step 8: Making a List</button>
+            <button id="goToStep8Btn" class="primary" style="margin-top: 15px;">Step 8: List of Harms</button>
             <button id="goToStep9Btn" class="primary" style="margin-top: 15px;">Step 9: Making Amends</button>
             <button id="goToStep10Btn" class="primary" style="margin-top: 15px;">Step 10: Daily Inventory</button>
             <button id="goToStep11Btn" class="primary" style="margin-top: 15px;">Step 11: Prayer & Meditation</button>
@@ -189,167 +180,71 @@
         </div>
     </div>
     
-    <!-- WORKBOOK STEP VIEWS -->
-    <div id="stepOneView" style="display:none;">
+    <!-- All 12 Step Workbook Views -->
+    <div id="stepOneView" style="display:none;"><div class="content-card"><h2>Step 1: Admitted Powerlessness</h2><p class="sub" style="text-align: center;">"We admitted we were powerless over our addiction—that our lives had become unmanageable."</p><div id="stepOneQuestions"></div><div class="actions-row"><p id="stepOneSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepOneBtn" class="secondary">Save</button><button id="stepOneWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepTwoView" style="display:none;"><div class="content-card"><h2>Step 2: Coming to Believe</h2><p class="sub" style="text-align: center;">"Came to believe that a Power greater than ourselves could restore us to sanity."</p><div id="stepTwoQuestions"></div><div class="actions-row"><p id="stepTwoSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTwoBtn" class="secondary">Save</button><button id="stepTwoWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepThreeView" style="display:none;"><div class="content-card"><h2>Step 3: Turning It Over</h2><p class="sub" style="text-align: center;">"Made a decision to turn our will and our lives over to the care of God as we understood Him."</p><div id="stepThreeQuestions"></div><div class="actions-row"><p id="stepThreeSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepThreeBtn" class="secondary">Save</button><button id="stepThreeWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepFourView" style="display:none;"><div class="content-card"><h2>Step 4: Moral Inventory</h2><p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p><div id="stepFourQuestions"></div><div class="actions-row"><p id="stepFourSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepFourBtn" class="secondary">Save</button><button id="stepFourWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepFiveView" style="display:none;"><div class="content-card"><h2>Step 5: Admitting Wrongs</h2><p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p><div id="stepFiveQuestions"></div><div class="actions-row"><p id="stepFiveSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepFiveBtn" class="secondary">Save</button><button id="stepFiveWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepSixView" style="display:none;"><div class="content-card"><h2>Step 6: Becoming Ready</h2><p class="sub" style="text-align: center;">"Were entirely ready to have God remove all these defects of character."</p><div id="stepSixQuestions"></div><div class="actions-row"><p id="stepSixSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepSixBtn" class="secondary">Save</button><button id="stepSixWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepSevenView" style="display:none;"><div class="content-card"><h2>Step 7: Humbly Asking</h2><p class="sub" style="text-align: center;">"Humbly asked Him to remove our shortcomings."</p><div id="stepSevenQuestions"></div><div class="actions-row"><p id="stepSevenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepSevenBtn" class="secondary">Save</button><button id="stepSevenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepEightView" style="display:none;"><div class="content-card"><h2>Step 8: List of Harms</h2><p class="sub" style="text-align: center;">"Made a list of all persons we had harmed, and became willing to make amends to them all."</p><div id="stepEightQuestions"></div><div class="actions-row"><p id="stepEightSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepEightBtn" class="secondary">Save</button><button id="stepEightWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepNineView" style="display:none;"><div class="content-card"><h2>Step 9: Making Amends</h2><p class="sub" style="text-align: center;">"Made direct amends to such people wherever possible, except when to do so would injure them or others."</p><div id="stepNineQuestions"></div><div class="actions-row"><p id="stepNineSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepNineBtn" class="secondary">Save</button><button id="stepNineWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepTenView" style="display:none;"><div class="content-card"><h2>Step 10: Daily Inventory</h2><p class="sub" style="text-align: center;">"Continued to take personal inventory and when we were wrong promptly admitted it."</p><div id="stepTenQuestions"></div><div class="actions-row"><p id="stepTenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTenBtn" class="secondary">Save</button><button id="stepTenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepElevenView" style="display:none;"><div class="content-card"><h2>Step 11: Prayer & Meditation</h2><p class="sub" style="text-align: center;">"Sought through prayer and meditation to improve our conscious contact with God as we understood Him..."</p><div id="stepElevenQuestions"></div><div class="actions-row"><p id="stepElevenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepElevenBtn" class="secondary">Save</button><button id="stepElevenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+    <div id="stepTwelveView" style="display:none;"><div class="content-card"><h2>Step 12: Spiritual Awakening</h2><p class="sub" style="text-align: center;">"Having had a spiritual awakening as the result of these steps, we tried to carry this message to other addicts, and to practice these principles in all our affairs."</p><div id="stepTwelveQuestions"></div><div class="actions-row"><p id="stepTwelveSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTwelveBtn" class="secondary">Save</button><button id="stepTwelveWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
+
+    <!-- REFLECTION VIEWS -->
+    <div id="reflectionView" style="display:none;">
         <div class="content-card">
-            <h2>Step 1: Admitted Powerlessness</h2>
-            <p class="sub" style="text-align: center;">"We admitted we were powerless over our addiction—that our lives had become unmanageable."</p>
-            <div id="stepOneQuestions"></div>
-            <div class="actions-row">
-                <p id="stepOneSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepOneBtn" class="secondary">Save Progress</button>
-                    <button id="stepOneWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
+            <h2>Daily Reflection (AA)</h2>
+            <p class="sub" style="text-align: center;">A daily quote and meditation to guide your thoughts.</p>
+            <label for="reflectionDateInput" class="date-label">Select Date:</label>
+            <input type="date" id="reflectionDateInput">
+            <div id="reflectionContent" class="reflection-content">
+                <div class="loading-spinner" id="reflectionSpinner"></div>
+                <p id="reflectionQuote" class="reflection-quote"></p>
+                <p id="reflectionReading" class="reflection-reading"></p>
+            </div>
+            <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
+                <button id="reflectionHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
-    <div id="stepTwoView" style="display:none;">
+    <div id="jftView" style="display:none;">
         <div class="content-card">
-            <h2>Step 2: Coming to Believe</h2>
-            <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
-            <div id="stepTwoQuestions"></div>
-            <div class="actions-row">
-                <p id="stepTwoSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepTwoBtn" class="secondary">Save Progress</button>
-                    <button id="stepTwoWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
+            <h2>Just for Today (NA)</h2>
+            <p class="sub" style="text-align: center;">The daily spiritual message from Narcotics Anonymous.</p>
+            <label for="jftDateInput" class="date-label">Select Date:</label>
+            <input type="date" id="jftDateInput">
+            <div id="jftContent" class="reflection-content">
+                <div class="loading-spinner" id="jftSpinner"></div>
+                <p id="jftQuote" class="reflection-quote"></p>
+                <p id="jftReading" class="reflection-reading"></p>
+            </div>
+            <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
+                <button id="jftHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
-    <div id="stepThreeView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 3: Turning It Over</h2>
-            <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
-            <div id="stepThreeQuestions"></div>
-            <div class="actions-row">
-                <p id="stepThreeSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepThreeBtn" class="secondary">Save Progress</button>
-                    <button id="stepThreeWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepFourView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 4: Moral Inventory</h2>
-            <p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p>
-            <div id="stepFourQuestions"></div>
-            <div class="actions-row">
-                <p id="stepFourSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepFourBtn" class="secondary">Save Progress</button>
-                    <button id="stepFourWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepFiveView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 5: Admitting Wrongs</h2>
-            <p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p>
-            <div id="stepFiveQuestions"></div>
-            <div class="actions-row">
-                <p id="stepFiveSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepFiveBtn" class="secondary">Save Progress</button>
-                    <button id="stepFiveWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepSixView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 6: Becoming Ready</h2>
-            <p class="sub" style="text-align: center;">"Were entirely ready to have God remove all these defects of character."</p>
-            <div id="stepSixQuestions"></div>
-            <div class="actions-row">
-                <p id="stepSixSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepSixBtn" class="secondary">Save Progress</button>
-                    <button id="stepSixWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepSevenView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 7: Humbly Asking</h2>
-            <p class="sub" style="text-align: center;">"Humbly asked Him to remove our shortcomings."</p>
-            <div id="stepSevenQuestions"></div>
-            <div class="actions-row">
-                <p id="stepSevenSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepSevenBtn" class="secondary">Save Progress</button>
-                    <button id="stepSevenWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepEightView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 8: Making a List</h2>
-            <p class="sub" style="text-align: center;">"Made a list of all persons we had harmed, and became willing to make amends to them all."</p>
-            <div id="stepEightQuestions"></div>
-            <div class="actions-row">
-                <p id="stepEightSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepEightBtn" class="secondary">Save Progress</button>
-                    <button id="stepEightWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepNineView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 9: Making Amends</h2>
-            <p class="sub" style="text-align: center;">"Made direct amends to such people wherever possible, except when to do so would injure them or others."</p>
-            <div id="stepNineQuestions"></div>
-            <div class="actions-row">
-                <p id="stepNineSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepNineBtn" class="secondary">Save Progress</button>
-                    <button id="stepNineWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepTenView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 10: Daily Inventory</h2>
-            <p class="sub" style="text-align: center;">"Continued to take personal inventory and when we were wrong promptly admitted it."</p>
-            <div id="stepTenQuestions"></div>
-            <div class="actions-row">
-                <p id="stepTenSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepTenBtn" class="secondary">Save Progress</button>
-                    <button id="stepTenWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepElevenView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 11: Prayer & Meditation</h2>
-            <p class="sub" style="text-align: center;">"Sought through prayer and meditation to improve our conscious contact with God as we understood Him..."</p>
-            <div id="stepElevenQuestions"></div>
-            <div class="actions-row">
-                <p id="stepElevenSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="saveStepElevenBtn" class="secondary">Save Progress</button>
-                    <button id="stepElevenWorkbooksBtn" class="secondary">Workbooks Home</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="stepTwelveView" style="display:none;">
-        <div class="content-card">
-            <h2>Step 12: Spiritual Awakening</h2>
-            <p class="sub" style="text-align: center;">"Having had a spiritual awakening as the result of these steps, we tried to carry this message to others, and to practice these principles in all our affairs."</p>
-            <div id="stepTwelveQuestions"></div>
-            <div class="actions-row">
-                <p id="stepTwelveSaveStatus" class="save-status"></p>
-                <div class="list-view-actions">
-                    <button id="sa
+
+  </div>
+  
+  <script type="module">
+    // FIX: Wait for the DOM to be fully loaded before initializing the app
+    // This prevents race conditions and ensures all elements are available.
+    document.addEventListener('DOMContentLoaded', () => {
+        // Import the main App logic after the DOM is ready.
+        import('./global_events.js').then(({ App }) => {
+            // Initialize the application
+            App.initializeApp();
+        }).catch(err => {
+            console.error("Failed to load or initialize the application:", err);
+            // Optionally, display a user-friendly error message on the page
+            document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-family: sans-serif;"><h1>Application Error</h1><p>Could not load the application. Please try refreshing the page. See console for details.</p></div>';
+        });
+    });
+
+    // Register Service Worker
+    if('serviceWorker' in navigator) {
+      
