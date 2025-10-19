@@ -8,9 +8,7 @@ import { DateUtils, ViewManager } from './utils.js';
 import { SettingsLogic } from './settings.js';
 import { TodoLogic } from './todo.js';
 import { ReflectionLogic } from './reflection.js';
-
-// --- Global State ---
-export let deck = [...AppData.cards];
+// FIX: No longer exporting 'deck' from here to prevent circular dependencies.
 
 // --- Core App Logic ---
 export const App = {
