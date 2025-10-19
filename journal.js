@@ -94,65 +94,15 @@ function renderEntryList() {
         viewButton.classList.add('secondary');
         viewButton.style.marginLeft = '10px';
         
-        viewButton.onclick = () => showJournalEntryView(key);
+        viewButton.onclick = () => JournalLogic.showJournalEntryView(key);
 
         li.appendChild(viewButton);
         entryListElement.appendChild(li);
     });
 }
 
-// --- View Logic ---
-
-/**
- * Shows the main entry view for a specific date (defaults to today).
- * @param {string | null} dateKey - The date (YYYY-MM-DD).
- */
-export function showJournalEntryView(dateKey = null) {
-    ViewManager.displayAppView('journalView');
-    document.getElementById('journalEntryView').style.display = 'block';
-    document.getElementById('journalList').style.display = 'none';
-    document.getElementById('promptManagerView').style.display = 'none';
-
-    const today = new Date();
-    dateKey = dateKey === null ? DateUtils.getFormattedDate(today) : dateKey;
-
-    currentJournalKey = dateKey;
-    document.getElementById('entryDate').value = dateKey;
-    
-    const entryContent = loadEntry(dateKey);
-    document.getElementById('journalEntry').value = entryContent;
-    
-    document.querySelector('#journalEntryView h2').textContent = DateUtils.formatDateForDisplay(new Date(dateKey));
-    
-    renderPromptSelect(); 
-    document.getElementById('promptSelect').value = '';
-}
-
-/**
- * Shows the list view of all past journal entries.
- */
-export function showJournalListView() {
-    ViewManager.displayAppView('journalView');
-    document.getElementById('journalEntryView').style.display = 'none';
-    document.getElementById('journalList').style.display = 'block';
-    document.getElementById('promptManagerView').style.display = 'none';
-    renderEntryList();
-}
-
-/**
- * Shows the prompt management interface.
- */
-export function showPromptManagerView() {
-    ViewManager.displayAppView('journalView');
-    document.getElementById('journalEntryView').style.display = 'none';
-    document.getElementById('journalList').style.display = 'none';
-    document.getElementById('promptManagerView').style.display = 'block';
-    renderCustomPromptList();
-}
-
-// --- Event Handlers (exported for binding in app.js) ---
-
-export const JournalEventHandlers = {
+// --- Event Handlers (kept separate for clarity) ---
+const JournalEventHandlers = {
     handleSave: () => {
         const content = document.getElementById('journalEntry').value;
         const dateKey = document.getElementById('entryDate').value;
@@ -172,7 +122,7 @@ export const JournalEventHandlers = {
     handleDateChange: (event) => {
         const dateKey = event.target.value;
         if (dateKey) {
-            showJournalEntryView(dateKey);
+            JournalLogic.showJournalEntryView(dateKey);
         }
     },
     handlePromptAdd: () => {
@@ -200,6 +150,73 @@ export const JournalEventHandlers = {
                 event.target.value = '';
             }
         }
-    },
-    getCurrentJournalKey: () => currentJournalKey
+    }
 };
+
+
+// --- Exported Logic Module ---
+export const JournalLogic = {
+    /**
+     * Shows the main entry view for a specific date (defaults to today).
+     * @param {string | null} dateKey - The date (YYYY-MM-DD).
+     */
+    showJournalEntryView: (dateKey = null) => {
+        ViewManager.displayAppView('journalView');
+        document.getElementById('journalEntryView').style.display = 'block';
+        document.getElementById('journalList').style.display = 'none';
+        document.getElementById('promptManagerView').style.display = 'none';
+
+        const today = new Date();
+        dateKey = dateKey === null ? DateUtils.getFormattedDate(today) : dateKey;
+
+        currentJournalKey = dateKey;
+        document.getElementById('entryDate').value = dateKey;
+        
+        const entryContent = loadEntry(dateKey);
+        document.getElementById('journalEntry').value = entryContent;
+        
+        const dateForDisplay = new Date(dateKey.replace(/-/g, '\/'));
+        document.querySelector('#journalEntryView h2').textContent = DateUtils.formatDateForDisplay(dateForDisplay.toDateString());
+        
+        renderPromptSelect(); 
+        document.getElementById('promptSelect').value = '';
+    },
+
+    /**
+     * Shows the list view of all past journal entries.
+     */
+    showJournalListView: () => {
+        ViewManager.displayAppView('journalView');
+        document.getElementById('journalEntryView').style.display = 'none';
+        document.getElementById('journalList').style.display = 'block';
+        document.getElementById('promptManagerView').style.display = 'none';
+        renderEntryList();
+    },
+
+    /**
+     * Shows the prompt management interface.
+     */
+    showPromptManagerView: () => {
+        ViewManager.displayAppView('journalView');
+        document.getElementById('journalEntryView').style.display = 'none';
+        document.getElementById('journalList').style.display = 'none';
+        document.getElementById('promptManagerView').style.display = 'block';
+        renderCustomPromptList();
+    },
+    
+    // NEW: Centralized event binder for this module
+    bindEventListeners: () => {
+        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('managePromptsBtn').addEventListener('click', JournalLogic.showPromptManagerView);
+        document.getElementById('backToEntryBtn').addEventListener('click', () => JournalLogic.showJournalEntryView(currentJournalKey));
+        
+        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
+        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
+        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
+        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
+        document.getElementById('viewAllEntriesBtn').addEventListener('click', JournalLogic.showJournalListView);
+        document.getElementById('newEntryBtn').addEventListener('click', () => JournalLogic.showJournalEntryView());
+    }
+};
+
