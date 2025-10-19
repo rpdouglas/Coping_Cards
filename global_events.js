@@ -1,6 +1,6 @@
 import { AppData } from './data.js';
 import { Storage } from './storage.js';
-import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
+import { JournalLogic } from './journal.js'; 
 import { LiteratureLogic } from './literature.js'; 
 import { CardLogic } from './coping_cards.js'; 
 import { WorkbookLogic } from './workbooks.js';
@@ -9,8 +9,6 @@ import { WorkbookLogic } from './workbooks.js';
 // Global Constants and State
 // ----------------------------------------------------------------------
 export let deck = [...AppData.cards];
-// UPDATED: Set the API key to an empty string. 
-// The environment will securely provide the key at runtime.
 export const GEMINI_API_KEY = ""; 
 export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
 
@@ -23,9 +21,10 @@ export const DateUtils = {
         const dd = String(date.getDate()).padStart(2, '0');
         return `${yyyy}-${mm}-${dd}`;
     },
+    // FIX: Corrected typo from "new date(...)" to "new Date(...)"
     formatDateForDisplayShort: (dateKey) => {
         if (!dateKey) return '';
-        const date = new date(dateKey);
+        const date = new Date(dateKey);
         return date.toLocaleDateString('en-US'); 
     },
     formatDateForDisplay: (dateKey) => {
@@ -303,7 +302,6 @@ export const ReflectionLogic = {
 
             } catch (error) {
                 attempt++;
-                console.error(`Attempt ${attempt} failed:`, error.message);
                 if (attempt >= maxRetries) {
                     resultText = "Error fetching reflection after multiple retries. This may be due to a missing API key or connectivity issues.";
                     break;
@@ -397,7 +395,6 @@ export const ReflectionLogic = {
 
             } catch (error) {
                 attempt++;
-                console.error(`Attempt ${attempt} failed:`, error.message);
                 if (attempt >= maxRetries) {
                     resultText = "Error fetching reflection after multiple retries. This may be due to a missing API key or connectivity issues.";
                     break;
@@ -450,17 +447,25 @@ export const App = {
         App.bindEventListeners();
     },
 
+    // REFACTORED: Centralized event listener bindings
     bindEventListeners: () => {
-        // --- General Nav ---
+        // --- Call module-specific binders ---
+        CardLogic.bindEventListeners();
+        JournalLogic.bindEventListeners();
+        WorkbookLogic.bindEventListeners();
+        LiteratureLogic.bindEventListeners();
+
+        // --- General App Navigation & Settings ---
         document.getElementById('goToSettingsBtn').addEventListener('click', () => ViewManager.displayAppView('settingsView'));
-        document.querySelectorAll('#settingsView button.secondary, #literatureView button.secondary, #workbooksView button.secondary, #reflectionView button.secondary, #jftView button.secondary').forEach(btn => {
-            if (btn.id.includes('Home')) {
-                btn.addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-            }
+        document.getElementById('settingsHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('goToJournalBtn').addEventListener('click', () => JournalLogic.showJournalEntryView());
+        document.getElementById('goToTodoBtn').addEventListener('click', () => { 
+            ViewManager.displayAppView('todoView'); 
+            TodoLogic.renderTodoList(); 
         });
+        document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView);
+        document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
         
-        document.getElementById('goToJournalBtn').addEventListener('click', () => showJournalEntryView());
-        document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
-        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); // Using WorkbookLogic module
-        document.getElementById('goToReflectionBtn').addEventListener('clic
+        // --- Reflection View Listeners ---
+        document.getElementById('reflectionDateInput').addEventListener('change', (e) => ReflectionLogic.getDailyReflection(e.target.value));
+        document.getElementById('jftDateInput').addEventListener('change', (e) => ReflectionLogic.getJ
