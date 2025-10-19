@@ -4,7 +4,6 @@ import { JournalLogic } from './journal.js';
 import { LiteratureLogic } from './literature.js'; 
 import { CardLogic } from './coping_cards.js'; 
 import { WorkbookLogic } from './workbooks.js';
-// UPDATED: Import shared utilities from the new utils.js file
 import { DateUtils, ViewManager } from './utils.js';
 
 // ----------------------------------------------------------------------
