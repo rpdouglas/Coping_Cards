@@ -1,7 +1,7 @@
 import { AppData } from './data.js';
-// UPDATED: Import from utils.js and global_events.js separately
 import { ViewManager } from './utils.js'; 
-import { deck } from './global_events.js'; 
+// FIX: Import the shared 'deck' state from the new state.js file
+import { deck } from './state.js'; 
 
 // --- Card Logic ---
 export const CardLogic = {
@@ -44,9 +44,11 @@ export const CardLogic = {
         ViewManager.displayAppView('homeScreen');
     },
     bindEventListeners: () => {
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
+        // These buttons are now handled in the main global_events.js file to centralize navigation
+        // document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
         document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
         document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
     }
 };
+
 
