@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- UPDATED: Title for the application -->
   <title>The Addicts Agenda</title>
   <link rel="manifest" href="manifest.json">
   <style>
@@ -411,13 +410,10 @@
 <body>
   <div class="app">
 
-    <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
-            <!-- NEW: App Version Number -->
             <div id="appVersion">V0.5</div>
 
-            <!-- NEW: Settings Cog -->
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
             </div>
@@ -425,7 +421,6 @@
             <h1>The Addicts Agenda</h1>
             <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
             
-            <!-- NEW: Sobriety Duration Display -->
             <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
             
             <div class="fact-box">
@@ -433,33 +428,24 @@
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
 
-            <!-- Button 1: Draw Coping Cards (Text Changed) -->
             <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
 
-            <!-- Button 2: Start Journaling (Style Changed to Primary) -->
             <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
             
-            <!-- Button 3: To Do List (NEW) -->
             <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
             
-            <!-- NEW Button Group for Reflections -->
             <div class="reflection-group">
-                <!-- Button 4: Daily Reflection -->
                 <button id="goToReflectionBtn" class="primary">Daily Reflection (AA)</button>
-                <!-- NEW Button 5: Just For Today -->
                 <button id="goToJFTBtn" class="primary">Just for Today (NA)</button>
             </div>
 
 
-            <!-- NEW Button 6: Recovery Literature -->
             <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
 
-            <!-- NEW Button 7: Recovery Workbooks -->
             <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
         </div>
     </div>
     
-    <!-- 2. CARD INTRO SCREEN (Unused) -->
     <div id="cardIntro" style="display:none;">
       <div class="hero">
         <h1>52 Coping Cards</h1>
@@ -468,7 +454,6 @@
       </div>
     </div>
     
-    <!-- 3. CARD VIEW SCREEN -->
     <div id="cardView" style="display:none;">
       <div id="cardArea" class="card-area">
         <div>
@@ -484,11 +469,9 @@
       </div>
     </div>
 
-    <!-- 4. JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
         <div class="content-card">
             
-            <!-- Journal List View (initially hidden) -->
             <div id="journalList" style="display:none;">
                 <h2>Journal Entries</h2>
                 <div class="list-view-actions">
@@ -500,7 +483,6 @@
                 </ul>
             </div>
 
-            <!-- Journal Prompt Manager (NEW, initially hidden) -->
             <div id="promptManagerView" style="display:none;">
                 <h2>Manage Custom Prompts</h2>
                 <div class="prompt-row">
@@ -509,14 +491,12 @@
                 </div>
                 <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
                 <ul id="customPromptList" class="journal-entry-list prompt-list-manager">
-                    <!-- Custom Prompts will be rendered here -->
-                </ul>
+                    </ul>
                 <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
                     <button id="backToEntryBtn" class="secondary">Back to Journal</button>
                 </div>
             </div>
 
-            <!-- Journal Entry View (today's entry) -->
             <div id="journalEntryView">
                 <h2>Today's Reflection</h2>
                 <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
@@ -528,8 +508,7 @@
                 
                 <div class="prompt-row" style="margin-top: 15px;">
                     <select id="promptSelect">
-                        <!-- Prompts loaded here -->
-                    </select>
+                        </select>
                     <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
                 </div>
 
@@ -546,7 +525,6 @@
         </div>
     </div>
 
-    <!-- 5. SETTINGS VIEW SCREEN -->
     <div id="settingsView" style="display:none;">
         <div class="content-card">
             <h2>App Settings</h2>
@@ -564,13 +542,11 @@
         </div>
     </div>
     
-    <!-- 6. NEW TO DO LIST VIEW SCREEN -->
     <div id="todoView" style="display:none;">
         <div class="content-card">
             <h2>My To Do List</h2>
             <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
             
-            <!-- NEW: Task Input Form with Date and Recurrence -->
             <div class="todo-input-group">
                 <input type="text" id="todoInput" placeholder="Task description">
                 <input type="date" id="todoDateInput">
@@ -586,8 +562,7 @@
             </div>
             
             <ul id="todoList" class="todo-list">
-                <!-- To Do Items will be rendered here -->
-            </ul>
+                </ul>
             
             <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
                 <button id="todoHomeBtn" class="secondary">Home</button>
@@ -595,20 +570,17 @@
         </div>
     </div>
 
-    <!-- 7. NEW RECOVERY LITERATURE VIEW SCREEN -->
     <div id="literatureView" style="display:none;">
         <div class="content-card">
             <h2>Recovery Literature: Big Book Excerpts</h2>
             <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
             
             <div id="literatureContent">
-                <!-- Chapter 1: Bill's Story -->
                 <div class="literature-chapter">
                     <h3>Chapter 1: Bill's Story</h3>
                     <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
                 </div>
 
-                <!-- Chapter 2: There is a Solution -->
                 <div class="literature-chapter">
                     <h3>Chapter 2: There is a Solution</h3>
                     <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
@@ -626,34 +598,28 @@
         </div>
     </div>
 
-    <!-- 8. NEW RECOVERY WORKBOOKS VIEW SCREEN -->
     <div id="workbooksView" style="display:none;">
         <div class="content-card">
             <h2>Recovery Workbooks</h2>
             <p class="sub" style="text-align: center;">Tools and step work resources.</p>
-            <!-- NEW: Button to Step 1 Workbook -->
             <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
-            <!-- NEW: Button to Step 2 Workbook -->
             <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
-            <!-- NEW: Button to Step 3 Workbook -->
             <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
-            <!-- NEW: Button to Step 4 Workbook -->
             <button id="goToStep4Btn" class="primary" style="margin-top: 15px;">Step 4: Moral Inventory</button>
+            <button id="goToStep5Btn" class="primary" style="margin-top: 15px;">Step 5: Admitted Wrongs</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
     
-    <!-- 9. NEW STEP ONE WORKBOOK VIEW SCREEN -->
     <div id="stepOneView" style="display:none;">
         <div class="content-card">
             <h2>Step 1: Admitted Powerlessness</h2>
             <p class="sub" style="text-align: center;">"We admitted we were powerless over cocaine and all other mind-altering substances—that our lives had become unmanageable."</p>
             
             <div id="stepOneQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
+                </div>
             
             <div class="actions-row">
                 <p id="stepOneSaveStatus" style="color: green; font-weight: 600;"></p>
@@ -665,15 +631,13 @@
         </div>
     </div>
 
-    <!-- 10. NEW STEP TWO WORKBOOK VIEW SCREEN -->
     <div id="stepTwoView" style="display:none;">
         <div class="content-card">
             <h2>Step 2: Coming to Believe</h2>
             <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
             
             <div id="stepTwoQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
+                </div>
             
             <div class="actions-row">
                 <p id="stepTwoSaveStatus" style="color: green; font-weight: 600;"></p>
@@ -685,15 +649,13 @@
         </div>
     </div>
     
-    <!-- 11. NEW STEP THREE WORKBOOK VIEW SCREEN -->
     <div id="stepThreeView" style="display:none;">
         <div class="content-card">
             <h2>Step 3: Turning It Over</h2>
             <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
             
             <div id="stepThreeQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
+                </div>
             
             <div class="actions-row">
                 <p id="stepThreeSaveStatus" style="color: green; font-weight: 600;"></p>
@@ -705,15 +667,13 @@
         </div>
     </div>
     
-    <!-- 12. NEW STEP FOUR WORKBOOK VIEW SCREEN -->
     <div id="stepFourView" style="display:none;">
         <div class="content-card">
             <h2>Step 4: Moral Inventory</h2>
             <p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p>
             
             <div id="stepFourQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
+                </div>
             
             <div class="actions-row">
                 <p id="stepFourSaveStatus" style="color: green; font-weight: 600;"></p>
@@ -725,7 +685,24 @@
         </div>
     </div>
 
-    <!-- 13. NEW DAILY REFLECTION VIEW SCREEN -->
+    <div id="stepFiveView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 5: Admitted Wrongs</h2>
+            <p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p>
+            
+            <div id="stepFiveQuestions">
+                </div>
+            
+            <div class="actions-row">
+                <p id="stepFiveSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepFiveBtn" class="secondary">Save Progress</button>
+                    <button id="stepFiveWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="reflectionView" style="display:none;">
         <div class="content-card">
             <h2>Daily Reflection (AA)</h2>
@@ -746,7 +723,6 @@
         </div>
     </div>
     
-    <!-- 14. NEW JUST FOR TODAY VIEW SCREEN -->
     <div id="jftView" style="display:none;">
         <div class="content-card">
             <h2>Just for Today (NA)</h2>
@@ -806,16 +782,19 @@
         document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
         document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
         document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+        document.getElementById('goToStep5Btn').addEventListener('click', WorkbookLogic.showStepFiveView);
         document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         
         // Workbook Save Bindings: Must be explicitly bound
         document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
         document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
+        document.getElementById('saveStepFiveBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFiveQuestions', 'saveStepFiveBtn', 'stepFiveSaveStatus'));
     }
     
     const bindReflectionHandlers = () => {

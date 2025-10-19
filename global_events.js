@@ -10,7 +10,7 @@ import { WorkbookLogic } from './workbooks.js';
 // ----------------------------------------------------------------------
 export let deck = [...AppData.cards];
 export const GEMINI_API_KEY = typeof __api_key !== 'undefined' ? __api_key : ""; 
-export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=";
 
 
 // --- Date/Time Helpers ---
@@ -62,7 +62,7 @@ export const DateUtils = {
 // --- View Management ---
 export const ViewManager = {
     displayAppView: (viewId) => {
-        const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView', 'reflectionView', 'jftView'];
+        const views = ['homeScreen', 'cardIntro', 'cardView', 'journalView', 'settingsView', 'todoView', 'literatureView', 'workbooksView', 'stepOneView', 'stepTwoView', 'stepThreeView', 'stepFourView', 'stepFiveView', 'reflectionView', 'jftView'];
         views.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
@@ -493,16 +493,19 @@ export const App = {
         document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
         document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
         document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
+        document.getElementById('goToStep5Btn').addEventListener('click', WorkbookLogic.showStepFiveView);
         document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         
         // Workbook Save Bindings: Must be explicitly bound
         document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
         document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
+        document.getElementById('saveStepFiveBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFiveQuestions', 'saveStepFiveBtn', 'stepFiveSaveStatus'));
         
         
         // --- Journal Listeners ---

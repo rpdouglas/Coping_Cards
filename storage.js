@@ -7,6 +7,7 @@ const WORKBOOK_STEP1_KEY = 'addictsAgendaWorkbookStep1';
 const WORKBOOK_STEP2_KEY = 'addictsAgendaWorkbookStep2'; 
 const WORKBOOK_STEP3_KEY = 'addictsAgendaWorkbookStep3'; 
 const WORKBOOK_STEP4_KEY = 'addictsAgendaWorkbookStep4'; 
+const WORKBOOK_STEP5_KEY = 'addictsAgendaWorkbookStep5';
 
 // General Helpers (Internal)
 function get(key, defaultValue = {}) {
@@ -52,4 +53,6 @@ export const Storage = {
     saveStepThreeAnswers: (answers) => set(WORKBOOK_STEP3_KEY, answers),
     getStepFourAnswers: (questions) => _getWorkbookAnswers(WORKBOOK_STEP4_KEY, questions),
     saveStepFourAnswers: (answers) => set(WORKBOOK_STEP4_KEY, answers),
+    getStepFiveAnswers: (questions) => _getWorkbookAnswers(WORKBOOK_STEP5_KEY, questions),
+    saveStepFiveAnswers: (answers) => set(WORKBOOK_STEP5_KEY, answers),
 };
