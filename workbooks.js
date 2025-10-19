@@ -1,4 +1,5 @@
-import { ViewManager } from './global_events.js';
+// UPDATED: Import from the new utils.js file
+import { ViewManager } from './utils.js';
 import { AppData } from './data.js';
 import { Storage } from './storage.js';
 
@@ -12,7 +13,6 @@ const WorkbookDataMap = {
         getAnswers: Storage.getStepOneAnswers, 
         saveAnswers: Storage.saveStepOneAnswers, 
         containerId: 'stepOneQuestions', 
-        saveButtonId: 'saveStepOneBtn', 
         saveStatusId: 'stepOneSaveStatus',
         viewId: 'stepOneView'
     },
@@ -21,7 +21,6 @@ const WorkbookDataMap = {
         getAnswers: Storage.getStepTwoAnswers, 
         saveAnswers: Storage.saveStepTwoAnswers, 
         containerId: 'stepTwoQuestions', 
-        saveButtonId: 'saveStepTwoBtn', 
         saveStatusId: 'stepTwoSaveStatus',
         viewId: 'stepTwoView'
     },
@@ -30,7 +29,6 @@ const WorkbookDataMap = {
         getAnswers: Storage.getStepThreeAnswers, 
         saveAnswers: Storage.saveStepThreeAnswers, 
         containerId: 'stepThreeQuestions', 
-        saveButtonId: 'saveStepThreeBtn', 
         saveStatusId: 'stepThreeSaveStatus',
         viewId: 'stepThreeView'
     },
@@ -39,7 +37,6 @@ const WorkbookDataMap = {
         getAnswers: Storage.getStepFourAnswers, 
         saveAnswers: Storage.saveStepFourAnswers, 
         containerId: 'stepFourQuestions', 
-        saveButtonId: 'saveStepFourBtn', 
         saveStatusId: 'stepFourSaveStatus',
         viewId: 'stepFourView'
     }
@@ -47,118 +44,69 @@ const WorkbookDataMap = {
 
 const toggleSection = (headerElement) => {
     const content = headerElement.nextElementSibling;
-    const icon = headerElement.querySelector('.collapse-icon');
-    content.classList.toggle('collapsed');
     headerElement.classList.toggle('collapsed');
+    content.classList.toggle('collapsed');
 };
 
 const renderWorkbook = (config) => {
     const container = document.getElementById(config.containerId);
     container.innerHTML = '';
-    // getAnswersFn needs the questions array for default answers
     const answers = config.getAnswers(config.questions); 
     let answerIndex = 0; 
-    
     let currentSectionContent = null;
     let isFirstSection = true;
     
     config.questions.forEach((q) => {
         if (q.isSection) {
-            if (currentSectionContent) {
-                container.appendChild(currentSectionContent);
-            }
-            
+            if (currentSectionContent) container.appendChild(currentSectionContent);
             const header = document.createElement('div');
-            header.classList.add('workbook-section-header');
-            
-            if (!isFirstSection) {
-                header.classList.add('collapsed');
-            }
-            
-            const h3 = document.createElement('h3');
-            h3.textContent = q.title;
-            
-            const icon = document.createElement('span');
-            icon.classList.add('collapse-icon');
-            icon.textContent = '▼';
-            
-            header.appendChild(h3);
-            header.appendChild(icon);
+            header.className = 'workbook-section-header';
+            if (!isFirstSection) header.classList.add('collapsed');
+            header.innerHTML = `<h3>${q.title}</h3><span class="collapse-icon">▼</span>`;
+            header.onclick = () => toggleSection(header);
             
             currentSectionContent = document.createElement('div');
-            currentSectionContent.classList.add('section-content');
-            if (!isFirstSection) {
-                currentSectionContent.classList.add('collapsed');
-            }
-            
-            header.onclick = () => toggleSection(header);
+            currentSectionContent.className = 'section-content';
+            if (!isFirstSection) currentSectionContent.classList.add('collapsed');
             
             container.appendChild(header);
             isFirstSection = false;
-            
-            return;
-        }
-        
-        if (currentSectionContent) {
+        } else if (currentSectionContent) {
             const div = document.createElement('div');
-            div.classList.add('workbook-question');
-
+            div.className = 'workbook-question';
             const h4 = document.createElement('h4');
             h4.textContent = `${answerIndex + 1}. ${q}`;
-            
             const textarea = document.createElement('textarea');
-            textarea.setAttribute('data-question-index', answerIndex);
+            textarea.dataset.questionIndex = answerIndex;
             textarea.value = answers[answerIndex] || ''; 
             textarea.placeholder = 'Write your honest answer here...';
-
-            div.appendChild(h4);
-            div.appendChild(textarea);
+            div.append(h4, textarea);
             currentSectionContent.appendChild(div);
-            
             answerIndex++; 
         }
     });
     
-    if (currentSectionContent) {
-         container.appendChild(currentSectionContent);
-    }
-    
+    if (currentSectionContent) container.appendChild(currentSectionContent);
     document.getElementById(config.saveStatusId).textContent = '';
-    
-    // Re-bind save listener 
-    const saveBtn = document.getElementById(config.saveButtonId);
-    if (saveBtn) {
-        saveBtn.onclick = () => collectAndSaveWorkbookAnswers(config);
-    }
 };
 
 const collectAndSaveWorkbookAnswers = (config) => {
     const textareas = document.querySelectorAll(`#${config.containerId} textarea`);
-    
-    // Pass questions to getAnswersFn so it can ensure the array length is correct
     let answers = config.getAnswers(config.questions); 
-    
     textareas.forEach(textarea => {
-        const index = parseInt(textarea.getAttribute('data-question-index'));
-        if (index >= 0 && index < answers.length) {
+        const index = parseInt(textarea.dataset.questionIndex);
+        if (!isNaN(index) && index < answers.length) {
             answers[index] = textarea.value;
         }
     });
-
     config.saveAnswers(answers);
-    document.getElementById(config.saveStatusId).textContent = 'Progress Saved!';
-    
-    setTimeout(() => {
-        document.getElementById(config.saveStatusId).textContent = '';
-    }, 3000);
+    const statusEl = document.getElementById(config.saveStatusId);
+    statusEl.textContent = 'Progress Saved!';
+    setTimeout(() => { statusEl.textContent = ''; }, 3000);
 };
 
-
 export const WorkbookLogic = {
-    showWorkbooksHome: () => {
-        ViewManager.displayAppView('workbooksView');
-    },
-
+    showWorkbooksHome: () => ViewManager.displayAppView('workbooksView'),
     showStepOneView: () => {
         ViewManager.displayAppView(WorkbookDataMap.stepOne.viewId);
         renderWorkbook(WorkbookDataMap.stepOne);
@@ -175,26 +123,23 @@ export const WorkbookLogic = {
         ViewManager.displayAppView(WorkbookDataMap.stepFour.viewId);
         renderWorkbook(WorkbookDataMap.stepFour);
     },
-
     bindEventListeners: () => {
-        // Navigational Buttons
         document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('workbooksHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
+        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
+        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
+        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+        
         document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
 
-        // Step View Buttons
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
-
-        // Save Buttons are bound dynamically within renderWorkbook, but we can bind the initial handlers here
         document.getElementById('saveStepOneBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepOne));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepTwo));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepThree));
         document.getElementById('saveStepFourBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepFour));
     }
 };
+
