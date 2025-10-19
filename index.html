@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- UPDATED: Title for the application -->
   <title>The Addicts Agenda</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -14,47 +13,25 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
-            <!-- NEW: App Version Number -->
-            <div id="appVersion">V0.9</div>
-
-            <!-- NEW: Settings Cog -->
+            <div id="appVersion">V0.5</div>
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
             </div>
-            
             <h1>The Addicts Agenda</h1>
             <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
-            
-            <!-- NEW: Sobriety Duration Display -->
             <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
-            
             <div class="fact-box">
                 <h2 id="dailyFactHeader">Recovery Fact of the Day</h2>
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
-
-            <!-- Button 1: Draw Coping Cards (Text Changed) -->
             <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
-
-            <!-- Button 2: Start Journaling (Style Changed to Primary) -->
             <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
-            
-            <!-- Button 3: To Do List (NEW) -->
             <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
-            
-            <!-- NEW Button Group for Reflections -->
             <div class="reflection-group">
-                <!-- Button 4: Daily Reflection -->
                 <button id="goToReflectionBtn" class="primary">Daily Reflection (AA)</button>
-                <!-- NEW Button 5: Just For Today -->
                 <button id="goToJFTBtn" class="primary">Just for Today (NA)</button>
             </div>
-
-
-            <!-- NEW Button 6: Recovery Literature -->
             <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
-
-            <!-- NEW Button 7: Recovery Workbooks -->
             <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
         </div>
     </div>
@@ -87,54 +64,38 @@
     <!-- 4. JOURNAL VIEW SCREEN -->
     <div id="journalView" style="display:none;">
         <div class="content-card">
-            
-            <!-- Journal List View (initially hidden) -->
             <div id="journalList" style="display:none;">
                 <h2>Journal Entries</h2>
                 <div class="list-view-actions">
                     <button id="openListHomeBtn" class="secondary">Home</button>
                     <button id="newEntryBtn" class="secondary">Write Today's Entry</button>
                 </div>
-                <ul id="entryList" class="journal-entry-list">
-                    <li>No entries saved yet.</li>
-                </ul>
+                <ul id="entryList" class="journal-entry-list"></ul>
             </div>
-
-            <!-- Journal Prompt Manager (NEW, initially hidden) -->
             <div id="promptManagerView" style="display:none;">
                 <h2>Manage Custom Prompts</h2>
                 <div class="prompt-row">
-                    <input type="text" id="customPromptInput" placeholder="Enter new prompt text (e.g., What did I learn today?)" style="flex-grow: 1;">
+                    <input type="text" id="customPromptInput" placeholder="Enter new prompt text..." style="flex-grow: 1;">
                     <button id="addCustomPromptBtn" class="secondary">Add</button>
                 </div>
                 <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
-                <ul id="customPromptList" class="journal-entry-list prompt-list-manager">
-                    <!-- Custom Prompts will be rendered here -->
-                </ul>
+                <ul id="customPromptList" class="journal-entry-list prompt-list-manager"></ul>
                 <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
                     <button id="backToEntryBtn" class="secondary">Back to Journal</button>
                 </div>
             </div>
-
-            <!-- Journal Entry View (today's entry) -->
             <div id="journalEntryView">
                 <h2>Today's Reflection</h2>
                 <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
-                
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <label for="entryDate">Date:</label>
                     <input type="date" id="entryDate">
                 </div>
-                
                 <div class="prompt-row" style="margin-top: 15px;">
-                    <select id="promptSelect">
-                        <!-- Prompts loaded here -->
-                    </select>
+                    <select id="promptSelect"></select>
                     <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
                 </div>
-
                 <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
-                
                 <div class="actions-row">
                     <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
                     <div class="list-view-actions">
@@ -169,8 +130,6 @@
         <div class="content-card">
             <h2>My To Do List</h2>
             <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
-            
-            <!-- NEW: Task Input Form with Date and Recurrence -->
             <div class="todo-input-group">
                 <input type="text" id="todoInput" placeholder="Task description">
                 <input type="date" id="todoDateInput">
@@ -184,11 +143,7 @@
                 </select>
                 <button id="addTodoBtn" class="secondary">Add Task</button>
             </div>
-            
-            <ul id="todoList" class="todo-list">
-                <!-- To Do Items will be rendered here -->
-            </ul>
-            
+            <ul id="todoList" class="todo-list"></ul>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
                 <button id="todoHomeBtn" class="secondary">Home</button>
             </div>
@@ -200,26 +155,20 @@
         <div class="content-card">
             <h2>Recovery Literature: Big Book Excerpts</h2>
             <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
-            
             <div id="literatureContent">
-                <!-- Chapter 1: Bill's Story -->
                 <div class="literature-chapter">
                     <h3>Chapter 1: Bill's Story</h3>
                     <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
                 </div>
-
-                <!-- Chapter 2: There is a Solution -->
                 <div class="literature-chapter">
                     <h3>Chapter 2: There is a Solution</h3>
                     <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
                 </div>
             </div>
-
             <p class="literature-link">
                 For the complete text, download the 
                 <a href="https://aa-netherlands.org/for-members/big-book-online/" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online (PDF)</a>.
             </p>
-
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="literatureHomeBtn" class="secondary">Home</button>
             </div>
@@ -231,13 +180,9 @@
         <div class="content-card">
             <h2>Recovery Workbooks</h2>
             <p class="sub" style="text-align: center;">Tools and step work resources.</p>
-            <!-- NEW: Button to Step 1 Workbook -->
             <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
-            <!-- NEW: Button to Step 2 Workbook -->
             <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
-            <!-- NEW: Button to Step 3 Workbook -->
             <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
-            <!-- NEW: Button to Step 4 Workbook -->
             <button id="goToStep4Btn" class="primary" style="margin-top: 15px;">Step 4: Moral Inventory</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
@@ -250,11 +195,7 @@
         <div class="content-card">
             <h2>Step 1: Admitted Powerlessness</h2>
             <p class="sub" style="text-align: center;">"We admitted we were powerless over cocaine and all other mind-altering substances—that our lives had become unmanageable."</p>
-            
-            <div id="stepOneQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
-            
+            <div id="stepOneQuestions"></div>
             <div class="actions-row">
                 <p id="stepOneSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -270,11 +211,7 @@
         <div class="content-card">
             <h2>Step 2: Coming to Believe</h2>
             <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
-            
-            <div id="stepTwoQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
-            
+            <div id="stepTwoQuestions"></div>
             <div class="actions-row">
                 <p id="stepTwoSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -290,11 +227,7 @@
         <div class="content-card">
             <h2>Step 3: Turning It Over</h2>
             <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
-            
-            <div id="stepThreeQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
-            
+            <div id="stepThreeQuestions"></div>
             <div class="actions-row">
                 <p id="stepThreeSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -310,11 +243,7 @@
         <div class="content-card">
             <h2>Step 4: Moral Inventory</h2>
             <p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p>
-            
-            <div id="stepFourQuestions">
-                <!-- Questions and answers will be dynamically loaded here -->
-            </div>
-            
+            <div id="stepFourQuestions"></div>
             <div class="actions-row">
                 <p id="stepFourSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -330,16 +259,13 @@
         <div class="content-card">
             <h2>Daily Reflection (AA)</h2>
             <p class="sub" style="text-align: center;">A daily quote and meditation to guide your thoughts.</p>
-            
             <label for="reflectionDateInput" style="display: block; text-align: center; font-weight: 600; margin-top: 10px;">Select Date:</label>
             <input type="date" id="reflectionDateInput">
-
             <div id="reflectionContent">
                 <div class="loading-spinner" id="reflectionSpinner"></div>
-                <p id="reflectionQuote" style="display: none;">Quote goes here.</p>
-                <p id="reflectionReading" style="display: none;">Reading goes here.</p>
+                <p id="reflectionQuote" style="display: none;"></p>
+                <p id="reflectionReading" style="display: none;"></p>
             </div>
-            
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="reflectionHomeBtn" class="secondary">Home</button>
             </div>
@@ -351,99 +277,26 @@
         <div class="content-card">
             <h2>Just for Today (NA)</h2>
             <p class="sub" style="text-align: center;">The daily spiritual message from Narcotics Anonymous.</p>
-            
             <label for="jftDateInput" style="display: block; text-align: center; font-weight: 600; margin-top: 10px;">Select Date:</label>
             <input type="date" id="jftDateInput">
-
             <div id="jftContent" style="min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 15px; background: #f7f7f9; border-radius: 10px; border: 1px solid #ddd; margin-top: 15px;">
                 <div class="loading-spinner" id="jftSpinner"></div>
-                <p id="jftQuote" style="display: none; font-size: 1.2em; font-style: italic; color: #333; margin-bottom: 15px;">Quote goes here.</p>
-                <p id="jftReading" style="display: none; color: #555; line-height: 1.6;">Reading goes here.</p>
+                <p id="jftQuote" style="display: none; font-size: 1.2em; font-style: italic; color: #333; margin-bottom: 15px;"></p>
+                <p id="jftReading" style="display: none; color: #555; line-height: 1.6;"></p>
             </div>
-            
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="jftHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
-
-
   </div>
   
   <script type="module">
-    // --- START: MODULAR JAVASCRIPT ---
-    
-    // Import all necessary data and module helpers
-    import { AppData } from './data.js';
-    import { Storage } from './storage.js';
-    import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
-    import { LiteratureLogic } from './literature.js'; 
-    import { CardLogic } from './coping_cards.js'; 
-    import { WorkbookLogic } from './workbooks.js'; 
-    import { App, DateUtils, ViewManager, TodoLogic, ReflectionLogic } from './global_events.js'; 
-    
+    // REFACTORED: The only code in the HTML is the entry point to the application.
+    // All logic is now handled in the dedicated .js files.
+    import { App } from './global_events.js'; 
 
-    // --- Initialization and Event Binding ---
-    
-    // Bind the journal handlers that were separated into the journal module
-    const bindJournalHandlers = () => {
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
-        document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
-        
-        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
-        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
-        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
-        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
-        document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
-        document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
-    }
-
-    const bindWorkbookHandlers = () => {
-        // --- Workbooks Nav ---
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-    }
-    
-    const bindReflectionHandlers = () => {
-        // --- Daily Reflection Listener ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
-        });
-        
-        // --- Just For Today Listener ---
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
-    }
-
-
-    // Override the base App.bindEventListeners to include all module bindings
-    const originalBindEventListeners = App.bindEventListeners;
-
-    App.bindEventListeners = () => {
-        // Call the original bindings from global_events.js (general buttons, settings, todo, card nav)
-        originalBindEventListeners(); 
-        
-        // Add bindings for module-specific views
-        bindJournalHandlers();
-        bindWorkbookHandlers();
-        bindReflectionHandlers();
-    };
-
+    // Initialize the application
     App.initializeApp();
 
     // Register Service Worker
@@ -456,7 +309,7 @@
           console.log('Service Worker Registration Failed:', err);
         });
     }
-    // --- END: MODULAR JAVASCRIPT REFACTOR ---
   </script>
 </body>
 </html>
+
