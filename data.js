@@ -103,8 +103,14 @@ const DEFAULT_PROMPTS = [
     {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
 ];
 
-// Import Workbook data separately (will be loaded in global_events)
-import { WORKBOOK_STEP1_QUESTIONS, WORKBOOK_STEP2_QUESTIONS, WORKBOOK_STEP3_QUESTIONS, WORKBOOK_STEP4_QUESTIONS } from './workbook_data.js';
+// Import Workbook data from its dedicated file
+import { 
+    WORKBOOK_STEP1_QUESTIONS, 
+    WORKBOOK_STEP2_QUESTIONS, 
+    WORKBOOK_STEP3_QUESTIONS, 
+    WORKBOOK_STEP4_QUESTIONS,
+    WORKBOOK_STEP5_QUESTIONS // NEW: Import Step 5
+} from './workbook_data.js';
 
 // --- EXPORT ALL STATIC DATA ---
 export const AppData = {
@@ -115,4 +121,6 @@ export const AppData = {
     WORKBOOK_STEP2_QUESTIONS,
     WORKBOOK_STEP3_QUESTIONS,
     WORKBOOK_STEP4_QUESTIONS,
+    WORKBOOK_STEP5_QUESTIONS, // NEW: Export Step 5
 };
+
