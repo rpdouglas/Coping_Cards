@@ -12,18 +12,14 @@
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       --color-blue: #2b77f0;
       --color-shadow: rgba(43, 119, 240, 0.3);
-      /* Define a neutral gray for secondary text/borders, now darker for contrast */
       --color-gray: #444; 
       --color-light-gray: #f0f0f0;
     }
-    /* FIX: Remove height:100% from html,body and allow the body to scroll */
     html,body{margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center; min-height: 100vh;}
     .app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
-    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; position: relative; /* Added for cog positioning */ }
+    .hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; position: relative; }
     h1{margin:0;font-size:28px}
     p.sub{color:#556;opacity:0.8;margin-top:8px}
-
-    /* NEW: Version Number Positioning */
     #appVersion {
         position: absolute;
         top: 15px;
@@ -32,8 +28,6 @@
         color: #888;
         font-weight: 500;
     }
-
-    /* NEW: Settings Cog Positioning */
     .settings-container {
         position: absolute;
         top: 15px;
@@ -41,7 +35,7 @@
     }
     button.settings-cog {
         font-size: 24px;
-        color: var(--color-gray); /* Dark gray color */
+        color: var(--color-gray);
         padding: 5px;
         transition: transform 0.3s;
         background: none;
@@ -59,45 +53,31 @@
         color: #333;
         text-align: left;
     }
-
-    /* Primary Blue Button Style (Used for Cards, Journal, and To Do List) */
-    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s; text-align: center;} /* Default centered text */
+    button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s; text-align: center;}
     button.primary:hover{background:#2361c4}
-    
-    /* WORKBOOKS PAGE BUTTON FIX: Align text left only for workbook buttons */
     #workbooksView button.primary {
         text-align: left;
         padding-left: 20px;
     }
-    
-    /* NEW: Reflection Button Group Styling */
     .reflection-group {
         display: flex;
-        gap: 15px; /* Spacing between the two reflection buttons */
+        gap: 15px;
         margin-top: 15px;
     }
     .reflection-group button.primary {
         margin-top: 0;
-        width: 50%; /* Make them share the width */
+        width: 50%;
         padding-left: 10px;
         padding-right: 10px;
     }
-
-
-    /* Secondary/Action Buttons (Default) */
     button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
-    
-    /* UPDATED: Secondary style for next/home buttons with high contrast */
     button.secondary {
-        /* Set background to white */
         background: #ffffff; 
-        /* Set text color to a dark gray for high contrast */
         color: var(--color-gray); 
         padding: 10px 15px;
         border-radius: 8px;
         font-weight: 600;
         transition: all 0.2s;
-        /* Give it a subtle shadow to lift it off the card background */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
         border: 1px solid #d0d0d0;
     }
@@ -105,8 +85,6 @@
         background: #f5f5f5;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
     }
-
-    /* ADDED FOR ACCESSIBILITY */
     button:focus-visible {
       outline: 2px solid var(--color-blue);
       outline-offset: 2px;
@@ -123,8 +101,6 @@
         width: 100%;
         cursor: pointer;
     }
-
-    /* Fact Box Styling */
     .fact-box {
         margin-top: 30px;
         padding: 20px;
@@ -146,30 +122,23 @@
         margin: 0;
         font-style: italic;
     }
-    
-    /* Sobriety Duration on Home Screen */
     #homeSobrietyDuration {
         margin: 15px 0 0 0;
         font-size: 1.1em;
         font-weight: 600;
         color: #555;
     }
-
-    /* Card View Styles */
     .card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; transition: background 0.5s ease;}
     #cardIcon{font-size:80px;line-height:1;margin-bottom:12px; color: #fff;}
     #cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#fff}
     #cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#fff}
     .actions button{margin:0 10px}
     .status-text{font-size:14px;color:#777;margin-top:10px}
-
-    /* Shared Content Styles */
     .content-card {
         background: #ffffff;
         padding: 24px;
         border-radius: 18px;
         box-shadow: 0 6px 18px rgba(32,40,60,0.08);
-        /* FIX: Allow content cards to grow vertically without height constraints */
         width: 100%;
         box-sizing: border-box;
     }
@@ -211,19 +180,16 @@
         align-items: center;
         margin-bottom: 15px;
     }
-
-    /* To Do List Specific Styles */
     .todo-input-group {
         display: flex;
         gap: 10px;
-        margin-bottom: 10px; /* Reduced margin */
+        margin-bottom: 10px;
         flex-wrap: wrap;
     }
     .todo-input-group input[type="text"] {
         flex-grow: 1;
         min-width: 150px;
     }
-    /* NEW: Styling for recurrence and date inputs in the task form */
     .todo-input-group input[type="date"], .todo-input-group select {
         width: auto;
         flex-grow: 0;
@@ -236,7 +202,7 @@
     }
     .todo-list li {
         display: flex;
-        flex-direction: column; /* Stack details vertically */
+        flex-direction: column;
         align-items: flex-start;
         padding: 10px 0;
         border-bottom: 1px solid #eee;
@@ -266,7 +232,6 @@
         text-decoration: line-through;
         color: #888;
     }
-    /* Prompt Manager Styles */
     .prompt-list-manager li {
         display: flex;
         justify-content: space-between;
@@ -275,7 +240,6 @@
         border-bottom: 1px solid #eee;
         font-size: 16px;
     }
-    /* Workbook Styles */
     .workbook-question {
         margin-bottom: 30px;
         border-left: 3px solid var(--color-blue);
@@ -292,14 +256,12 @@
         height: 150px;
         margin-top: 0;
     }
-    
-    /* NEW: Collapsible styles for Workbook */
     .workbook-section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 10px 15px;
-        margin: 20px -24px 0 -24px; /* Extend full width of content-card */
+        margin: 20px -24px 0 -24px;
         background-color: var(--color-light-gray);
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
@@ -313,7 +275,7 @@
     }
     .workbook-section-header h3 {
         margin: 0;
-        font-size: 1em; /* Use 1em since parent is 1.2em */
+        font-size: 1em;
     }
     .collapse-icon {
         font-size: 1.5em;
@@ -323,7 +285,7 @@
         transform: rotate(-90deg);
     }
     .section-content {
-        max-height: 2000px; /* large enough for content */
+        max-height: 2000px;
         overflow: hidden;
         transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
     }
@@ -333,8 +295,6 @@
         padding-top: 0;
         padding-bottom: 0;
     }
-
-    /* Literature Styles */
     .literature-chapter {
         margin-bottom: 30px;
         padding: 15px;
@@ -360,8 +320,6 @@
         text-align: center;
         font-style: italic;
     }
-
-    /* Daily Reflection Styles */
     #reflectionContent {
         min-height: 250px;
         display: flex;
@@ -375,13 +333,11 @@
         border: 1px solid #ddd;
         margin-top: 15px;
     }
-
     #reflectionDateInput {
         max-width: 200px;
         margin: 15px auto 5px auto;
         display: block;
     }
-
     #reflectionQuote {
         font-size: 1.2em;
         font-style: italic;
@@ -412,36 +368,25 @@
 
     <div id="homeScreen" style="display:block;">
         <div class="hero">
-            <div id="appVersion">V0.7</div>
-
+            <div id="appVersion">V0.8</div>
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
             </div>
-            
             <h1>The Addicts Agenda</h1>
             <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
-            
             <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
-            
             <div class="fact-box">
                 <h2 id="dailyFactHeader">Recovery Fact of the Day</h2>
                 <p id="dailyFactText">Loading daily inspiration...</p>
             </div>
-
             <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
-
             <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
-            
             <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
-            
             <div class="reflection-group">
                 <button id="goToReflectionBtn" class="primary">Daily Reflection (AA)</button>
                 <button id="goToJFTBtn" class="primary">Just for Today (NA)</button>
             </div>
-
-
             <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
-
             <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
         </div>
     </div>
@@ -471,7 +416,6 @@
 
     <div id="journalView" style="display:none;">
         <div class="content-card">
-            
             <div id="journalList" style="display:none;">
                 <h2>Journal Entries</h2>
                 <div class="list-view-actions">
@@ -482,7 +426,6 @@
                     <li>No entries saved yet.</li>
                 </ul>
             </div>
-
             <div id="promptManagerView" style="display:none;">
                 <h2>Manage Custom Prompts</h2>
                 <div class="prompt-row">
@@ -490,30 +433,23 @@
                     <button id="addCustomPromptBtn" class="secondary">Add</button>
                 </div>
                 <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
-                <ul id="customPromptList" class="journal-entry-list prompt-list-manager">
-                    </ul>
+                <ul id="customPromptList" class="journal-entry-list prompt-list-manager"></ul>
                 <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
                     <button id="backToEntryBtn" class="secondary">Back to Journal</button>
                 </div>
             </div>
-
             <div id="journalEntryView">
                 <h2>Today's Reflection</h2>
                 <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect on your card.</p>
-                
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <label for="entryDate">Date:</label>
                     <input type="date" id="entryDate">
                 </div>
-                
                 <div class="prompt-row" style="margin-top: 15px;">
-                    <select id="promptSelect">
-                        </select>
+                    <select id="promptSelect"></select>
                     <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
                 </div>
-
                 <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
-                
                 <div class="actions-row">
                     <button id="viewAllEntriesBtn" class="secondary">View All Entries</button>
                     <div class="list-view-actions">
@@ -546,7 +482,6 @@
         <div class="content-card">
             <h2>My To Do List</h2>
             <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
-            
             <div class="todo-input-group">
                 <input type="text" id="todoInput" placeholder="Task description">
                 <input type="date" id="todoDateInput">
@@ -560,10 +495,7 @@
                 </select>
                 <button id="addTodoBtn" class="secondary">Add Task</button>
             </div>
-            
-            <ul id="todoList" class="todo-list">
-                </ul>
-            
+            <ul id="todoList" class="todo-list"></ul>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
                 <button id="todoHomeBtn" class="secondary">Home</button>
             </div>
@@ -574,24 +506,20 @@
         <div class="content-card">
             <h2>Recovery Literature: Big Book Excerpts</h2>
             <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
-            
             <div id="literatureContent">
                 <div class="literature-chapter">
                     <h3>Chapter 1: Bill's Story</h3>
                     <p>Bill W.'s story is the compelling and historic account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience and connection with others, found a way out. It details his struggles in the business world, his devastating descent into alcoholism, his institutionalization, and the transformative visit from his old friend, Ebby T. His realization that only a spiritual experience and helping others could provide lasting sobriety became the bedrock of the entire program.</p>
                 </div>
-
                 <div class="literature-chapter">
                     <h3>Chapter 2: There is a Solution</h3>
                     <p>This chapter provides hope by asserting that recovery from alcoholism is possible. It emphasizes the importance of the fellowship (the "hundreds of men and women" who have recovered) and the fact that the solution lies not just in stopping drinking, but in a spiritual program of action. It introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—and that the spiritual malady requires a spiritual remedy, a practical method for living soberly.</p>
                 </div>
             </div>
-
             <p class="literature-link">
                 For the complete text, download the 
                 <a href="https://aa-netherlands.org/for-members/big-book-online/" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online (PDF)</a>.
             </p>
-
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="literatureHomeBtn" class="secondary">Home</button>
             </div>
@@ -617,10 +545,7 @@
         <div class="content-card">
             <h2>Step 1: Admitted Powerlessness</h2>
             <p class="sub" style="text-align: center;">"We admitted we were powerless over cocaine and all other mind-altering substances—that our lives had become unmanageable."</p>
-            
-            <div id="stepOneQuestions">
-                </div>
-            
+            <div id="stepOneQuestions"></div>
             <div class="actions-row">
                 <p id="stepOneSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -635,10 +560,7 @@
         <div class="content-card">
             <h2>Step 2: Coming to Believe</h2>
             <p class="sub" style="text-align: center;">"We came to believe that a Power greater than ourselves could restore us to sanity."</p>
-            
-            <div id="stepTwoQuestions">
-                </div>
-            
+            <div id="stepTwoQuestions"></div>
             <div class="actions-row">
                 <p id="stepTwoSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -653,10 +575,7 @@
         <div class="content-card">
             <h2>Step 3: Turning It Over</h2>
             <p class="sub" style="text-align: center;">"We made a decision to turn our will and our lives over to the care of God as we understood Him."</p>
-            
-            <div id="stepThreeQuestions">
-                </div>
-            
+            <div id="stepThreeQuestions"></div>
             <div class="actions-row">
                 <p id="stepThreeSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -671,10 +590,7 @@
         <div class="content-card">
             <h2>Step 4: Moral Inventory</h2>
             <p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p>
-            
-            <div id="stepFourQuestions">
-                </div>
-            
+            <div id="stepFourQuestions"></div>
             <div class="actions-row">
                 <p id="stepFourSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -689,10 +605,7 @@
         <div class="content-card">
             <h2>Step 5: Admitted Wrongs</h2>
             <p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p>
-            
-            <div id="stepFiveQuestions">
-                </div>
-            
+            <div id="stepFiveQuestions"></div>
             <div class="actions-row">
                 <p id="stepFiveSaveStatus" style="color: green; font-weight: 600;"></p>
                 <div class="list-view-actions">
@@ -707,16 +620,13 @@
         <div class="content-card">
             <h2>Daily Reflection (AA)</h2>
             <p class="sub" style="text-align: center;">A daily quote and meditation to guide your thoughts.</p>
-            
             <label for="reflectionDateInput" style="display: block; text-align: center; font-weight: 600; margin-top: 10px;">Select Date:</label>
             <input type="date" id="reflectionDateInput">
-
             <div id="reflectionContent">
                 <div class="loading-spinner" id="reflectionSpinner"></div>
                 <p id="reflectionQuote" style="display: none;">Quote goes here.</p>
                 <p id="reflectionReading" style="display: none;">Reading goes here.</p>
             </div>
-            
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="reflectionHomeBtn" class="secondary">Home</button>
             </div>
@@ -727,115 +637,86 @@
         <div class="content-card">
             <h2>Just for Today (NA)</h2>
             <p class="sub" style="text-align: center;">The daily spiritual message from Narcotics Anonymous.</p>
-            
             <label for="jftDateInput" style="display: block; text-align: center; font-weight: 600; margin-top: 10px;">Select Date:</label>
             <input type="date" id="jftDateInput">
-
             <div id="jftContent" style="min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 15px; background: #f7f7f9; border-radius: 10px; border: 1px solid #ddd; margin-top: 15px;">
                 <div class="loading-spinner" id="jftSpinner"></div>
                 <p id="jftQuote" style="display: none; font-size: 1.2em; font-style: italic; color: #333; margin-bottom: 15px;">Quote goes here.</p>
                 <p id="jftReading" style="display: none; color: #555; line-height: 1.6;">Reading goes here.</p>
             </div>
-            
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="jftHomeBtn" class="secondary">Home</button>
             </div>
         </div>
     </div>
 
-
   </div>
   
   <script type="module">
-    // --- START: MODULAR JAVASCRIPT ---
+    // --- START: SIMPLIFIED APP INITIALIZATION ---
     
-    // Import all necessary data and module helpers
-    import { AppData } from './data.js';
-    import { Storage } from './storage.js';
+    // Import all necessary modules and logic handlers
     import { JournalEventHandlers, showJournalEntryView, showJournalListView, showPromptManagerView } from './journal.js'; 
-    import { LiteratureLogic } from './literature.js'; 
-    import { CardLogic } from './coping_cards.js'; 
     import { WorkbookLogic } from './workbooks.js'; 
-    import { App, DateUtils, ViewManager, TodoLogic, ReflectionLogic } from './global_events.js'; 
+    import { App } from './global_events.js'; 
     
+    // --- Bind All Event Listeners Directly ---
+    
+    // This is now the single source of truth for binding events after the app initializes.
+    // It calls the main app's binding function and then adds the module-specific ones.
+    
+    const originalBindEventListeners = App.bindEventListeners;
 
-    // --- Initialization and Event Binding ---
-    
-    // Bind the journal handlers that were separated into the journal module
-    const bindJournalHandlers = () => {
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
+    App.bindEventListeners = () => {
+        // First, bind all the general event listeners from the main app logic
+        originalBindEventListeners(); 
+        
+        // --- Journal View Event Listeners ---
+        document.getElementById('entryHomeBtn').addEventListener('click', () => App.ViewManager.displayAppView('homeScreen'));
+        document.getElementById('openListHomeBtn').addEventListener('click', () => App.ViewManager.displayAppView('homeScreen'));
         document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
         document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
-        
         document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
         document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
         document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
         document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
         document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
         document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
-    }
 
-    const bindWorkbookHandlers = () => {
-        // --- Workbooks Nav ---
+        // --- Workbook View Event Listeners ---
         document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
         document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
         document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
         document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
         document.getElementById('goToStep5Btn').addEventListener('click', WorkbookLogic.showStepFiveView);
+        
         document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
         
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-        document.getElementById('saveStepFiveBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFiveQuestions', 'saveStepFiveBtn', 'stepFiveSaveStatus'));
-    }
-    
-    const bindReflectionHandlers = () => {
-        // --- Daily Reflection Listener ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
-        });
+        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers(WorkbookLogic.WorkbookDataMap.stepOne));
+        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers(WorkbookLogic.WorkbookDataMap.stepTwo));
+        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers(WorkbookLogic.WorkbookDataMap.stepThree));
+        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers(WorkbookLogic.WorkbookDataMap.stepFour));
+        document.getElementById('saveStepFiveBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers(WorkbookLogic.WorkbookDataMap.stepFive));
         
-        // --- Just For Today Listener ---
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
-    }
-
-
-    // Override the base App.bindEventListeners to include all module bindings
-    const originalBindEventListeners = App.bindEventListeners;
-
-    App.bindEventListeners = () => {
-        // Call the original bindings from global_events.js (general buttons, settings, todo, card nav)
-        originalBindEventListeners(); 
-        
-        // Add bindings for module-specific views
-        bindJournalHandlers();
-        bindWorkbookHandlers();
-        bindReflectionHandlers();
+        // --- Daily Reflection & JFT Listeners ---
+        document.getElementById('reflectionDateInput').addEventListener('change', (e) => App.ReflectionLogic.getDailyReflection(e.target.value));
+        document.getElementById('jftDateInput').addEventListener('change', (e) => App.ReflectionLogic.getJustForToday(e.target.value));
     };
 
+    // --- Initialize the Application ---
     App.initializeApp();
 
-    // Register Service Worker
+    // Register Service Worker for PWA functionality
     if('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
-        .then(function(reg) {
-          console.log('Service Worker Registered');
-        })
-        .catch(function(err) {
-          console.log('Service Worker Registration Failed:', err);
-        });
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Registration Failed:', err));
     }
-    // --- END: MODULAR JAVASCRIPT REFACTOR ---
+    // --- END: SIMPLIFIED APP INITIALIZATION ---
   </script>
 </body>
 </html>
