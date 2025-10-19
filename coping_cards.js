@@ -1,10 +1,10 @@
 import { AppData } from './data.js';
-import { ViewManager, deck } from './global_events.js'; 
+// UPDATED: Import from utils.js and global_events.js separately
+import { ViewManager } from './utils.js'; 
+import { deck } from './global_events.js'; 
 
 // --- Card Logic ---
 export const CardLogic = {
-    // deck variable is imported as an array reference, allowing modifications
-    
     suitColor: (suit_key) => {
         switch(suit_key){
             case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
@@ -27,13 +27,11 @@ export const CardLogic = {
     drawRandom: () => {
         if(deck.length === 0) return null;
         const idx = Math.floor(Math.random()*deck.length);
-        const card = deck.splice(idx,1)[0];
-        return card;
+        return deck.splice(idx,1)[0];
     },
     drawAndDisplayCard: () => {
         const card = CardLogic.drawRandom();
         if (!card) {
-            console.log('Deck empty — shuffle or reset.');
             alert('Deck empty — please shuffle or return home.');
             return;
         }
@@ -41,14 +39,14 @@ export const CardLogic = {
         ViewManager.displayAppView('cardView');
     },
     resetDeck: () => {
-        deck.splice(0, deck.length, ...AppData.cards); // Efficiently resets the deck array
+        deck.splice(0, deck.length, ...AppData.cards);
         CardLogic.updateStatus();
         ViewManager.displayAppView('homeScreen');
     },
-    // Initializer for the card view elements
     bindEventListeners: () => {
         document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
         document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
         document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
     }
 };
+
