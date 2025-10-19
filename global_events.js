@@ -9,7 +9,9 @@ import { WorkbookLogic } from './workbooks.js';
 // Global Constants and State
 // ----------------------------------------------------------------------
 export let deck = [...AppData.cards];
-export const GEMINI_API_KEY = typeof __api_key !== 'undefined' ? __api_key : ""; 
+// UPDATED: Set the API key to an empty string. 
+// The environment will securely provide the key at runtime.
+export const GEMINI_API_KEY = ""; 
 export const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
 
 
@@ -23,7 +25,7 @@ export const DateUtils = {
     },
     formatDateForDisplayShort: (dateKey) => {
         if (!dateKey) return '';
-        const date = new Date(dateKey);
+        const date = new date(dateKey);
         return date.toLocaleDateString('en-US'); 
     },
     formatDateForDisplay: (dateKey) => {
@@ -258,15 +260,6 @@ export const ReflectionLogic = {
         quoteEl.style.display = 'none';
         readingEl.style.display = 'none';
         
-        if (!GEMINI_API_KEY) {
-            spinner.style.display = 'none';
-            quoteEl.textContent = "Error: API Key is missing. Cannot fetch Daily Reflection.";
-            quoteEl.style.display = 'block';
-            readingEl.textContent = "Please ensure a valid API key is configured to use this feature.";
-            readingEl.style.display = 'block';
-            return;
-        }
-
         spinner.style.display = 'block';
         quoteEl.textContent = "Loading reflection...";
         quoteEl.style.display = 'block';
@@ -303,6 +296,8 @@ export const ReflectionLogic = {
                         break; 
                     }
                 } else {
+                    const errorBody = await response.text();
+                    console.error(`API returned status ${response.status}: ${errorBody}`);
                     throw new Error(`API returned status ${response.status}`);
                 }
 
@@ -310,7 +305,7 @@ export const ReflectionLogic = {
                 attempt++;
                 console.error(`Attempt ${attempt} failed:`, error.message);
                 if (attempt >= maxRetries) {
-                    resultText = "Error fetching reflection after multiple retries. Check connectivity.";
+                    resultText = "Error fetching reflection after multiple retries. This may be due to a missing API key or connectivity issues.";
                     break;
                 }
                 const delay = Math.pow(2, attempt) * 1000;
@@ -322,14 +317,14 @@ export const ReflectionLogic = {
         
         const parts = resultText.split('\n\n');
         
-        if (parts.length >= 2 && !resultText.includes("Error")) {
+        if (parts.length >= 2 && !resultText.toLowerCase().includes("error")) {
             quoteEl.textContent = parts[0].trim().replace(/^['"]|['"]$/g, '');
             readingEl.innerHTML = parts.slice(1).join('<br><br>').trim();
             quoteEl.style.display = 'block';
             readingEl.style.display = 'block';
         } else {
             quoteEl.textContent = "Error: Content not found or bad response.";
-            readingEl.textContent = "The reflection could not be loaded for this date. Try today's date.";
+            readingEl.textContent = "The reflection could not be loaded for this date. Ensure your API key is configured correctly or try today's date.";
             quoteEl.style.display = 'block';
             readingEl.style.display = 'block';
         }
@@ -358,15 +353,6 @@ export const ReflectionLogic = {
 
         quoteEl.style.display = 'none';
         readingEl.style.display = 'none';
-
-        if (!GEMINI_API_KEY) {
-            spinner.style.display = 'none';
-            quoteEl.textContent = "Error: API Key is missing. Cannot fetch Just For Today.";
-            quoteEl.style.display = 'block';
-            readingEl.textContent = "Please ensure a valid API key is configured to use this feature.";
-            readingEl.style.display = 'block';
-            return;
-        }
 
         spinner.style.display = 'block';
         quoteEl.textContent = "Loading reflection...";
@@ -404,6 +390,8 @@ export const ReflectionLogic = {
                         break;
                     }
                 } else {
+                    const errorBody = await response.text();
+                    console.error(`API returned status ${response.status}: ${errorBody}`);
                     throw new Error(`API returned status ${response.status}`);
                 }
 
@@ -411,7 +399,7 @@ export const ReflectionLogic = {
                 attempt++;
                 console.error(`Attempt ${attempt} failed:`, error.message);
                 if (attempt >= maxRetries) {
-                    resultText = "Error fetching reflection after multiple retries. Check connectivity.";
+                    resultText = "Error fetching reflection after multiple retries. This may be due to a missing API key or connectivity issues.";
                     break;
                 }
                 const delay = Math.pow(2, attempt) * 1000;
@@ -423,14 +411,14 @@ export const ReflectionLogic = {
         
         const parts = resultText.split('\n\n');
         
-        if (parts.length >= 2 && !resultText.includes("Error")) {
+        if (parts.length >= 2 && !resultText.toLowerCase().includes("error")) {
             quoteEl.textContent = parts[0].trim().replace(/^['"]|['"]$/g, '');
             readingEl.innerHTML = parts.slice(1).join('<br><br>').trim();
             quoteEl.style.display = 'block';
             readingEl.style.display = 'block';
         } else {
             quoteEl.textContent = "Error: Content not found or bad response.";
-            readingEl.textContent = "The reflection could not be loaded for this date. Try today's date.";
+            readingEl.textContent = "The reflection could not be loaded for this date. Ensure your API key is configured correctly or try today's date.";
             quoteEl.style.display = 'block';
             readingEl.style.display = 'block';
         }
@@ -475,83 +463,4 @@ export const App = {
         document.getElementById('goToTodoBtn').addEventListener('click', () => { ViewManager.displayAppView('todoView'); TodoLogic.renderTodoList(); });
         document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView); 
         document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome); // Using WorkbookLogic module
-        document.getElementById('goToReflectionBtn').addEventListener('click', ReflectionLogic.showReflectionView); 
-        document.getElementById('goToJFTBtn').addEventListener('click', ReflectionLogic.showJFTView);
-
-        // --- Daily Reflection Listener ---
-        document.getElementById('reflectionDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getDailyReflection(e.target.value);
-        });
-        
-        // --- Just For Today Listener ---
-        document.getElementById('jftDateInput').addEventListener('change', (e) => {
-            ReflectionLogic.getJustForToday(e.target.value);
-        });
-
-        // --- Workbooks Nav ---
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView); 
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        
-        // Workbook Save Bindings: Must be explicitly bound
-        document.getElementById('saveStepOneBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepOneQuestions', 'saveStepOneBtn', 'stepOneSaveStatus'));
-        document.getElementById('saveStepTwoBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepTwoQuestions', 'saveStepTwoBtn', 'stepTwoSaveStatus'));
-        document.getElementById('saveStepThreeBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepThreeQuestions', 'saveStepThreeBtn', 'stepThreeSaveStatus'));
-        document.getElementById('saveStepFourBtn').addEventListener('click', () => WorkbookLogic.collectAndSaveWorkbookAnswers('stepFourQuestions', 'saveStepFourBtn', 'stepFourSaveStatus'));
-        
-        
-        // --- Journal Listeners ---
-        document.getElementById('entryHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('openListHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('managePromptsBtn').addEventListener('click', showPromptManagerView);
-        document.getElementById('backToEntryBtn').addEventListener('click', () => showJournalEntryView(JournalEventHandlers.getCurrentJournalKey()));
-        
-        document.getElementById('addCustomPromptBtn').addEventListener('click', JournalEventHandlers.handlePromptAdd);
-        document.getElementById('promptSelect').addEventListener('change', JournalEventHandlers.handlePromptSelect);
-        document.getElementById('saveJournalBtn').addEventListener('click', JournalEventHandlers.handleSave);
-        document.getElementById('entryDate').addEventListener('change', JournalEventHandlers.handleDateChange);
-        document.getElementById('viewAllEntriesBtn').addEventListener('click', showJournalListView);
-        document.getElementById('newEntryBtn').addEventListener('click', () => showJournalEntryView());
-
-        // --- Settings Listeners ---
-        document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-            const dateStr = document.getElementById('soberDateInput').value;
-            if (dateStr && new Date(dateStr) <= new Date()) {
-                Storage.saveSoberDate(dateStr);
-                ViewManager.updateHomeSobrietyDuration();
-                alert('Sober Date Saved!');
-            } else {
-                alert('Please enter a valid Sober Date in the past.');
-            }
-        });
-
-        // --- To Do List Listeners ---
-        document.getElementById('addTodoBtn').addEventListener('click', () => {
-            const input = document.getElementById('todoInput');
-            const dateInput = document.getElementById('todoDateInput');
-            const recurrenceSelect = document.getElementById('todoRecurrenceSelect');
-            
-            const task = input.value.trim();
-            const dueDate = dateInput.value;
-            const recurrence = recurrenceSelect.value;
-            
-            if (task) {
-                TodoLogic.addTodo(task, dueDate, recurrence);
-                input.value = '';
-                dateInput.value = '';
-                recurrenceSelect.value = 'none';
-            } else {
-                alert('Please enter a task description.');
-            }
-        });
-        document.getElementById('todoHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-
-        // Initialize Card Listeners, now imported from coping_cards.js
-        CardLogic.bindEventListeners();
-    }
-};
+        document.getElementById('goToReflectionBtn').addEventListener('clic

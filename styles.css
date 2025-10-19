@@ -1,0 +1,399 @@
+:root {
+  --bg: #f7f7f9;
+  --card-radius: 16px;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --color-blue: #2b77f0;
+  --color-shadow: rgba(43, 119, 240, 0.3);
+  /* Define a neutral gray for secondary text/borders, now darker for contrast */
+  --color-gray: #444; 
+  --color-light-gray: #f0f0f0;
+}
+/* FIX: Remove height:100% from html,body and allow the body to scroll */
+html,body{margin:0;font-family:var(--font-family);background:linear-gradient(180deg,#f4f7fb,#ffffff);display:flex;align-items:center;justify-content:center; min-height: 100vh;}
+.app{width:100%;max-width:720px;padding:24px;box-sizing:border-box}
+.hero{background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; position: relative; /* Added for cog positioning */ }
+h1{margin:0;font-size:28px}
+p.sub{color:#556;opacity:0.8;margin-top:8px}
+
+/* NEW: Version Number Positioning */
+#appVersion {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 14px;
+    color: #888;
+    font-weight: 500;
+}
+
+/* NEW: Settings Cog Positioning */
+.settings-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+button.settings-cog {
+    font-size: 24px;
+    color: var(--color-gray); /* Dark gray color */
+    padding: 5px;
+    transition: transform 0.3s;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+button.settings-cog:hover {
+    transform: rotate(30deg);
+}
+.settings-group h3 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #333;
+    text-align: left;
+}
+
+/* Primary Blue Button Style (Used for Cards, Journal, and To Do List) */
+button.primary{margin-top:20px;padding:14px 20px;border-radius:12px;border:0;background:var(--color-blue);color:#fff;font-size:18px;font-weight:600;width:100%;box-shadow:0 6px 16px var(--color-shadow);cursor:pointer;transition:background 0.2s; text-align: center;} /* Default centered text */
+button.primary:hover{background:#2361c4}
+
+/* WORKBOOKS PAGE BUTTON FIX: Align text left only for workbook buttons */
+#workbooksView button.primary {
+    text-align: left;
+    padding-left: 20px;
+}
+
+/* NEW: Reflection Button Group Styling */
+.reflection-group {
+    display: flex;
+    gap: 15px; /* Spacing between the two reflection buttons */
+    margin-top: 15px;
+}
+.reflection-group button.primary {
+    margin-top: 0;
+    width: 50%; /* Make them share the width */
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+/* Secondary/Action Buttons (Default) */
+button{cursor:pointer;background:none;border:none;color:var(--color-blue);font-size:16px;padding:8px;font-weight:500}
+
+/* UPDATED: Secondary style for next/home buttons with high contrast */
+button.secondary {
+    /* Set background to white */
+    background: #ffffff; 
+    /* Set text color to a dark gray for high contrast */
+    color: var(--color-gray); 
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    /* Give it a subtle shadow to lift it off the card background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border: 1px solid #d0d0d0;
+}
+button.secondary:hover {
+    background: #f5f5f5;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ADDED FOR ACCESSIBILITY */
+button:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+input[type="date"], input[type="text"], select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    box-sizing: border-box;
+}
+select {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Fact Box Styling */
+.fact-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f0f7ff;
+    border: 1px solid #d0e4ff;
+    border-radius: 12px;
+    text-align: center;
+}
+.fact-box h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-blue);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.fact-box p {
+    font-size: 16px;
+    color: #444;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Sobriety Duration on Home Screen */
+#homeSobrietyDuration {
+    margin: 15px 0 0 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #555;
+}
+
+/* Card View Styles */
+.card-area{min-height:360px;background:#fff;border-radius:var(--card-radius);padding:40px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(32,40,60,0.08);text-align:center; transition: background 0.5s ease;}
+#cardIcon{font-size:80px;line-height:1;margin-bottom:12px; color: #fff;}
+#cardSuit{font-size:24px;font-weight:600;text-transform:uppercase;color:#fff}
+#cardText{font-size:24px;font-weight:500;margin:20px 0 40px;padding:0 20px;color:#fff}
+.actions button{margin:0 10px}
+.status-text{font-size:14px;color:#777;margin-top:10px}
+
+/* Shared Content Styles */
+.content-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(32,40,60,0.08);
+    /* FIX: Allow content cards to grow vertically without height constraints */
+    width: 100%;
+    box-sizing: border-box;
+}
+.content-card h2 {
+    font-size: 24px;
+    margin-top: 0;
+    color: #333;
+    text-align: center;
+}
+textarea {
+    width: 100%;
+    height: 300px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-top: 15px;
+}
+.actions-row {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.list-view-actions {
+    display: flex;
+    gap: 10px;
+}
+.list-view-actions button {
+    margin: 0;
+}
+.prompt-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* To Do List Specific Styles */
+.todo-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px; /* Reduced margin */
+    flex-wrap: wrap;
+}
+.todo-input-group input[type="text"] {
+    flex-grow: 1;
+    min-width: 150px;
+}
+/* NEW: Styling for recurrence and date inputs in the task form */
+.todo-input-group input[type="date"], .todo-input-group select {
+    width: auto;
+    flex-grow: 0;
+    min-width: 100px;
+}
+.todo-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 0;
+}
+.todo-list li {
+    display: flex;
+    flex-direction: column; /* Stack details vertically */
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+}
+.todo-list li:last-child {
+    border-bottom: none;
+}
+.todo-main-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.todo-text {
+    flex-grow: 1;
+    cursor: pointer;
+    padding: 0 5px;
+    font-weight: 500;
+}
+.todo-details {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 5px;
+}
+.todo-completed {
+    text-decoration: line-through;
+    color: #888;
+}
+/* Prompt Manager Styles */
+.prompt-list-manager li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+}
+/* Workbook Styles */
+.workbook-question {
+    margin-bottom: 30px;
+    border-left: 3px solid var(--color-blue);
+    padding-left: 15px;
+}
+.workbook-question h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+}
+.workbook-question textarea {
+    height: 150px;
+    margin-top: 0;
+}
+
+/* NEW: Collapsible styles for Workbook */
+.workbook-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 20px -24px 0 -24px; /* Extend full width of content-card */
+    background-color: var(--color-light-gray);
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+}
+.workbook-section-header:hover {
+    background-color: #e5e5e5;
+}
+.workbook-section-header h3 {
+    margin: 0;
+    font-size: 1em; /* Use 1em since parent is 1.2em */
+}
+.collapse-icon {
+    font-size: 1.5em;
+    transition: transform 0.3s;
+}
+.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+.section-content {
+    max-height: 2000px; /* large enough for content */
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+}
+.section-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Literature Styles */
+.literature-chapter {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+.literature-chapter h3 {
+    color: var(--color-blue);
+    border-bottom: 2px solid var(--color-blue);
+    padding-bottom: 5px;
+    margin-top: 0;
+    font-size: 1.4em;
+}
+.literature-chapter p {
+    text-align: justify;
+    line-height: 1.6;
+    color: #555;
+    margin-top: 15px;
+}
+.literature-link {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Daily Reflection Styles */
+#reflectionContent {
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    background: #f7f7f9;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-top: 15px;
+}
+
+#reflectionDateInput {
+    max-width: 200px;
+    margin: 15px auto 5px auto;
+    display: block;
+}
+
+#reflectionQuote {
+    font-size: 1.2em;
+    font-style: italic;
+    color: #333;
+    margin-bottom: 15px;
+}
+#reflectionReading {
+    color: #555;
+    line-height: 1.6;
+}
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--color-blue);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
