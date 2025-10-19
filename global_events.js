@@ -387,7 +387,7 @@ export const ReflectionLogic = {
 
         const maxRetries = 3;
         let attempt = 0;
-        while (attempt < max_retries) {
+        while (attempt < maxRetries) {
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -410,7 +410,7 @@ export const ReflectionLogic = {
             } catch (error) {
                 attempt++;
                 console.error(`Attempt ${attempt} failed:`, error.message);
-                if (attempt >= max_retries) {
+                if (attempt >= maxRetries) {
                     resultText = "Error fetching reflection after multiple retries. Check connectivity.";
                     break;
                 }
