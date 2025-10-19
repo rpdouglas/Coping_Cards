@@ -46,7 +46,7 @@ const cards = [
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Listen to a piece of classical music you’ve never heard before.'},
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Draw or doodle for 5 minutes without judging the result.'},
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Watch a short documentary or educational video on a random topic.'},
-    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one like a harmonica) and try it.'},
+    {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Pick up a new musical instrument (even a simple one) and try it.'},
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Look up a recipe and plan to make it later this week.'},
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Browse an online museum or art gallery.'},
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Start a journal entry about your goals for the next month.'},
@@ -57,41 +57,36 @@ const cards = [
     {suit: 'Creative & Learning', suit_key: 'purple', icon: '🎨', text: 'Try to balance an object on your finger for 60 seconds.'}
 ];
 
-// --- DAILY FACTS (Celebrity/AA Focused) ---
+// --- DAILY FACTS ---
 const POP_FACTS = [
-    "In his recovery, actor Robert Downey Jr. pursued martial arts and therapy, stating: 'Job one is get out of that cave.'",
-    "Actress Jamie Lee Curtis became addicted to prescription painkillers after a cosmetic surgery but has been sober since 1999, crediting her sobriety with giving her everything of value in her life.",
-    "Bradley Cooper, who has been sober since 2004, credits his sobriety with saving his career and allowing him to become an A-list actor.",
-    "Musician Elton John, who entered recovery in 1990, established the Elton John AIDS Foundation two years later, using his energy to help others.",
-    "Actor Daniel Radcliffe sought sobriety in 2010 to cope with anxiety and stress after the Harry Potter series wrapped up, finding greater peace without alcohol.",
-    "After battling substance abuse in her youth, Drew Barrymore went to rehab at age 13 and is now a successful actress and talk show host, openly sharing her journey.",
+    "Actor Robert Downey Jr. pursued martial arts and therapy in his recovery, stating: 'Job one is get out of that cave.'",
+    "Actress Jamie Lee Curtis has been sober since 1999, crediting sobriety with giving her everything of value in her life.",
+    "Bradley Cooper, sober since 2004, credits his sobriety with saving his career.",
+    "Musician Elton John established the Elton John AIDS Foundation two years after entering recovery in 1990.",
+    "Actor Daniel Radcliffe sought sobriety in 2010 to cope with anxiety and stress after the Harry Potter series.",
+    "Drew Barrymore went to rehab at age 13 and is now a successful actress and talk show host.",
     "Actor Danny Trejo has been sober for over 50 years, having gotten clean well before his career took off.",
-    "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it, and has since become one of Hollywood's most successful actors.",
-    "AA was founded in 1935 in Akron, Ohio, by stockbroker Bill Wilson and surgeon Dr. Bob Smith.",
-    "The 12 Steps of AA were first outlined in the book 'Alcoholics Anonymous,' often called the Big Book.",
-    "The Big Book's chapter 'How It Works' is frequently read aloud at the beginning of AA meetings worldwide.",
+    "Samuel L. Jackson got sober in the early 1990s, realizing his acting career would require it.",
+    "AA was founded in 1935 in Akron, Ohio, by Bill Wilson and Dr. Bob Smith.",
+    "The 12 Steps were first outlined in the book 'Alcoholics Anonymous,' often called the Big Book.",
+    "The Big Book's chapter 'How It Works' is frequently read at the beginning of AA meetings.",
     "The central purpose of AA is to stay sober and help other alcoholics achieve sobriety.",
-    "AA is known for its tradition of anonymity, ensuring that members are judged by their actions, not their reputation.",
-    "The spiritual foundation of AA is based on a 'Power greater than ourselves,' emphasizing that it is spiritual, not religious.",
-    "Many addiction recovery programs, including Narcotics Anonymous, Al-Anon, and Overeaters Anonymous, use adapted versions of the 12 Steps.",
-    "Dr. Bob's sobriety date, June 10, 1935, is celebrated as the founding date of Alcoholics Anonymous.",
-    "AA operates on three legacies: Recovery (the Steps), Unity (the Traditions), and Service (the Concepts).",
-    "The Serenity Prayer, 'God grant me the serenity...', is widely used in AA and other 12-Step programs.",
-    "AA groups are autonomous—each group runs itself, except in matters affecting other groups or AA as a whole.",
-    "In AA, sponsorship is a key element: a recovered alcoholic helps a newcomer work through the Twelve Steps.",
-    "The 12th Step emphasizes carrying the message to other alcoholics and practicing the principles in all affairs.",
-    "AA does not charge dues or fees; it is self-supporting through member contributions.",
+    "AA's tradition of anonymity ensures that members are judged by actions, not reputation.",
+    "The spiritual foundation of AA is based on a 'Power greater than ourselves.'",
+    "Many recovery programs use adapted versions of the 12 Steps.",
+    "Dr. Bob's sobriety date, June 10, 1935, is celebrated as the founding date of AA.",
+    "AA operates on three legacies: Recovery (Steps), Unity (Traditions), and Service (Concepts).",
+    "The Serenity Prayer is widely used in AA and other 12-Step programs.",
+    "The only requirement for AA membership is a desire to stop drinking.",
+    "In AA, sponsorship is key: a recovered alcoholic helps a newcomer work the Steps.",
+    "The 12th Step emphasizes carrying the message and practicing the principles in all affairs.",
+    "AA is self-supporting through member contributions.",
     "The 'third tradition' states that the only requirement for AA membership is a desire to stop drinking.",
-    "AA literature is protected by copyright to preserve its integrity and message.",
-    "The co-founders believed their recovery was a 'spiritual experience' that came through helping others.",
-    "AA's slogan 'One Day at a Time' encourages members to focus only on staying sober for the next 24 hours.",
-    "The AA symbol is a circle enclosing a triangle, representing the Three Legacies: Unity, Recovery, and Service.",
-    "AA has grown from two members in 1935 to an estimated two million members worldwide today.",
-    "The concept of 'Higher Power' is intentionally left to individual interpretation in AA.",
-    "Many AA meetings take place online or over the phone, reflecting the program's adaptability.",
-    "The Twelve Traditions govern how the AA groups and the fellowship operate as a whole.",
-    "AA encourages members to seek professional help for non-alcohol-related issues.",
-    "The 'Big Book' contains personal stories to show newcomers that they are not alone.",
+    "AA's slogan 'One Day at a Time' encourages focusing on staying sober for the next 24 hours.",
+    "The AA symbol is a circle enclosing a triangle, representing Unity, Recovery, and Service.",
+    "AA has grown to an estimated two million members worldwide today.",
+    "The concept of 'Higher Power' is left to individual interpretation in AA.",
+    "The Twelve Traditions govern how AA groups and the fellowship operate."
 ];
 
 // --- DEFAULT JOURNAL PROMPTS ---
@@ -103,13 +98,20 @@ const DEFAULT_PROMPTS = [
     {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
 ];
 
-// Import Workbook data from its dedicated file
+// Import Workbook data from its own dedicated file
 import { 
     WORKBOOK_STEP1_QUESTIONS, 
     WORKBOOK_STEP2_QUESTIONS, 
     WORKBOOK_STEP3_QUESTIONS, 
     WORKBOOK_STEP4_QUESTIONS,
-    WORKBOOK_STEP5_QUESTIONS // NEW: Import Step 5
+    WORKBOOK_STEP5_QUESTIONS,
+    WORKBOOK_STEP6_QUESTIONS,
+    WORKBOOK_STEP7_QUESTIONS,
+    WORKBOOK_STEP8_QUESTIONS,
+    WORKBOOK_STEP9_QUESTIONS,
+    WORKBOOK_STEP10_QUESTIONS,
+    WORKBOOK_STEP11_QUESTIONS,
+    WORKBOOK_STEP12_QUESTIONS
 } from './workbook_data.js';
 
 // --- EXPORT ALL STATIC DATA ---
@@ -121,6 +123,14 @@ export const AppData = {
     WORKBOOK_STEP2_QUESTIONS,
     WORKBOOK_STEP3_QUESTIONS,
     WORKBOOK_STEP4_QUESTIONS,
-    WORKBOOK_STEP5_QUESTIONS, // NEW: Export Step 5
+    WORKBOOK_STEP5_QUESTIONS,
+    WORKBOOK_STEP6_QUESTIONS,
+    WORKBOOK_STEP7_QUESTIONS,
+    WORKBOOK_STEP8_QUESTIONS,
+    WORKBOOK_STEP9_QUESTIONS,
+    WORKBOOK_STEP10_QUESTIONS,
+    WORKBOOK_STEP11_QUESTIONS,
+    WORKBOOK_STEP12_QUESTIONS,
 };
+
 
