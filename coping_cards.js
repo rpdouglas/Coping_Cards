@@ -1,11 +1,9 @@
 import { AppData } from './data.js';
-// UPDATED: Import from utils.js and global_events.js separately
 import { ViewManager } from './utils.js'; 
-import { deck } from './global_events.js'; 
+import { deck } from './state.js'; 
 
-// --- Card Logic ---
 export const CardLogic = {
-    suitColor: (suit_key) => {
+    suitColor: function(suit_key) {
         switch(suit_key){
             case 'blue': return 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)';
             case 'green': return 'linear-gradient(135deg, #2ECC71 0%, #56C87C 100%)';
@@ -14,39 +12,38 @@ export const CardLogic = {
             default: return '#fff';
         }
     },
-    updateStatus: () => {
+    updateStatus: function() {
         document.getElementById('statusText').textContent = `Cards left in deck: ${deck.length} / 52`;
     },
-    renderCard: (card) => {
+    renderCard: function(card) {
         document.getElementById('cardIcon').textContent = card.icon;
         document.getElementById('cardSuit').textContent = card.suit;
         document.getElementById('cardText').textContent = card.text;
-        document.getElementById('cardArea').style.background = CardLogic.suitColor(card.suit_key);
-        CardLogic.updateStatus();
+        document.getElementById('cardArea').style.background = this.suitColor(card.suit_key);
+        this.updateStatus();
     },
-    drawRandom: () => {
+    drawRandom: function() {
         if(deck.length === 0) return null;
         const idx = Math.floor(Math.random()*deck.length);
         return deck.splice(idx,1)[0];
     },
-    drawAndDisplayCard: () => {
-        const card = CardLogic.drawRandom();
+    drawAndDisplayCard: function() {
+        const card = this.drawRandom();
         if (!card) {
             alert('Deck empty — please shuffle or return home.');
             return;
         }
-        CardLogic.renderCard(card);
+        this.renderCard(card);
         ViewManager.displayAppView('cardView');
     },
-    resetDeck: () => {
+    resetDeck: function() {
         deck.splice(0, deck.length, ...AppData.cards);
-        CardLogic.updateStatus();
+        this.updateStatus();
         ViewManager.displayAppView('homeScreen');
     },
-    bindEventListeners: () => {
-        document.getElementById('goToCardsBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('nextBtn').addEventListener('click', CardLogic.drawAndDisplayCard);
-        document.getElementById('resetBtn').addEventListener('click', CardLogic.resetDeck);
+    bindEventListeners: function() {
+        document.getElementById('nextBtn').addEventListener('click', this.drawAndDisplayCard.bind(this));
+        document.getElementById('resetBtn').addEventListener('click', this.resetDeck.bind(this));
     }
 };
 

@@ -13,7 +13,7 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
         <div class="hero">
-            <div id="appVersion">V0.5</div>
+            <div id="appVersion">V0.14</div>
             <div class="settings-container">
                 <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
             </div>
@@ -184,6 +184,8 @@
             <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
             <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
             <button id="goToStep4Btn" class="primary" style="margin-top: 15px;">Step 4: Moral Inventory</button>
+            <!-- NEW: Button for Step 5 -->
+            <button id="goToStep5Btn" class="primary" style="margin-top: 15px;">Step 5: Admitted Wrongs</button>
             <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
                 <button id="workbooksHomeBtn" class="secondary">Home</button>
             </div>
@@ -254,6 +256,22 @@
         </div>
     </div>
 
+    <!-- NEW: Step Five Workbook View Screen -->
+    <div id="stepFiveView" style="display:none;">
+        <div class="content-card">
+            <h2>Step 5: Admitted Wrongs</h2>
+            <p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p>
+            <div id="stepFiveQuestions"></div>
+            <div class="actions-row">
+                <p id="stepFiveSaveStatus" style="color: green; font-weight: 600;"></p>
+                <div class="list-view-actions">
+                    <button id="saveStepFiveBtn" class="secondary">Save Progress</button>
+                    <button id="stepFiveWorkbooksBtn" class="secondary">Workbooks Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 13. NEW DAILY REFLECTION VIEW SCREEN -->
     <div id="reflectionView" style="display:none;">
         <div class="content-card">
@@ -292,24 +310,15 @@
   </div>
   
   <script type="module">
-    // REFACTORED: The only code in the HTML is the entry point to the application.
-    // All logic is now handled in the dedicated .js files.
     import { App } from './global_events.js'; 
-
-    // Initialize the application
     App.initializeApp();
-
-    // Register Service Worker
     if('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
-        .then(function(reg) {
-          console.log('Service Worker Registered');
-        })
-        .catch(function(err) {
-          console.log('Service Worker Registration Failed:', err);
-        });
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Registration Failed:', err));
     }
   </script>
 </body>
 </html>
+
 

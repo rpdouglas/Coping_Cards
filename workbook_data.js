@@ -139,3 +139,38 @@ export const WORKBOOK_STEP4_QUESTIONS = [
     "Are you willing to let go of these defects, even the ones you think you 'need'? Why or why not?",
     "What would your life look like without these destructive patterns dominating your thoughts and actions?",
 ];
+
+// NEW: Step 5 Workbook Questions
+export const WORKBOOK_STEP5_QUESTIONS = [
+    { title: "Part 1: Understanding Step Five", isSection: true },
+    "What does Step Five mean to you personally?",
+    "Why do you think it’s necessary to share your moral inventory with another person?",
+    "How does admitting your wrongs to God, yourself, and another human being help you heal?",
+    "What fears or doubts do you have about being completely honest in this step?",
+    "What do you hope to gain from completing Step Five?",
+    { title: "Part 2: Preparation for Step Five", isSection: true },
+    "Who have you chosen to share your Step Four inventory with, and why did you choose them?",
+    "What qualities make this person trustworthy and supportive of your recovery?",
+    "What steps can you take to prepare emotionally and spiritually for this conversation?",
+    "Are there any parts of your inventory you still feel hesitant or ashamed to share?",
+    "What might happen if you hold back certain truths during your Step Five?",
+    { title: "Part 3: The Experience of Sharing", isSection: true },
+    "Describe what it felt like to share your inventory openly with another person.",
+    "Were there any surprises or realizations during the conversation?",
+    "Did the person you shared with offer insights or perspectives you hadn’t considered before?",
+    "How did it feel to be truly honest about things you’ve hidden or denied for years?",
+    "What emotions surfaced during or after your Step Five discussion (e.g., relief, guilt, peace, freedom)?",
+    { title: "Part 4: Insights and Lessons Learned", isSection: true },
+    "What did you learn about yourself through this process?",
+    "How did Step Five change your understanding of humility and accountability?",
+    "What patterns of behavior or thinking became clearer after sharing your wrongs out loud?",
+    "How has this step affected your sense of connection with your Higher Power?",
+    "Do you feel lighter or more at peace now that you’ve shared your secrets? Explain.",
+    { title: "Part 5: Moving Forward", isSection: true },
+    "What areas of your life feel ready for healing now that you’ve completed Step Five?",
+    "Are there amends or changes in behavior you already feel motivated to make?",
+    "What practices will help you maintain honesty and humility going forward?",
+    "How will you remind yourself to keep an open heart and mind as you continue with the Steps?",
+    "In what ways do you feel closer to freedom, forgiveness, and inner peace after completing Step Five?",
+];
+

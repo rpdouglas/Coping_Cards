@@ -1,13 +1,14 @@
-// UPDATED: Import from the new utils.js file
 import { ViewManager } from './utils.js'; 
 
 export const LiteratureLogic = {
-    showLiteratureView: () => {
+    showLiteratureView: function() {
         ViewManager.displayAppView('literatureView');
     },
-    bindEventListeners: () => {
-        document.getElementById('goToLiteratureBtn').addEventListener('click', LiteratureLogic.showLiteratureView);
+    
+    bindEventListeners: function() {
+        // Binds only the buttons within the literature view itself.
         document.getElementById('literatureHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
     }
 };
+
 

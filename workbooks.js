@@ -1,11 +1,8 @@
-// UPDATED: Import from the new utils.js file
 import { ViewManager } from './utils.js';
 import { AppData } from './data.js';
 import { Storage } from './storage.js';
 
-/**
- * Workbook Logic Module (Steps 1-4)
- */
+// --- Private Helper Functions ---
 
 const WorkbookDataMap = {
     stepOne: { 
@@ -39,6 +36,14 @@ const WorkbookDataMap = {
         containerId: 'stepFourQuestions', 
         saveStatusId: 'stepFourSaveStatus',
         viewId: 'stepFourView'
+    },
+    stepFive: {
+        questions: AppData.WORKBOOK_STEP5_QUESTIONS,
+        getAnswers: Storage.getStepFiveAnswers,
+        saveAnswers: Storage.saveStepFiveAnswers,
+        containerId: 'stepFiveQuestions',
+        saveStatusId: 'stepFiveSaveStatus',
+        viewId: 'stepFiveView'
     }
 };
 
@@ -105,41 +110,34 @@ const collectAndSaveWorkbookAnswers = (config) => {
     setTimeout(() => { statusEl.textContent = ''; }, 3000);
 };
 
+// --- Exported Logic Module ---
 export const WorkbookLogic = {
-    showWorkbooksHome: () => ViewManager.displayAppView('workbooksView'),
-    showStepOneView: () => {
-        ViewManager.displayAppView(WorkbookDataMap.stepOne.viewId);
-        renderWorkbook(WorkbookDataMap.stepOne);
-    },
-    showStepTwoView: () => {
-        ViewManager.displayAppView(WorkbookDataMap.stepTwo.viewId);
-        renderWorkbook(WorkbookDataMap.stepTwo);
-    },
-    showStepThreeView: () => {
-        ViewManager.displayAppView(WorkbookDataMap.stepThree.viewId);
-        renderWorkbook(WorkbookDataMap.stepThree);
-    },
-    showStepFourView: () => {
-        ViewManager.displayAppView(WorkbookDataMap.stepFour.viewId);
-        renderWorkbook(WorkbookDataMap.stepFour);
-    },
-    bindEventListeners: () => {
-        document.getElementById('goToWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('workbooksHomeBtn').addEventListener('click', () => ViewManager.displayAppView('homeScreen'));
-        document.getElementById('goToStep1Btn').addEventListener('click', WorkbookLogic.showStepOneView);
-        document.getElementById('goToStep2Btn').addEventListener('click', WorkbookLogic.showStepTwoView);
-        document.getElementById('goToStep3Btn').addEventListener('click', WorkbookLogic.showStepThreeView);
-        document.getElementById('goToStep4Btn').addEventListener('click', WorkbookLogic.showStepFourView);
+    showWorkbooksHome: function() { ViewManager.displayAppView('workbooksView'); },
+    showStepOneView: function() { ViewManager.displayAppView(WorkbookDataMap.stepOne.viewId); renderWorkbook(WorkbookDataMap.stepOne); },
+    showStepTwoView: function() { ViewManager.displayAppView(WorkbookDataMap.stepTwo.viewId); renderWorkbook(WorkbookDataMap.stepTwo); },
+    showStepThreeView: function() { ViewManager.displayAppView(WorkbookDataMap.stepThree.viewId); renderWorkbook(WorkbookDataMap.stepThree); },
+    showStepFourView: function() { ViewManager.displayAppView(WorkbookDataMap.stepFour.viewId); renderWorkbook(WorkbookDataMap.stepFour); },
+    showStepFiveView: function() { ViewManager.displayAppView(WorkbookDataMap.stepFive.viewId); renderWorkbook(WorkbookDataMap.stepFive); },
+
+    bindEventListeners: function() {
+        document.getElementById('goToStep1Btn').addEventListener('click', this.showStepOneView.bind(this));
+        document.getElementById('goToStep2Btn').addEventListener('click', this.showStepTwoView.bind(this));
+        document.getElementById('goToStep3Btn').addEventListener('click', this.showStepThreeView.bind(this));
+        document.getElementById('goToStep4Btn').addEventListener('click', this.showStepFourView.bind(this));
+        document.getElementById('goToStep5Btn').addEventListener('click', this.showStepFiveView.bind(this));
         
-        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
-        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', WorkbookLogic.showWorkbooksHome);
+        document.getElementById('workbooksHomeBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepOneWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepTwoWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepThreeWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepFourWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
+        document.getElementById('stepFiveWorkbooksBtn').addEventListener('click', this.showWorkbooksHome.bind(this));
 
         document.getElementById('saveStepOneBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepOne));
         document.getElementById('saveStepTwoBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepTwo));
         document.getElementById('saveStepThreeBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepThree));
         document.getElementById('saveStepFourBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepFour));
+        document.getElementById('saveStepFiveBtn').addEventListener('click', () => collectAndSaveWorkbookAnswers(WorkbookDataMap.stepFive));
     }
 };
 
