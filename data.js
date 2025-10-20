@@ -1,3 +1,19 @@
+// Import Workbook data from its own dedicated file
+import { 
+    WORKBOOK_STEP1_QUESTIONS, 
+    WORKBOOK_STEP2_QUESTIONS, 
+    WORKBOOK_STEP3_QUESTIONS, 
+    WORKBOOK_STEP4_QUESTIONS,
+    WORKBOOK_STEP5_QUESTIONS,
+    WORKBOOK_STEP6_QUESTIONS,
+    WORKBOOK_STEP7_QUESTIONS,
+    WORKBOOK_STEP8_QUESTIONS,
+    WORKBOOK_STEP9_QUESTIONS,
+    WORKBOOK_STEP10_QUESTIONS,
+    WORKBOOK_STEP11_QUESTIONS,
+    WORKBOOK_STEP12_QUESTIONS
+} from './workbook_data.js';
+
 // --- COPING CARDS DATA ---
 const cards = [
     {suit: 'Action & Movement', suit_key: 'blue', icon: '🏃‍♂️', text: 'Tense and then relax your muscles. Repeat 3 times.'},
@@ -98,22 +114,6 @@ const DEFAULT_PROMPTS = [
     {name: "Future Goal Setting", template: "One small recovery goal for tomorrow is:\nOne large life goal I'm moving toward is:\nWhat steps can I take today to prepare for tomorrow?"}
 ];
 
-// Import Workbook data from its own dedicated file
-import { 
-    WORKBOOK_STEP1_QUESTIONS, 
-    WORKBOOK_STEP2_QUESTIONS, 
-    WORKBOOK_STEP3_QUESTIONS, 
-    WORKBOOK_STEP4_QUESTIONS,
-    WORKBOOK_STEP5_QUESTIONS,
-    WORKBOOK_STEP6_QUESTIONS,
-    WORKBOOK_STEP7_QUESTIONS,
-    WORKBOOK_STEP8_QUESTIONS,
-    WORKBOOK_STEP9_QUESTIONS,
-    WORKBOOK_STEP10_QUESTIONS,
-    WORKBOOK_STEP11_QUESTIONS,
-    WORKBOOK_STEP12_QUESTIONS
-} from './workbook_data.js';
-
 // --- EXPORT ALL STATIC DATA ---
 export const AppData = {
     cards,
@@ -132,5 +132,3 @@ export const AppData = {
     WORKBOOK_STEP11_QUESTIONS,
     WORKBOOK_STEP12_QUESTIONS,
 };
-
-
