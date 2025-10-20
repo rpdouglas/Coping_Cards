@@ -1,250 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Addicts Agenda</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coping Cards</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="app">
+  <div id="appContainer">
+    <header>
+      <h1>Coping Cards</h1>
+      <p class="subtitle">Find strength, focus, and calm — one card at a time.</p>
+    </header>
 
-    <!-- 1. HOME SCREEN -->
-    <div id="homeScreen" style="display:block;">
-        <div class="hero">
-            <div id="appVersion">V0.23</div>
-            <div class="settings-container">
-                <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
-            </div>
-            <h1>The Addicts Agenda</h1>
-            <p class="sub">Find inspiration and practical tools for your recovery journey.</p>
-            <p id="homeSobrietyDuration" style="color: var(--color-blue);">Set your sober date in Settings.</p>
-            <div class="fact-box">
-                <h2 id="dailyFactHeader">Recovery Fact of the Day</h2>
-                <p id="dailyFactText">Loading daily inspiration...</p>
-            </div>
-            <button id="goToCardsBtn" class="primary">Draw a Coping Card</button>
-            <button id="goToJournalBtn" class="primary" style="margin-top: 15px;">Start Journaling</button>
-            <button id="goToTodoBtn" class="primary" style="margin-top: 15px;">View To Do List</button>
-            <div class="reflection-group">
-                <button id="goToReflectionBtn" class="primary">Daily Reflection (AA)</button>
-                <button id="goToJFTBtn" class="primary">Just for Today (NA)</button>
-            </div>
-            <button id="goToLiteratureBtn" class="primary" style="margin-top: 15px;">Recovery Literature</button>
-            <button id="goToWorkbooksBtn" class="primary" style="margin-top: 15px;">Recovery Workbooks</button>
-        </div>
-    </div>
-    
-    <!-- (All other view divs are unchanged but included for completeness) -->
-    
-    <!-- 3. CARD VIEW SCREEN -->
-    <div id="cardView" style="display:none;">
-      <div id="cardArea" class="card-area">
-        <div><span id="cardIcon"></span><div id="cardSuit"></div></div>
-        <p id="cardText"></p>
-        <div class="actions">
-          <button id="nextBtn" class="secondary">Next Card</button>
-          <button id="resetBtn" class="secondary">Home</button>
-        </div>
-        <div id="statusText" class="status-text"></div>
-      </div>
-    </div>
+    <!-- DAILY FACT SECTION -->
+    <section id="dailyFactSection" class="card">
+      <h2>Daily Inspiration</h2>
+      <p id="dailyFactText">Loading daily inspiration...</p>
+    </section>
 
-    <!-- 4. JOURNAL VIEW SCREEN -->
-    <div id="journalView" style="display:none;">
-        <div class="content-card">
-            <div id="journalList" style="display:none;">
-                <h2>Journal Entries</h2>
-                <div class="list-view-actions">
-                    <button id="openListHomeBtn" class="secondary">Home</button>
-                    <button id="newEntryBtn" class="secondary">Write Today's Entry</button>
-                </div>
-                <ul id="entryList" class="journal-entry-list"></ul>
-            </div>
-            <div id="promptManagerView" style="display:none;">
-                <h2>Manage Custom Prompts</h2>
-                <div class="prompt-row">
-                    <input type="text" id="customPromptInput" placeholder="Enter new prompt text..." style="flex-grow: 1;">
-                    <button id="addCustomPromptBtn" class="secondary">Add</button>
-                </div>
-                <p class="sub" style="text-align: center;">Click a prompt below to delete it.</p>
-                <ul id="customPromptList" class="journal-entry-list prompt-list-manager"></ul>
-                <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
-                    <button id="backToEntryBtn" class="secondary">Back to Journal</button>
-                </div>
-            </div>
-            <div id="journalEntryView">
-                <h2>Today's Reflection</h2>
-                <p class="sub" style="text-align: center;">Use this space to process cravings, track progress, or reflect.</p>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <label for="entryDate">Date:</label><input type="date" id="entryDate">
-                </div>
-                <div class="prompt-row" style="margin-top: 15px;">
-                    <select id="promptSelect"></select>
-                    <button id="managePromptsBtn" class="secondary">Manage Prompts</button>
-                </div>
-                <textarea id="journalEntry" placeholder="What's on your mind today?"></textarea>
-                <div class="actions-row">
-                    <button id="viewAllEntriesBtn" class="secondary">View All</button>
-                    <div class="list-view-actions">
-                        <button id="saveJournalBtn" class="secondary">Save</button>
-                        <button id="entryHomeBtn" class="secondary">Home</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- MAIN NAVIGATION BUTTONS -->
+    <section id="homeButtons" class="button-grid">
+      <button id="goToCardsBtn" class="primary">🎴 Draw a Coping Card</button>
+      <button id="goToJournalBtn" class="secondary">📝 Journal</button>
+      <button id="goToTodoBtn" class="secondary">✅ To-Do List</button>
+      <button id="goToQuotesBtn" class="secondary">💬 Quotes</button>
+      <button id="goToAboutBtn" class="secondary">ℹ️ About</button>
+    </section>
 
-    <!-- 5. SETTINGS VIEW SCREEN -->
-    <div id="settingsView" style="display:none;">
-        <div class="content-card">
-            <h2>App Settings</h2>
-            <div class="settings-group">
-                <p class="sub" style="text-align: center; margin-bottom: 20px;">Track your journey.</p>
-                <h3>Sober Date Tracking</h3>
-                <label for="soberDateInput" style="display: block; margin-bottom: 8px; font-weight: 600;">Your Sober Date:</label>
-                <input type="date" id="soberDateInput" style="width: 100%; margin-bottom: 20px;">
-                <p id="sobrietyDuration" style="font-size: 1.1em; font-weight: bold; text-align: center; color: var(--color-blue); min-height: 20px;"></p>
-            </div>
-            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
-                <button id="saveSettingsBtn" class="secondary">Save Date</button>
-                <button id="settingsHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 6. TO DO LIST VIEW SCREEN -->
-    <div id="todoView" style="display:none;">
-        <div class="content-card">
-            <h2>My To Do List</h2>
-            <p class="sub" style="text-align: center;">Keep track of small, actionable tasks.</p>
-            <div class="todo-input-group">
-                <input type="text" id="todoInput" placeholder="Task description">
-                <input type="date" id="todoDateInput">
-                <select id="todoRecurrenceSelect">
-                    <option value="none">No Repeat</option><option value="daily">Daily</option><option value="weekly">Weekly</option>
-                    <option value="biweekly">Every 2 Weeks</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option>
-                </select>
-                <button id="addTodoBtn" class="secondary">Add Task</button>
-            </div>
-            <ul id="todoList" class="todo-list"></ul>
-            <div class="actions-row" style="justify-content: flex-end; gap: 10px;">
-                <button id="todoHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 7. LITERATURE VIEW SCREEN -->
-    <div id="literatureView" style="display:none;">
-        <div class="content-card">
-            <h2>Recovery Literature: Big Book Excerpts</h2>
-            <p class="sub" style="text-align: center;">Read key foundational texts from the fellowship.</p>
-            <div id="literatureContent">
-                <div class="literature-chapter">
-                    <h3>Chapter 1: Bill's Story</h3>
-                    <p>Bill W.'s story is the compelling account of how the co-founder of Alcoholics Anonymous discovered his powerlessness over alcohol and, through a spiritual experience, found a way out. It details his descent into alcoholism and the visit from his friend, Ebby T., whose own recovery planted the seed for the program.</p>
-                </div>
-                <div class="literature-chapter">
-                    <h3>Chapter 2: There is a Solution</h3>
-                    <p>This chapter provides hope by asserting that recovery is possible. It emphasizes the importance of the fellowship and introduces the core concept that alcoholism is a threefold disease—physical, mental, and spiritual—requiring a spiritual remedy.</p>
-                </div>
-            </div>
-            <p class="literature-link">For the complete text, download the <a href="https://aa.org/the-big-book" target="_blank" style="color: var(--color-blue); font-weight: 600;">Big Book Online</a>.</p>
-            <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
-                <button id="literatureHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 8. WORKBOOKS HOME VIEW SCREEN -->
-    <div id="workbooksView" style="display:none;">
-        <div class="content-card">
-            <h2>Recovery Workbooks</h2>
-            <p class="sub" style="text-align: center;">Tools and step work resources.</p>
-            <button id="goToStep1Btn" class="primary" style="margin-top: 15px;">Step 1: Powerlessness & Unmanageability</button>
-            <button id="goToStep2Btn" class="primary" style="margin-top: 15px;">Step 2: Coming to Believe</button>
-            <button id="goToStep3Btn" class="primary" style="margin-top: 15px;">Step 3: Turning It Over</button>
-            <button id="goToStep4Btn" class="primary" style="margin-top: 15px;">Step 4: Moral Inventory</button>
-            <button id="goToStep5Btn" class="primary" style="margin-top: 15px;">Step 5: Admitting Wrongs</button>
-            <button id="goToStep6Btn" class="primary" style="margin-top: 15px;">Step 6: Becoming Ready</button>
-            <button id="goToStep7Btn" class="primary" style="margin-top: 15px;">Step 7: Humbly Asking</button>
-            <button id="goToStep8Btn" class="primary" style="margin-top: 15px;">Step 8: List of Harms</button>
-            <button id="goToStep9Btn" class="primary" style="margin-top: 15px;">Step 9: Making Amends</button>
-            <button id="goToStep10Btn" class="primary" style="margin-top: 15px;">Step 10: Daily Inventory</button>
-            <button id="goToStep11Btn" class="primary" style="margin-top: 15px;">Step 11: Prayer & Meditation</button>
-            <button id="goToStep12Btn" class="primary" style="margin-top: 15px;">Step 12: Spiritual Awakening</button>
-            <div class="actions-row" style="justify-content: flex-end; gap: 10px; margin-top: 40px;">
-                <button id="workbooksHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- All 12 Step Workbook Views -->
-    <div id="stepOneView" style="display:none;"><div class="content-card"><h2>Step 1: Admitted Powerlessness</h2><p class="sub" style="text-align: center;">"We admitted we were powerless over our addiction—that our lives had become unmanageable."</p><div id="stepOneQuestions"></div><div class="actions-row"><p id="stepOneSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepOneBtn" class="secondary">Save</button><button id="stepOneWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepTwoView" style="display:none;"><div class="content-card"><h2>Step 2: Coming to Believe</h2><p class="sub" style="text-align: center;">"Came to believe that a Power greater than ourselves could restore us to sanity."</p><div id="stepTwoQuestions"></div><div class="actions-row"><p id="stepTwoSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTwoBtn" class="secondary">Save</button><button id="stepTwoWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepThreeView" style="display:none;"><div class="content-card"><h2>Step 3: Turning It Over</h2><p class="sub" style="text-align: center;">"Made a decision to turn our will and our lives over to the care of God as we understood Him."</p><div id="stepThreeQuestions"></div><div class="actions-row"><p id="stepThreeSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepThreeBtn" class="secondary">Save</button><button id="stepThreeWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepFourView" style="display:none;"><div class="content-card"><h2>Step 4: Moral Inventory</h2><p class="sub" style="text-align: center;">"Made a searching and fearless moral inventory of ourselves."</p><div id="stepFourQuestions"></div><div class="actions-row"><p id="stepFourSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepFourBtn" class="secondary">Save</button><button id="stepFourWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepFiveView" style="display:none;"><div class="content-card"><h2>Step 5: Admitting Wrongs</h2><p class="sub" style="text-align: center;">"Admitted to God, to ourselves, and to another human being the exact nature of our wrongs."</p><div id="stepFiveQuestions"></div><div class="actions-row"><p id="stepFiveSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepFiveBtn" class="secondary">Save</button><button id="stepFiveWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepSixView" style="display:none;"><div class="content-card"><h2>Step 6: Becoming Ready</h2><p class="sub" style="text-align: center;">"Were entirely ready to have God remove all these defects of character."</p><div id="stepSixQuestions"></div><div class="actions-row"><p id="stepSixSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepSixBtn" class="secondary">Save</button><button id="stepSixWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepSevenView" style="display:none;"><div class="content-card"><h2>Step 7: Humbly Asking</h2><p class="sub" style="text-align: center;">"Humbly asked Him to remove our shortcomings."</p><div id="stepSevenQuestions"></div><div class="actions-row"><p id="stepSevenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepSevenBtn" class="secondary">Save</button><button id="stepSevenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepEightView" style="display:none;"><div class="content-card"><h2>Step 8: List of Harms</h2><p class="sub" style="text-align: center;">"Made a list of all persons we had harmed, and became willing to make amends to them all."</p><div id="stepEightQuestions"></div><div class="actions-row"><p id="stepEightSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepEightBtn" class="secondary">Save</button><button id="stepEightWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepNineView" style="display:none;"><div class="content-card"><h2>Step 9: Making Amends</h2><p class="sub" style="text-align: center;">"Made direct amends to such people wherever possible, except when to do so would injure them or others."</p><div id="stepNineQuestions"></div><div class="actions-row"><p id="stepNineSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepNineBtn" class="secondary">Save</button><button id="stepNineWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepTenView" style="display:none;"><div class="content-card"><h2>Step 10: Daily Inventory</h2><p class="sub" style="text-align: center;">"Continued to take personal inventory and when we were wrong promptly admitted it."</p><div id="stepTenQuestions"></div><div class="actions-row"><p id="stepTenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTenBtn" class="secondary">Save</button><button id="stepTenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepElevenView" style="display:none;"><div class="content-card"><h2>Step 11: Prayer & Meditation</h2><p class="sub" style="text-align: center;">"Sought through prayer and meditation to improve our conscious contact with God as we understood Him..."</p><div id="stepElevenQuestions"></div><div class="actions-row"><p id="stepElevenSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepElevenBtn" class="secondary">Save</button><button id="stepElevenWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-    <div id="stepTwelveView" style="display:none;"><div class="content-card"><h2>Step 12: Spiritual Awakening</h2><p class="sub" style="text-align: center;">"Having had a spiritual awakening as the result of these steps, we tried to carry this message to other addicts, and to practice these principles in all our affairs."</p><div id="stepTwelveQuestions"></div><div class="actions-row"><p id="stepTwelveSaveStatus" class="save-status"></p><div class="list-view-actions"><button id="saveStepTwelveBtn" class="secondary">Save</button><button id="stepTwelveWorkbooksBtn" class="secondary">Workbooks</button></div></div></div></div>
-
-    <!-- REFLECTION VIEWS -->
-    <div id="reflectionView" style="display:none;">
-        <div class="content-card">
-            <h2>Daily Reflection (AA)</h2>
-            <p class="sub" style="text-align: center;">A daily quote and meditation to guide your thoughts.</p>
-            <label for="reflectionDateInput" class="date-label">Select Date:</label>
-            <input type="date" id="reflectionDateInput">
-            <div id="reflectionContent" class="reflection-content">
-                <div class="loading-spinner" id="reflectionSpinner"></div>
-                <p id="reflectionQuote" class="reflection-quote"></p>
-                <p id="reflectionReading" class="reflection-reading"></p>
-            </div>
-            <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
-                <button id="reflectionHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-    <div id="jftView" style="display:none;">
-        <div class="content-card">
-            <h2>Just for Today (NA)</h2>
-            <p class="sub" style="text-align: center;">The daily spiritual message from Narcotics Anonymous.</p>
-            <label for="jftDateInput" class="date-label">Select Date:</label>
-            <input type="date" id="jftDateInput">
-            <div id="jftContent" class="reflection-content">
-                <div class="loading-spinner" id="jftSpinner"></div>
-                <p id="jftQuote" class="reflection-quote"></p>
-                <p id="jftReading" class="reflection-reading"></p>
-            </div>
-            <div class="actions-row" style="justify-content: flex-end; margin-top: 20px;">
-                <button id="jftHomeBtn" class="secondary">Home</button>
-            </div>
-        </div>
-    </div>
-
+    <footer>
+      <p>Made with ❤️ for recovery and mindfulness</p>
+    </footer>
   </div>
-  
-  <script type="module">
-    // FIX: Wait for the DOM to be fully loaded before initializing the app
-    // This prevents race conditions and ensures all elements are available.
-    document.addEventListener('DOMContentLoaded', () => {
-        // Import the main App logic after the DOM is ready.
-        import('./global_events.js').then(({ App }) => {
-            // Initialize the application
-            App.initializeApp();
-        }).catch(err => {
-            console.error("Failed to load or initialize the application:", err);
-            // Optionally, display a user-friendly error message on the page
-            document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-family: sans-serif;"><h1>Application Error</h1><p>Could not load the application. Please try refreshing the page. See console for details.</p></div>';
-        });
-    });
 
-    // Register Service Worker
-    if('serviceWorker' in navigator) {
-      
+  <!-- ✅ Main Script Logic -->
+  <script type="module">
+    document.addEventListener("DOMContentLoaded", async () => {
+      console.log("🌱 Initializing Coping Cards App...");
+
+      // Try to initialize the main app first
+      try {
+        const { App } = await import("./global_events.js");
+        if (App && typeof App.initializeApp === "function") {
+          App.initializeApp();
+          console.log("✅ App initialized successfully");
+          return;
+        } else {
+          console.warn("⚠️ App object missing initializeApp(), running fallback...");
+        }
+      } catch (err) {
+        console.error("❌ global_events.js failed to load:", err);
+      }
+
+      // --- FALLBACKS (if main import fails) ---
+
+      // 🧠 Load a Daily Fact manually
+      try {
+        const { AppData } = await import("./data.js");
+        const factElem = document.getElementById("dailyFactText");
+        const facts = AppData?.dailyFacts || [];
+        if (facts.length > 0) {
+          const randomFact = facts[Math.floor(Math.random() * facts.length)];
+          factElem.textContent = randomFact;
+        } else {
+          factElem.textContent = "Progress, not perfection — one day at a time.";
+        }
+        console.log("✅ Daily Fact loaded (fallback).");
+      } catch (err) {
+        console.error("⚠️ Could not load data.js for Daily Fact:", err);
+        document.getElementById("dailyFactText").textContent =
+          "Stay strong. You're doing better than you think.";
+      }
+
+      // 🎴 Enable Card Buttons manually
+      try {
+        const { CardLogic } = await import("./coping_cards.js");
+        if (CardLogic && typeof CardLogic.bindEventListeners === "function") {
+          CardLogic.bindEventListeners();
+          console.log("✅ CardLogic initialized (fallback).");
+        }
+      } catch (err) {
+        console.error("⚠️ Could not initialize CardLogic fallback:", err);
+      }
+
+      // 🔘 Minimal fallback navigation (so buttons still do something)
+      const goToCardsBtn = document.getElementById("goToCardsBtn");
+      if (goToCardsBtn) {
+        goToCardsBtn.addEventListener("click", () => {
+          alert("Coping Card deck is loading...");
+        });
+      }
+    });
+  </script>
+</body>
+</html>
