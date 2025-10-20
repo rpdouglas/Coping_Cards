@@ -14,7 +14,7 @@
     <!-- 1. HOME SCREEN -->
     <div id="homeScreen" style="display:block;">
       <div class="hero">
-        <div id="appVersion">V0.5</div>
+        <div id="appVersion">V0.10</div>
         <div class="settings-container">
           <button id="goToSettingsBtn" class="settings-cog" title="Settings">&#x2699;</button>
         </div>
@@ -390,501 +390,185 @@
     document.addEventListener('DOMContentLoaded', () => {
       // --- START: workbook_data.js ---
       const WORKBOOK_STEP1_QUESTIONS = [{
-          title: "Part 1: Powerlessness",
-          isSection: true
-        },
-        "In your own words, what does powerless mean to you regarding your addiction?",
-        "Describe your attempts to control your use. Did you ever set rules? What was the result?",
-        "Once you start using, can you reliably control the amount you'll take or how long it will last? Share examples.",
-        "Have you ever made sincere promises to yourself or others that you would stop, only to use again? How did that feel?",
-        "How much of your daily thinking was obsessed with your addiction (planning, hiding, recovering)?",
-        "Did you ever continue to use even when you knew it would lead to negative consequences?",
-        "Have you done things while active in your addiction that went against your core values?",
-        "Describe the physical craving you've experienced. What did it feel like?",
-        "How did your personality change when you were using?",
-        "Why haven't willpower and self-knowledge been enough to keep you sober?", {
-          title: "Part 2: Unmanageability",
-          isSection: true
-        },
-        "What does unmanageable mean in the context of your life? List five specific examples.",
-        "How has your addiction damaged your relationships? Have dishonesty and unreliability become normal?",
-        "In what ways did your use affect your job or school performance?",
-        "Be brutally honest about the financial cost of your addiction. How much has it consumed?",
-        "How has your use impacted your physical health?",
-        "What has been the effect of your use on your mental and emotional health (paranoia, anxiety, depression)?",
-        "Have you neglected important responsibilities (hygiene, bills, family)?",
-        "Has your addiction ever put you or others in dangerous situations?",
-        "Did you start isolating yourself or avoiding people and situations where you couldn't use?",
-        "How has your addiction impacted your spiritual life or moral compass?", {
-          title: "Part 3: Acceptance and Surrender",
-          isSection: true
-        },
-        "What doubts or reservations do you still have about admitting you are an addict?",
-        "What have been the consequences of denying the severity of your problem?",
-        "Looking back, can you identify when your use crossed the line into a destructive obsession?",
-        "If nothing changes, what will your life look like in one year? In five years?",
-        "Do you truly believe you are powerless over your addiction and that your life is unmanageable? Why is this surrender essential?"
-      ];
+        title: "Part 1: Powerlessness",
+        isSection: true
+      }, "In your own words, what does powerless mean to you regarding your addiction?", "Describe your attempts to control your use. Did you ever set rules? What was the result?", "Once you start using, can you reliably control the amount you'll take or how long it will last? Share examples.", "Have you ever made sincere promises to yourself or others that you would stop, only to use again? How did that feel?", "How much of your daily thinking was obsessed with your addiction (planning, hiding, recovering)?", "Did you ever continue to use even when you knew it would lead to negative consequences?", "Have you done things while active in your addiction that went against your core values?", "Describe the physical craving you've experienced. What did it feel like?", "How did your personality change when you were using?", "Why haven't willpower and self-knowledge been enough to keep you sober?", {
+        title: "Part 2: Unmanageability",
+        isSection: true
+      }, "What does unmanageable mean in the context of your life? List five specific examples.", "How has your addiction damaged your relationships? Have dishonesty and unreliability become normal?", "In what ways did your use affect your job or school performance?", "Be brutally honest about the financial cost of your addiction. How much has it consumed?", "How has your use impacted your physical health?", "What has been the effect of your use on your mental and emotional health (paranoia, anxiety, depression)?", "Have you neglected important responsibilities (hygiene, bills, family)?", "Has your addiction ever put you or others in dangerous situations?", "Did you start isolating yourself or avoiding people and situations where you couldn't use?", "How has your addiction impacted your spiritual life or moral compass?", {
+        title: "Part 3: Acceptance and Surrender",
+        isSection: true
+      }, "What doubts or reservations do you still have about admitting you are an addict?", "What have been the consequences of denying the severity of your problem?", "Looking back, can you identify when your use crossed the line into a destructive obsession?", "If nothing changes, what will your life look like in one year? In five years?", "Do you truly believe you are powerless over your addiction and that your life is unmanageable? Why is this surrender essential?"];
       const WORKBOOK_STEP2_QUESTIONS = [{
-          title: "Part 1: Understanding Insanity",
-          isSection: true
-        },
-        "In your own words, what does “insanity” mean in addiction (repeating destructive behavior expecting different results)?",
-        "What specific behaviors or thought patterns in your addiction could be considered “insane”?",
-        "How did your thinking become distorted while using (justifying, minimizing, denying)?",
-        "Describe times when you made irrational or risky decisions because of your addiction.",
-        "How did you try to manage your use after it became unmanageable? What were the results?",
-        "In what ways did your addiction separate you from reality, loved ones, or your true self?",
-        "What evidence shows that your best thinking wasn’t enough to keep you safe or sober?", {
-          title: "Part 2: Coming to Believe",
-          isSection: true
-        },
-        "What does the phrase “came to believe” mean to you? Is it a process or a sudden realization?",
-        "What are your current beliefs about a Power greater than yourself (God, fellowship, universe)?",
-        "Have you ever experienced something greater than yourself helping you through a difficult time?",
-        "What evidence of a Higher Power have you seen in early recovery?",
-        "How does the idea of surrendering control make you feel — fearful, hopeful, or relieved?",
-        "What people or experiences have helped you begin to trust that change is possible?",
-        "How does seeing others in recovery influence your belief that you can also recover?", {
-          title: "Part 3: Restoration to Sanity",
-          isSection: true
-        },
-        "What does “sanity” look like to you? How would a sane, balanced life differ from your old patterns?",
-        "In what areas of your life do you feel restoration is already beginning?",
-        "How do you imagine a Power greater than yourself could help you heal your thinking?",
-        "What does spiritual growth mean to you at this stage of recovery?",
-        "What signs of hope have you experienced since beginning this journey?",
-        "What would it mean to truly trust the recovery process instead of trying to control it?",
-        "How would your life look if you fully believed that recovery and peace of mind are possible for you?", {
-          title: "Part 4: Acceptance and Openness",
-          isSection: true
-        },
-        "What fears or doubts do you still have about a Power greater than yourself?",
-        "What is holding you back from fully believing that you can be restored to sanity?",
-        "What would you need to let go of to move forward in faith?",
-        "How can you stay open-minded as you explore your understanding of a Higher Power?",
-        "How do you plan to strengthen your spiritual connection moving into Step Three?"
-      ];
+        title: "Part 1: Understanding Insanity",
+        isSection: true
+      }, "In your own words, what does “insanity” mean in addiction (repeating destructive behavior expecting different results)?", "What specific behaviors or thought patterns in your addiction could be considered “insane”?", "How did your thinking become distorted while using (justifying, minimizing, denying)?", "Describe times when you made irrational or risky decisions because of your addiction.", "How did you try to manage your use after it became unmanageable? What were the results?", "In what ways did your addiction separate you from reality, loved ones, or your true self?", "What evidence shows that your best thinking wasn’t enough to keep you safe or sober?", {
+        title: "Part 2: Coming to Believe",
+        isSection: true
+      }, "What does the phrase “came to believe” mean to you? Is it a process or a sudden realization?", "What are your current beliefs about a Power greater than yourself (God, fellowship, universe)?", "Have you ever experienced something greater than yourself helping you through a difficult time?", "What evidence of a Higher Power have you seen in early recovery?", "How does the idea of surrendering control make you feel — fearful, hopeful, or relieved?", "What people or experiences have helped you begin to trust that change is possible?", "How does seeing others in recovery influence your belief that you can also recover?", {
+        title: "Part 3: Restoration to Sanity",
+        isSection: true
+      }, "What does “sanity” look like to you? How would a sane, balanced life differ from your old patterns?", "In what areas of your life do you feel restoration is already beginning?", "How do you imagine a Power greater than yourself could help you heal your thinking?", "What does spiritual growth mean to you at this stage of recovery?", "What signs of hope have you experienced since beginning this journey?", "What would it mean to truly trust the recovery process instead of trying to control it?", "How would your life look if you fully believed that recovery and peace of mind are possible for you?", {
+        title: "Part 4: Acceptance and Openness",
+        isSection: true
+      }, "What fears or doubts do you still have about a Power greater than yourself?", "What is holding you back from fully believing that you can be restored to sanity?", "What would you need to let go of to move forward in faith?", "How can you stay open-minded as you explore your understanding of a Higher Power?", "How do you plan to strengthen your spiritual connection moving into Step Three?"];
       const WORKBOOK_STEP3_QUESTIONS = [{
-          title: "Part 1: Understanding the Decision",
-          isSection: true
-        },
-        "In your own words, what does “making a decision” mean in recovery?",
-        "How is believing (Step 2) different from deciding to turn your will over (Step 3)?",
-        "What fears or reservations do you have about giving up control?",
-        "What does “your will” mean to you? How has self-will influenced your past decisions?",
-        "What has been the result when you tried to control everything yourself?",
-        "In what areas of your life do you still struggle to let go and trust a Higher Power?",
-        "What might your life look like if you truly surrendered those areas?", {
-          title: "Part 2: Turning It Over",
-          isSection: true
-        },
-        "What does “turning your will and your life over” look like in practical, daily terms?",
-        "How can you begin to rely on a Higher Power instead of your own impulses and fears?",
-        "Have you experienced moments when you felt guidance or strength beyond yourself? Describe them.",
-        "What daily practices can help you maintain this connection (prayer, meditation, service)?",
-        "What would it take for you to fully trust that this Power wants what’s best for you?",
-        "How does humility play a role in Step Three?",
-        "What does it mean to live “in God’s care” rather than under your own direction?", {
-          title: "Part 3: Willingness and Action",
-          isSection: true
-        },
-        "How do you know when you are being guided by self-will instead of spiritual will?",
-        "What are some signs that you are resisting guidance or trying to take back control?",
-        "How do you feel when you finally let go of something you’ve been clinging to?",
-        "What actions can you take today to show your willingness to live by spiritual principles?",
-        "How do prayer and meditation help you align your will with your Higher Power’s will?",
-        "How can you remind yourself each day that surrender is not weakness, but strength?",
-        "How might turning your will and life over improve your relationships?", {
-          title: "Part 4: Faith and Trust",
-          isSection: true
-        },
-        "What does faith mean to you, and how has it changed since entering recovery?",
-        "What does “trusting the process” look like in your daily life?",
-        "How can you show gratitude for the guidance and care you’re beginning to experience?",
-        "What would it feel like to live with complete trust in your Higher Power?",
-        "How do you handle doubt or fear when you feel disconnected from that Power?",
-        "Who or what helps you stay accountable to your decision to live spiritually?",
-        "What is one situation right now that you can practice turning over fully to your Higher Power?", {
-          title: "Part 5: Commitment and Renewal",
-          isSection: true
-        },
-        "Have you said or written your own version of the Step Three prayer? What does it mean to you?",
-        "How can you demonstrate your decision in your everyday choices?",
-        "What kind of person do you believe your Higher Power is helping you become?",
-        "How do you want your recovery to reflect your growing faith and surrender?",
-        "How will you keep renewing this decision, one day at a time?"
-      ];
+        title: "Part 1: Understanding the Decision",
+        isSection: true
+      }, "In your own words, what does “making a decision” mean in recovery?", "How is believing (Step 2) different from deciding to turn your will over (Step 3)?", "What fears or reservations do you have about giving up control?", "What does “your will” mean to you? How has self-will influenced your past decisions?", "What has been the result when you tried to control everything yourself?", "In what areas of your life do you still struggle to let go and trust a Higher Power?", "What might your life look like if you truly surrendered those areas?", {
+        title: "Part 2: Turning It Over",
+        isSection: true
+      }, "What does “turning your will and your life over” look like in practical, daily terms?", "How can you begin to rely on a Higher Power instead of your own impulses and fears?", "Have you experienced moments when you felt guidance or strength beyond yourself? Describe them.", "What daily practices can help you maintain this connection (prayer, meditation, service)?", "What would it take for you to fully trust that this Power wants what’s best for you?", "How does humility play a role in Step Three?", "What does it mean to live “in God’s care” rather than under your own direction?", {
+        title: "Part 3: Willingness and Action",
+        isSection: true
+      }, "How do you know when you are being guided by self-will instead of spiritual will?", "What are some signs that you are resisting guidance or trying to take back control?", "How do you feel when you finally let go of something you’ve been clinging to?", "What actions can you take today to show your willingness to live by spiritual principles?", "How do prayer and meditation help you align your will with your Higher Power’s will?", "How can you remind yourself each day that surrender is not weakness, but strength?", "How might turning your will and life over improve your relationships?", {
+        title: "Part 4: Faith and Trust",
+        isSection: true
+      }, "What does faith mean to you, and how has it changed since entering recovery?", "What does “trusting the process” look like in your daily life?", "How can you show gratitude for the guidance and care you’re beginning to experience?", "What would it feel like to live with complete trust in your Higher Power?", "How do you handle doubt or fear when you feel disconnected from that Power?", "Who or what helps you stay accountable to your decision to live spiritually?", "What is one situation right now that you can practice turning over fully to your Higher Power?", {
+        title: "Part 5: Commitment and Renewal",
+        isSection: true
+      }, "Have you said or written your own version of the Step Three prayer? What does it mean to you?", "How can you demonstrate your decision in your everyday choices?", "What kind of person do you believe your Higher Power is helping you become?", "How do you want your recovery to reflect your growing faith and surrender?", "How will you keep renewing this decision, one day at a time?"];
       const WORKBOOK_STEP4_QUESTIONS = [{
-          title: "Part 1: Understanding Moral Inventory",
-          isSection: true
-        },
-        "What does 'searching and fearless moral inventory' mean to you?",
-        "Why is it important to examine your resentments, fears, and harms to others?",
-        "What do you hope to gain from doing this inventory honestly?",
-        "What fears or hesitations do you have about doing Step Four?",
-        "How does honesty with yourself play a role in your recovery?", {
-          title: "Part 2: Resentments",
-          isSection: true
-        },
-        "List the people, institutions, or principles you resent. What did they do?",
-        "How did each resentment affect your pride, self-esteem, security, or relationships?",
-        "What part did you play in each situation? Were you selfish, dishonest, fearful, or inconsiderate?",
-        "Have you been holding onto any old grudges that poison your peace of mind?",
-        "What patterns can you identify in your resentments? What do they reveal about you?", {
-          title: "Part 3: Fears",
-          isSection: true
-        },
-        "What are your greatest fears—past, present, and future?",
-        "How have your fears influenced your decisions and behavior?",
-        "Have you ever allowed fear to control your actions or relationships? Give examples.",
-        "What do your fears reveal about your lack of faith or trust in a Higher Power?",
-        "How might facing your fears honestly bring you closer to spiritual freedom?", {
-          title: "Part 4: Harms to Others",
-          isSection: true
-        },
-        "List people you have harmed through your addiction or behavior.",
-        "What specific actions did you take that hurt them (lying, manipulation, neglect)?",
-        "How did these actions affect those people emotionally, financially, or spiritually?",
-        "What part of your character was at play in each harm (selfishness, pride, fear)?",
-        "How does recognizing these harms prepare you for making amends in Step Eight?", {
-          title: "Part 5: Character Defects",
-          isSection: true
-        },
-        "What recurring traits keep causing problems in your life (dishonesty, jealousy, self-pity)?",
-        "How have these defects shown up in your relationships and decisions?",
-        "In what ways have these traits protected you or helped you survive in the past?",
-        "Are you willing to let go of these defects, even the ones you think you 'need'?",
-        "What would your life look like without these destructive patterns?"
-      ];
+        title: "Part 1: Understanding Moral Inventory",
+        isSection: true
+      }, "What does 'searching and fearless moral inventory' mean to you?", "Why is it important to examine your resentments, fears, and harms to others?", "What do you hope to gain from doing this inventory honestly?", "What fears or hesitations do you have about doing Step Four?", "How does honesty with yourself play a role in your recovery?", {
+        title: "Part 2: Resentments",
+        isSection: true
+      }, "List the people, institutions, or principles you resent. What did they do?", "How did each resentment affect your pride, self-esteem, security, or relationships?", "What part did you play in each situation? Were you selfish, dishonest, fearful, or inconsiderate?", "Have you been holding onto any old grudges that poison your peace of mind?", "What patterns can you identify in your resentments? What do they reveal about you?", {
+        title: "Part 3: Fears",
+        isSection: true
+      }, "What are your greatest fears—past, present, and future?", "How have your fears influenced your decisions and behavior?", "Have you ever allowed fear to control your actions or relationships? Give examples.", "What do your fears reveal about your lack of faith or trust in a Higher Power?", "How might facing your fears honestly bring you closer to spiritual freedom?", {
+        title: "Part 4: Harms to Others",
+        isSection: true
+      }, "List people you have harmed through your addiction or behavior.", "What specific actions did you take that hurt them (lying, manipulation, neglect)?", "How did these actions affect those people emotionally, financially, or spiritually?", "What part of your character was at play in each harm (selfishness, pride, fear)?", "How does recognizing these harms prepare you for making amends in Step Eight?", {
+        title: "Part 5: Character Defects",
+        isSection: true
+      }, "What recurring traits keep causing problems in your life (dishonesty, jealousy, self-pity)?", "How have these defects shown up in your relationships and decisions?", "In what ways have these traits protected you or helped you survive in the past?", "Are you willing to let go of these defects, even the ones you think you 'need'?", "What would your life look like without these destructive patterns?"];
       const WORKBOOK_STEP5_QUESTIONS = [{
-          title: "Part 1: Understanding Step Five",
-          isSection: true
-        },
-        "What does Step Five mean to you personally?",
-        "Why is it necessary to share your moral inventory with another person?",
-        "How does admitting your wrongs to God, yourself, and another human being help you heal?",
-        "What fears or doubts do you have about being completely honest in this step?",
-        "What do you hope to gain from completing Step Five?", {
-          title: "Part 2: Preparation for Step Five",
-          isSection: true
-        },
-        "Who have you chosen to share your Step Four inventory with, and why?",
-        "What qualities make this person trustworthy and supportive of your recovery?",
-        "How can you prepare emotionally and spiritually for this conversation?",
-        "Are there any parts of your inventory you still feel hesitant or ashamed to share?",
-        "What might happen if you hold back certain truths during your Step Five?", {
-          title: "Part 3: The Experience of Sharing",
-          isSection: true
-        },
-        "Describe what it felt like to share your inventory openly with another person.",
-        "Were there any surprises or realizations during the conversation?",
-        "Did the person you shared with offer insights you hadn’t considered before?",
-        "How did it feel to be truly honest about things you’ve hidden for years?",
-        "What emotions surfaced during or after your Step Five (e.g., relief, guilt, peace)?", {
-          title: "Part 4: Insights and Lessons Learned",
-          isSection: true
-        },
-        "What did you learn about yourself through this process?",
-        "How did Step Five change your understanding of humility and accountability?",
-        "What patterns of behavior became clearer after sharing your wrongs out loud?",
-        "How has this step affected your connection with your Higher Power?",
-        "Do you feel lighter or more at peace now that you’ve shared your secrets? Explain.", {
-          title: "Part 5: Moving Forward",
-          isSection: true
-        },
-        "What areas of your life feel ready for healing now?",
-        "Are there amends or changes in behavior you already feel motivated to make?",
-        "What practices will help you maintain honesty and humility going forward?",
-        "How will you remind yourself to keep an open heart and mind as you continue?",
-        "In what ways do you feel closer to freedom, forgiveness, and inner peace?"
-      ];
+        title: "Part 1: Understanding Step Five",
+        isSection: true
+      }, "What does Step Five mean to you personally?", "Why is it necessary to share your moral inventory with another person?", "How does admitting your wrongs to God, yourself, and another human being help you heal?", "What fears or doubts do you have about being completely honest in this step?", "What do you hope to gain from completing Step Five?", {
+        title: "Part 2: Preparation for Step Five",
+        isSection: true
+      }, "Who have you chosen to share your Step Four inventory with, and why?", "What qualities make this person trustworthy and supportive of your recovery?", "How can you prepare emotionally and spiritually for this conversation?", "Are there any parts of your inventory you still feel hesitant or ashamed to share?", "What might happen if you hold back certain truths during your Step Five?", {
+        title: "Part 3: The Experience of Sharing",
+        isSection: true
+      }, "Describe what it felt like to share your inventory openly with another person.", "Were there any surprises or realizations during the conversation?", "Did the person you shared with offer insights you hadn’t considered before?", "How did it feel to be truly honest about things you’ve hidden for years?", "What emotions surfaced during or after your Step Five (e.g., relief, guilt, peace)?", {
+        title: "Part 4: Insights and Lessons Learned",
+        isSection: true
+      }, "What did you learn about yourself through this process?", "How did Step Five change your understanding of humility and accountability?", "What patterns of behavior became clearer after sharing your wrongs out loud?", "How has this step affected your connection with your Higher Power?", "Do you feel lighter or more at peace now that you’ve shared your secrets? Explain.", {
+        title: "Part 5: Moving Forward",
+        isSection: true
+      }, "What areas of your life feel ready for healing now?", "Are there amends or changes in behavior you already feel motivated to make?", "What practices will help you maintain honesty and humility going forward?", "How will you remind yourself to keep an open heart and mind as you continue?", "In what ways do you feel closer to freedom, forgiveness, and inner peace?"];
       const WORKBOOK_STEP6_QUESTIONS = [{
-          title: "Part 1: Understanding Step Six",
-          isSection: true
-        },
-        "What does 'entirely ready' mean to you in the context of this step?",
-        "Why is it important to become ready for change rather than forcing it?",
-        "What does it mean for God (or your Higher Power) to remove your defects of character?",
-        "How is being 'ready' different from simply 'wanting' your defects removed?",
-        "What fears do you have about letting go of your character defects?", {
-          title: "Part 2: Identifying Character Defects",
-          isSection: true
-        },
-        "List the main defects of character from your Step Four and Step Five work.",
-        "Which of these defects cause the most harm to yourself and others?",
-        "Which of these traits do you still find useful or comforting, even though they’re destructive?",
-        "What situations or emotions tend to trigger these defects?",
-        "How do these defects block your connection with your Higher Power and your true self?", {
-          title: "Part 3: Readiness for Change",
-          isSection: true
-        },
-        "Are you truly ready to let go of your most damaging character defects? Why or why not?",
-        "What would your life look like without these behaviors or attitudes controlling you?",
-        "What positive qualities could grow in place of these defects if they were removed?",
-        "How can you practice willingness when you’re not yet ready to change?",
-        "What might be holding you back from total readiness for transformation?", {
-          title: "Part 4: The Role of a Higher Power",
-          isSection: true
-        },
-        "How do you understand your Higher Power’s role in helping you change?",
-        "Do you believe your Higher Power can and will remove your defects if you are ready?",
-        "What spiritual practices (prayer, meditation, reflection) help you stay connected to willingness?",
-        "How does humility play a part in this step?",
-        "What does 'cooperating with grace' mean to you in the process of character change?", {
-          title: "Part 5: Growth and Ongoing Readiness",
-          isSection: true
-        },
-        "How can you recognize when a defect begins to resurface in your life?",
-        "What daily actions or attitudes help you stay willing to grow spiritually?",
-        "How can you remind yourself that progress, not perfection, is the goal of this step?",
-        "How do patience and persistence play a role in becoming entirely ready?",
-        "What signs will show you that you are truly ready to move forward to Step Seven?"
-      ];
+        title: "Part 1: Understanding Step Six",
+        isSection: true
+      }, "What does 'entirely ready' mean to you in the context of this step?", "Why is it important to become ready for change rather than forcing it?", "What does it mean for God (or your Higher Power) to remove your defects of character?", "How is being 'ready' different from simply 'wanting' your defects removed?", "What fears do you have about letting go of your character defects?", {
+        title: "Part 2: Identifying Character Defects",
+        isSection: true
+      }, "List the main defects of character from your Step Four and Step Five work.", "Which of these defects cause the most harm to yourself and others?", "Which of these traits do you still find useful or comforting, even though they’re destructive?", "What situations or emotions tend to trigger these defects?", "How do these defects block your connection with your Higher Power and your true self?", {
+        title: "Part 3: Readiness for Change",
+        isSection: true
+      }, "Are you truly ready to let go of your most damaging character defects? Why or why not?", "What would your life look like without these behaviors or attitudes controlling you?", "What positive qualities could grow in place of these defects if they were removed?", "How can you practice willingness when you’re not yet ready to change?", "What might be holding you back from total readiness for transformation?", {
+        title: "Part 4: The Role of a Higher Power",
+        isSection: true
+      }, "How do you understand your Higher Power’s role in helping you change?", "Do you believe your Higher Power can and will remove your defects if you are ready?", "What spiritual practices (prayer, meditation, reflection) help you stay connected to willingness?", "How does humility play a part in this step?", "What does 'cooperating with grace' mean to you in the process of character change?", {
+        title: "Part 5: Growth and Ongoing Readiness",
+        isSection: true
+      }, "How can you recognize when a defect begins to resurface in your life?", "What daily actions or attitudes help you stay willing to grow spiritually?", "How can you remind yourself that progress, not perfection, is the goal of this step?", "How do patience and persistence play a role in becoming entirely ready?", "What signs will show you that you are truly ready to move forward to Step Seven?"];
       const WORKBOOK_STEP7_QUESTIONS = [{
-          title: "Part 1: Understanding Step Seven",
-          isSection: true
-        },
-        "What does humility mean to you in the context of recovery?",
-        "Why do you think humility is essential in asking for your shortcomings to be removed?",
-        "How is Step Seven different from Step Six?",
-        "What does it mean to 'ask' your Higher Power to remove your shortcomings?",
-        "Why is it important to acknowledge that you cannot remove your defects on your own?", {
-          title: "Part 2: The Nature of Humility",
-          isSection: true
-        },
-        "How has pride or ego interfered with your recovery and relationships?",
-        "What are some examples of humility you’ve witnessed in others?",
-        "How can humility strengthen your connection with your Higher Power?",
-        "What does it feel like to admit that you still need help and guidance?",
-        "How do you balance self-respect with humility in your recovery journey?", {
-          title: "Part 3: Asking for Removal of Shortcomings",
-          isSection: true
-        },
-        "Which specific shortcomings do you most want your Higher Power to remove right now?",
-        "What daily actions can you take to cooperate with that spiritual process?",
-        "How do you know when a shortcoming is being lifted or transformed in your life?",
-        "How do prayer, meditation, or service help you practice Step Seven?",
-        "What is the difference between asking for removal and expecting instant perfection?", {
-          title: "Part 4: Living with Grace and Patience",
-          isSection: true
-        },
-        "Have you ever become frustrated that change wasn’t happening fast enough? What did you learn?",
-        "What helps you stay patient while your Higher Power works in your life?",
-        "How can you show gratitude for progress, even when it feels slow?",
-        "In what ways does practicing humility lead to serenity?",
-        "How does accepting your humanity help you maintain compassion for yourself and others?", {
-          title: "Part 5: Ongoing Practice of Step Seven",
-          isSection: true
-        },
-        "How can you make Step Seven a daily practice, not just a one-time event?",
-        "What reminders or rituals help you stay connected to humility and faith?",
-        "How do you notice your shortcomings returning, and how do you respond when they do?",
-        "How can you use service to others as an expression of humility and gratitude?",
-        "How will you carry the lessons of Step Seven into the next phase of your recovery journey?"
-      ];
+        title: "Part 1: Understanding Step Seven",
+        isSection: true
+      }, "What does humility mean to you in the context of recovery?", "Why do you think humility is essential in asking for your shortcomings to be removed?", "How is Step Seven different from Step Six?", "What does it mean to 'ask' your Higher Power to remove your shortcomings?", "Why is it important to acknowledge that you cannot remove your defects on your own?", {
+        title: "Part 2: The Nature of Humility",
+        isSection: true
+      }, "How has pride or ego interfered with your recovery and relationships?", "What are some examples of humility you’ve witnessed in others?", "How can humility strengthen your connection with your Higher Power?", "What does it feel like to admit that you still need help and guidance?", "How do you balance self-respect with humility in your recovery journey?", {
+        title: "Part 3: Asking for Removal of Shortcomings",
+        isSection: true
+      }, "Which specific shortcomings do you most want your Higher Power to remove right now?", "What daily actions can you take to cooperate with that spiritual process?", "How do you know when a shortcoming is being lifted or transformed in your life?", "How do prayer, meditation, or service help you practice Step Seven?", "What is the difference between asking for removal and expecting instant perfection?", {
+        title: "Part 4: Living with Grace and Patience",
+        isSection: true
+      }, "Have you ever become frustrated that change wasn’t happening fast enough? What did you learn?", "What helps you stay patient while your Higher Power works in your life?", "How can you show gratitude for progress, even when it feels slow?", "In what ways does practicing humility lead to serenity?", "How does accepting your humanity help you maintain compassion for yourself and others?", {
+        title: "Part 5: Ongoing Practice of Step Seven",
+        isSection: true
+      }, "How can you make Step Seven a daily practice, not just a one-time event?", "What reminders or rituals help you stay connected to humility and faith?", "How do you notice your shortcomings returning, and how do you respond when they do?", "How can you use service to others as an expression of humility and gratitude?", "How will you carry the lessons of Step Seven into the next phase of your recovery journey?"];
       const WORKBOOK_STEP8_QUESTIONS = [{
-          title: "Part 1: Understanding Step Eight",
-          isSection: true
-        },
-        "What does it mean to make a list of all persons you have harmed?",
-        "Why is willingness an important part of this step?",
-        "How does Step Eight prepare you for Step Nine?",
-        "What does 'harm' mean to you—emotionally, financially, or spiritually?",
-        "What fears or concerns come up for you when you think about making amends?", {
-          title: "Part 2: Making the List",
-          isSection: true
-        },
-        "Who are the people you have harmed (family, friends, co-workers, etc.)?",
-        "How did your actions or words harm them?",
-        "Have you caused harm indirectly, such as neglecting responsibilities or breaking trust?",
-        "Are there people you’ve forgotten or minimized in your inventory?",
-        "How can you ensure your list is honest, complete, and made in a spirit of humility?", {
-          title: "Part 3: Understanding Harm and Responsibility",
-          isSection: true
-        },
-        "What patterns do you notice in the ways you’ve harmed others?",
-        "Were your actions driven by fear, selfishness, dishonesty, pride, or anger?",
-        "How has your behavior affected the trust and safety of those around you?",
-        "How does taking responsibility for harm done help you grow spiritually?",
-        "Why is it important to forgive yourself as part of this process?", {
-          title: "Part 4: Becoming Willing",
-          isSection: true
-        },
-        "Who are you willing to make amends to right now? Why?",
-        "Who are you not yet willing to make amends to, and what’s holding you back?",
-        "What would it take for you to become willing to make those amends?",
-        "How can prayer, meditation, or talking with your sponsor help you find willingness?",
-        "How does Step Eight connect with your spiritual growth and your desire for a better life?"
-      ];
+        title: "Part 1: Understanding Step Eight",
+        isSection: true
+      }, "What does it mean to make a list of all persons you have harmed?", "Why is willingness an important part of this step?", "How does Step Eight prepare you for Step Nine?", "What does 'harm' mean to you—emotionally, financially, or spiritually?", "What fears or concerns come up for you when you think about making amends?", {
+        title: "Part 2: Making the List",
+        isSection: true
+      }, "Who are the people you have harmed (family, friends, co-workers, etc.)?", "How did your actions or words harm them?", "Have you caused harm indirectly, such as neglecting responsibilities or breaking trust?", "Are there people you’ve forgotten or minimized in your inventory?", "How can you ensure your list is honest, complete, and made in a spirit of humility?", {
+        title: "Part 3: Understanding Harm and Responsibility",
+        isSection: true
+      }, "What patterns do you notice in the ways you’ve harmed others?", "Were your actions driven by fear, selfishness, dishonesty, pride, or anger?", "How has your behavior affected the trust and safety of those around you?", "How does taking responsibility for harm done help you grow spiritually?", "Why is it important to forgive yourself as part of this process?", {
+        title: "Part 4: Becoming Willing",
+        isSection: true
+      }, "Who are you willing to make amends to right now? Why?", "Who are you not yet willing to make amends to, and what’s holding you back?", "What would it take for you to become willing to make those amends?", "How can prayer, meditation, or talking with your sponsor help you find willingness?", "How does Step Eight connect with your spiritual growth and your desire for a better life?"];
       const WORKBOOK_STEP9_QUESTIONS = [{
-          title: "Part 1: Understanding Step Nine",
-          isSection: true
-        },
-        "What does 'making direct amends' mean to you?",
-        "Why is it important to make amends 'wherever possible'?",
-        "What does the phrase 'except when to do so would injure them or others' mean?",
-        "How does this step differ from simply saying 'I’m sorry'?",
-        "What fears or reservations do you have about making amends?", {
-          title: "Part 2: Preparing to Make Amends",
-          isSection: true
-        },
-        "Review your Step Eight list. Who will you make amends to first, and why?",
-        "How will you approach each person? What will you say?",
-        "What is your motivation for making each amend—is it to clear your conscience or to truly help heal?",
-        "How can you stay humble and open to any reaction you might receive?",
-        "Have you discussed your plan with your sponsor or a trusted advisor?", {
-          title: "Part 3: The Act of Making Amends",
-          isSection: true
-        },
-        "Describe one of your experiences making a direct amend. What happened?",
-        "How did the other person react? How did you feel?",
-        "Were there any amends that were particularly difficult or surprising?",
-        "How did you handle situations where you couldn’t make a direct amend?",
-        "What did you learn about forgiveness, humility, and courage through this process?", {
-          title: "Part 4: Living Amends",
-          isSection: true
-        },
-        "How can you make 'living amends' by changing your behavior going forward?",
-        "In what ways do your daily actions now reflect your commitment to recovery?",
-        "How has making amends improved your relationships and your self-respect?",
-        "What does it feel like to live with a cleaner conscience?",
-        "How will you continue to practice honesty and responsibility in your relationships?", {
-          title: "Part 5: Spiritual Growth and Freedom",
-          isSection: true
-        },
-        "How has Step Nine deepened your connection with your Higher Power?",
-        "In what ways do you feel more spiritually free now?",
-        "How has this step helped you let go of guilt and shame from the past?",
-        "What does it mean to you to live with integrity and accountability?",
-        "How will you carry the lessons of Step Nine into your daily life?"
-      ];
+        title: "Part 1: Understanding Step Nine",
+        isSection: true
+      }, "What does 'making direct amends' mean to you?", "Why is it important to make amends 'wherever possible'?", "What does the phrase 'except when to do so would injure them or others' mean?", "How does this step differ from simply saying 'I’m sorry'?", "What fears or reservations do you have about making amends?", {
+        title: "Part 2: Preparing to Make Amends",
+        isSection: true
+      }, "Review your Step Eight list. Who will you make amends to first, and why?", "How will you approach each person? What will you say?", "What is your motivation for making each amend—is it to clear your conscience or to truly help heal?", "How can you stay humble and open to any reaction you might receive?", "Have you discussed your plan with your sponsor or a trusted advisor?", {
+        title: "Part 3: The Act of Making Amends",
+        isSection: true
+      }, "Describe one of your experiences making a direct amend. What happened?", "How did the other person react? How did you feel?", "Were there any amends that were particularly difficult or surprising?", "How did you handle situations where you couldn’t make a direct amend?", "What did you learn about forgiveness, humility, and courage through this process?", {
+        title: "Part 4: Living Amends",
+        isSection: true
+      }, "How can you make 'living amends' by changing your behavior going forward?", "In what ways do your daily actions now reflect your commitment to recovery?", "How has making amends improved your relationships and your self-respect?", "What does it feel like to live with a cleaner conscience?", "How will you continue to practice honesty and responsibility in your relationships?", {
+        title: "Part 5: Spiritual Growth and Freedom",
+        isSection: true
+      }, "How has Step Nine deepened your connection with your Higher Power?", "In what ways do you feel more spiritually free now?", "How has this step helped you let go of guilt and shame from the past?", "What does it mean to you to live with integrity and accountability?", "How will you carry the lessons of Step Nine into your daily life?"];
       const WORKBOOK_STEP10_QUESTIONS = [{
-          title: "Part 1: Understanding Step Ten",
-          isSection: true
-        },
-        "What does it mean to 'continue to take personal inventory'?",
-        "Why is Step Ten a daily practice?",
-        "How does this step help you stay on track with your recovery?",
-        "What does 'when we were wrong promptly admitted it' mean in your daily life?",
-        "How does Step Ten prevent resentments and character defects from building up again?", {
-          title: "Part 2: Daily Inventory Practice",
-          isSection: true
-        },
-        "What is your routine for taking a daily inventory (e.g., at the end of the day, during quiet moments)?",
-        "What questions do you ask yourself during your inventory?",
-        "How do you identify when you’ve been dishonest, selfish, resentful, or fearful?",
-        "What do you do when you realize you were wrong in a situation?",
-        "How do you make amends promptly when needed?", {
-          title: "Part 3: Emotional Sobriety and Self-Awareness",
-          isSection: true
-        },
-        "How has Step Ten helped you become more aware of your emotions and reactions?",
-        "What patterns in your behavior have you noticed through your daily inventories?",
-        "How do you handle difficult emotions like anger, fear, or jealousy in a healthier way now?",
-        "What does emotional sobriety mean to you, and how does Step Ten support it?",
-        "How has your self-awareness grown since you started practicing this step?", {
-          title: "Part 4: Spiritual Connection and Humility",
-          isSection: true
-        },
-        "How does your daily inventory help you stay connected to your Higher Power?",
-        "In what ways does admitting your wrongs promptly keep you humble?",
-        "How do you ask for guidance from your Higher Power when you’re unsure about a situation?",
-        "How has Step Ten improved your ability to listen to your conscience or inner voice?",
-        "What does it feel like to go to bed with a clear conscience each night?", {
-          title: "Part 5: A Way of Life",
-          isSection: true
-        },
-        "How has Step Ten become a natural part of your daily routine?",
-        "What are the biggest benefits you’ve experienced from practicing this step?",
-        "How does Step Ten help you maintain balance and serenity in your life?",
-        "In what ways does this step support your relationships with others?",
-        "How will you continue to use Step Ten to grow spiritually and emotionally?"
-      ];
+        title: "Part 1: Understanding Step Ten",
+        isSection: true
+      }, "What does it mean to 'continue to take personal inventory'?", "Why is Step Ten a daily practice?", "How does this step help you stay on track with your recovery?", "What does 'when we were wrong promptly admitted it' mean in your daily life?", "How does Step Ten prevent resentments and character defects from building up again?", {
+        title: "Part 2: Daily Inventory Practice",
+        isSection: true
+      }, "What is your routine for taking a daily inventory (e.g., at the end of the day, during quiet moments)?", "What questions do you ask yourself during your inventory?", "How do you identify when you’ve been dishonest, selfish, resentful, or fearful?", "What do you do when you realize you were wrong in a situation?", "How do you make amends promptly when needed?", {
+        title: "Part 3: Emotional Sobriety and Self-Awareness",
+        isSection: true
+      }, "How has Step Ten helped you become more aware of your emotions and reactions?", "What patterns in your behavior have you noticed through your daily inventories?", "How do you handle difficult emotions like anger, fear, or jealousy in a healthier way now?", "What does emotional sobriety mean to you, and how does Step Ten support it?", "How has your self-awareness grown since you started practicing this step?", {
+        title: "Part 4: Spiritual Connection and Humility",
+        isSection: true
+      }, "How does your daily inventory help you stay connected to your Higher Power?", "In what ways does admitting your wrongs promptly keep you humble?", "How do you ask for guidance from your Higher Power when you’re unsure about a situation?", "How has Step Ten improved your ability to listen to your conscience or inner voice?", "What does it feel like to go to bed with a clear conscience each night?", {
+        title: "Part 5: A Way of Life",
+        isSection: true
+      }, "How has Step Ten become a natural part of your daily routine?", "What are the biggest benefits you’ve experienced from practicing this step?", "How does Step Ten help you maintain balance and serenity in your life?", "In what ways does this step support your relationships with others?", "How will you continue to use Step Ten to grow spiritually and emotionally?"];
       const WORKBOOK_STEP11_QUESTIONS = [{
-          title: "Part 1: Understanding Step Eleven",
-          isSection: true
-        },
-        "What does 'conscious contact with God as we understood Him' mean to you?",
-        "Why are both prayer and meditation important parts of this step?",
-        "How do you see the difference between prayer and meditation?",
-        "What does it mean to pray 'only for knowledge of His will for us and the power to carry that out'?",
-        "How does this step help you deepen your spiritual connection?", {
-          title: "Part 2: The Practice of Prayer",
-          isSection: true
-        },
-        "What is your personal approach to prayer? Is it formal, conversational, or something else?",
-        "What do you pray for on a daily basis?",
-        "How has your understanding of prayer changed since you started recovery?",
-        "How do you handle times when you feel your prayers aren’t being answered?",
-        "In what ways does prayer help you align your will with your Higher Power’s will?", {
-          title: "Part 3: The Practice of Meditation",
-          isSection: true
-        },
-        "What is your meditation practice like? How do you quiet your mind?",
-        "What challenges do you face with meditation, and how do you overcome them?",
-        "How does meditation help you listen for guidance from your Higher Power?",
-        "What have you learned about yourself through your meditation practice?",
-        "In what ways has meditation brought you peace, clarity, or serenity?", {
-          title: "Part 4: Seeking Guidance and Power",
-          isSection: true
-        },
-        "How do you know when you are receiving guidance from your Higher Power?",
-        "What does it feel like to act on that guidance, even when it’s difficult?",
-        "How does Step Eleven give you the strength and courage to face life’s challenges?",
-        "Describe a time when you felt spiritually connected and empowered.",
-        "How does this step help you trust that you are on the right path?", {
-          title: "Part 5: A Spiritual Way of Life",
-          isSection: true
-        },
-        "How has your spiritual life grown since you began practicing Step Eleven?",
-        "What are the biggest benefits you’ve experienced from prayer and meditation?",
-        "How do you maintain your spiritual practice, especially on busy or stressful days?",
-        "In what ways has your conscious contact with your Higher Power transformed your life?",
-        "How will you continue to deepen your spiritual journey in the future?"
-      ];
+        title: "Part 1: Understanding Step Eleven",
+        isSection: true
+      }, "What does 'conscious contact with God as we understood Him' mean to you?", "Why are both prayer and meditation important parts of this step?", "How do you see the difference between prayer and meditation?", "What does it mean to pray 'only for knowledge of His will for us and the power to carry that out'?", "How does this step help you deepen your spiritual connection?", {
+        title: "Part 2: The Practice of Prayer",
+        isSection: true
+      }, "What is your personal approach to prayer? Is it formal, conversational, or something else?", "What do you pray for on a daily basis?", "How has your understanding of prayer changed since you started recovery?", "How do you handle times when you feel your prayers aren’t being answered?", "In what ways does prayer help you align your will with your Higher Power’s will?", {
+        title: "Part 3: The Practice of Meditation",
+        isSection: true
+      }, "What is your meditation practice like? How do you quiet your mind?", "What challenges do you face with meditation, and how do you overcome them?", "How does meditation help you listen for guidance from your Higher Power?", "What have you learned about yourself through your meditation practice?", "In what ways has meditation brought you peace, clarity, or serenity?", {
+        title: "Part 4: Seeking Guidance and Power",
+        isSection: true
+      }, "How do you know when you are receiving guidance from your Higher Power?", "What does it feel like to act on that guidance, even when it’s difficult?", "How does Step Eleven give you the strength and courage to face life’s challenges?", "Describe a time when you felt spiritually connected and empowered.", "How does this step help you trust that you are on the right path?", {
+        title: "Part 5: A Spiritual Way of Life",
+        isSection: true
+      }, "How has your spiritual life grown since you began practicing Step Eleven?", "What are the biggest benefits you’ve experienced from prayer and meditation?", "How do you maintain your spiritual practice, especially on busy or stressful days?", "In what ways has your conscious contact with your Higher Power transformed your life?", "How will you continue to deepen your spiritual journey in the future?"];
       const WORKBOOK_STEP12_QUESTIONS = [{
-          title: "Part 1: Understanding Spiritual Awakening",
-          isSection: true
-        },
-        "What does a 'spiritual awakening' mean to you personally?",
-        "How has your life changed as a result of working the first eleven steps?",
-        "In what ways do you see the world and yourself differently now?",
-        "How has your connection with your Higher Power grown through this process?",
-        "What are some signs of your spiritual awakening in your daily thoughts and actions?", {
-          title: "Part 2: Carrying the Message",
-          isSection: true
-        },
-        "What is the message of recovery that you have to share?",
-        "Why is it important to carry this message to other addicts who are still suffering?",
-        "How can you share your experience, strength, and hope with others in a helpful way?",
-        "What opportunities do you have for service work (e.g., sponsorship, sharing at meetings)?",
-        "How does helping others strengthen your own recovery?", {
-          title: "Part 3: Practicing These Principles in All Our Affairs",
-          isSection: true
-        },
-        "What are the key spiritual principles you’ve learned from the twelve steps (e.g., honesty, humility, forgiveness)?",
-        "How can you apply these principles in your relationships with family and friends?",
-        "How can you practice these principles at work or in your community?",
-        "What does it look like to live with integrity and purpose in your daily life?",
-        "How do you handle challenges and conflicts using the tools of the program?", {
-          title: "Part 4: A Life of Recovery",
-          isSection: true
-        },
-        "How has your life been transformed by the twelve steps?",
-        "What are you most grateful for in your recovery today?",
-        "How do you continue to grow spiritually, emotionally, and mentally?",
-        "What does it mean to you to live 'one day at a time'?",
-        "How do you maintain your hope and commitment to recovery for the long term?", {
-          title: "Part 5: The Journey Continues",
-          isSection: true
-        },
-        "What are your goals for the future in your recovery and in your life?",
-        "How will you stay connected to the fellowship and your support system?",
-        "What have you learned about yourself that will guide you in the years to come?",
-        "How do you find joy, peace, and fulfillment in your sober life?",
-        "What message of hope would you give to someone just starting their recovery journey?"
-      ];
+        title: "Part 1: Understanding Spiritual Awakening",
+        isSection: true
+      }, "What does a 'spiritual awakening' mean to you personally?", "How has your life changed as a result of working the first eleven steps?", "In what ways do you see the world and yourself differently now?", "How has your connection with your Higher Power grown through this process?", "What are some signs of your spiritual awakening in your daily thoughts and actions?", {
+        title: "Part 2: Carrying the Message",
+        isSection: true
+      }, "What is the message of recovery that you have to share?", "Why is it important to carry this message to other addicts who are still suffering?", "How can you share your experience, strength, and hope with others in a helpful way?", "What opportunities do you have for service work (e.g., sponsorship, sharing at meetings)?", "How does helping others strengthen your own recovery?", {
+        title: "Part 3: Practicing These Principles in All Our Affairs",
+        isSection: true
+      }, "What are the key spiritual principles you’ve learned from the twelve steps (e.g., honesty, humility, forgiveness)?", "How can you apply these principles in your relationships with family and friends?", "How can you practice these principles at work or in your community?", "What does it look like to live with integrity and purpose in your daily life?", "How do you handle challenges and conflicts using the tools of the program?", {
+        title: "Part 4: A Life of Recovery",
+        isSection: true
+      }, "How has your life been transformed by the twelve steps?", "What are you most grateful for in your recovery today?", "How do you continue to grow spiritually, emotionally, and mentally?", "What does it mean to you to live 'one day at a time'?", "How do you maintain your hope and commitment to recovery for the long term?", {
+        title: "Part 5: The Journey Continues",
+        isSection: true
+      }, "What are your goals for the future in your recovery and in your life?", "How will you stay connected to the fellowship and your support system?", "What have you learned about yourself that will guide you in the years to come?", "How do you find joy, peace, and fulfillment in your sober life?", "What message of hope would you give to someone just starting their recovery journey?"];
       // --- END: workbook_data.js ---
 
       // --- START: data.js ---
@@ -1810,8 +1494,8 @@
           });
           if (response.ok) {
             const result = await response.json();
-            const candidate = result.candidates ? .[0];
-            if (candidate && candidate.content ? .parts ? .[0] ? .text) {
+            const candidate = result.candidates?.[0];
+            if (candidate && candidate.content?.parts?.[0]?.text) {
               resultText = candidate.content.parts[0].text;
             }
           } else {
@@ -2245,3 +1929,4 @@
 </body>
 
 </html>
+
